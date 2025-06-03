@@ -7,8 +7,8 @@ class SchoolRepository{
         let school = await pool.query(`SELECT * FROM schools where id = ${id}`);
         return school;
     }
-    async insert(SchoolCode, SchoolName){
-        let school = await pool.query(` INSERT INTO schools (${SchoolCode}, ${SchoolName})`);
+    async insert(params){
+        let school = await pool.query(` INSERT INTO schools (${params.SchoolCode}, ${params.SchoolName})`);
         return school;
     }
     async update(SchoolCode, SchoolName){

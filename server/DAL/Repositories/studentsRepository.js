@@ -25,11 +25,11 @@ class StudentsRepository{
         return result.rows;
     }
 
-    async insert(id, firstname, lastname, field1, field2, field3, field4, severalpriority, able, field1priority, field2priority, field3priority,
-         field4priority, field1able, field2able, field3able,field4able, grade, schoolid){
-        let student = await pool.query(` INSERT INTO students (${id}, ${firstname},${lastname}, ${field1},${field2}, ${field3},${field4},
-             ${severalpriority},${able},${field1priority},${field2priority}, ${field3priority},${field4priority}, ${field1able},3
-             ${field2able}, ${field3able},${field4able},${grade},${schoolid})`);
+    async insert(params){
+        let student = await pool.query(` INSERT INTO students (${params.id}, ${params.firstname},${params.lastname}, ${params.field1},
+            ${params.field2}, ${params.field3},${params.field4},${params.severalpriority},${params.able},${params.field1priority},
+            ${params.field2priority}, ${params.field3priority},${params.field4priority}, ${params.field1able},${params.field2able},
+            ${params.field3able},${params.field4able},${params.grade},${params.schoolid})`);
         return student;
     }
     async updateStudent(id, updatedFields) {

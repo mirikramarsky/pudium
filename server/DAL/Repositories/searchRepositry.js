@@ -46,6 +46,11 @@ class SearchRepository{
         const result = await pool.query(query, values);
         return result.rows;
     }
+    async insert (params){
+        let search = await pool.query(` INSERT INTO students (${params.searchname}, ${params.searchdate},${params.field}, ${params.mingrade},
+            ${params.maxgrade}, ${params.countstudents},${params.searchername})`);
+        return search;
+    }
     async updateSearch(id, updatedFields) {
         const sets = [];
         const values = [];
