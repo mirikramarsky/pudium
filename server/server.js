@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('./db');
+const pool = require('./DAL/db');
 
 const app = express();
 app.use(express.json());
