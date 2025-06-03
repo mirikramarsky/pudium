@@ -23,6 +23,7 @@ app.get('/', async (req, res) => {
     res.status(500).send('Error querying the database');
   }
 });
-app.listen(3000, () => {
-  console.log('I am running at http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`I am running at http://localhost:${PORT}`);
 });
