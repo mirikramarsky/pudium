@@ -48,8 +48,9 @@ class SearchRepository{
         return result.rows;
     }
     async insert (params){
-        let search = await pool.query(` INSERT INTO students (${params.searchname}, ${params.searchdate},${params.field}, ${params.mingrade},
-            ${params.maxgrade}, ${params.countstudents},${params.searchername})`);
+        let search = await pool.query(` INSERT INTO students (searchname, searchdate, field, mingrade, maxgrade, countstudents, searchername) 
+            VALUES(${params.searchname}, ${params.searchdate},${params.field}, ${params.mingrade},${params.maxgrade},
+            ${params.countstudents},${params.searchername})`);
         return search;
     }
     async update(id, updatedFields) {
