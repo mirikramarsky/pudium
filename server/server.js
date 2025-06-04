@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('./DAL/db');
+// const pool = require('./DAL/db');
 const cors = require('cors');
 
 const app = express();
@@ -10,7 +10,12 @@ const schoolRoute = require('./routes/schoolRoute');
 const searchRoute = require('./routes/searchRoute');
 const staffRoute = require('./routes/staffRoute');
 const studentRoute = require('./routes/studentRoute');
-
+process.on('uncaughtException', err => {
+    console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', reason => {
+    console.error('Unhandled Rejection:', reason);
+});
 app.use(cors());
 
 app.use(express.json());
@@ -33,6 +38,7 @@ catch{
 app.use((err ,req, res, next)=>{
     res.status(500).send('sorry,😶😶😶😶😟😟😟😳😳 an error in app, pleasy runn again later...')
 });
+
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`I am running at http://0.0.0.0:${port}`);
