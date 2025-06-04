@@ -5,19 +5,19 @@ class StaffRepository{
         return staffs;
     }
     async getById(id){
-        let staff = await pool.query(`SELECT * FROM staff where id = ${id}`);
+        let staff = await pool.query(`SELECT * FROM staff where id = $1`,[id]);
         return staff;
     }
     async getBySchoolId(schoolId){
-        let staff = await pool.query(`SELECT * FROM staff where schoolId = ${schoolId}`);
+        let staff = await pool.query(`SELECT * FROM staff where schoolId = $1`,[schoolId]);
         return staff;
     }
     async getBySchoolIdAndId(schoolId,id){
-        let staff = await pool.query(`SELECT * FROM staff where schoolId = ${schoolId} AND id = ${id}`);
+        let staff = await pool.query(`SELECT * FROM staff where schoolId = $1 AND id = $2`,[schoolId, id]);
         return staff;
     }
     async insert(params){
-        let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm) VALUES ($1,$2,$3,$4)`,[params.id, $.schoolId,
+        let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm) VALUES ($1,$2,$3,$4)`,[params.id, params.schoolId,
             params.name, params.confirm]);
         return staff;
     }
@@ -35,7 +35,7 @@ class StaffRepository{
     }
     async delete(id, schoolId){
         let staff = await pool.query(` DELETE FROM staff
-            WHERE id = ${id} AND schoolId = ${schoolId}`);
+            WHERE id = $1 AND schoolId = $2`,[id, schoolId]);
         return staff;
     }
 }

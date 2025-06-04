@@ -5,7 +5,7 @@ class SearchRepository{
         return searches;
     }
     async getById(id){
-        let search = await pool.query(`SELECT * FROM searches where id = ${id}`);
+        let search = await pool.query(`SELECT * FROM searches where id = $1`,[id]);
         return search;
     }
     async getByParams(params) {
@@ -73,7 +73,7 @@ class SearchRepository{
 
     async delete(id){
         let search = await pool.query(` DELETE FROM searches
-            WHERE id = ${id};`);
+            WHERE id = $1`,[id]);
         return search;
     }
 }

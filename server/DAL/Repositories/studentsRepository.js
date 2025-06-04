@@ -5,7 +5,7 @@ class StudentsRepository{
         return students;
     }
     async getById(id){
-        let student = await pool.query(`SELECT * FROM students where id = ${id}`);
+        let student = await pool.query(`SELECT * FROM students where id = $1`,id);
         return student;
     }
     async getStudentsByParams(params) {
@@ -57,7 +57,7 @@ class StudentsRepository{
 
     async delete(id){
         let student = await pool.query(` DELETE FROM students
-            WHERE id = ${id};`);
+            WHERE id = $1`,[id]);
         return student;
     }
 }
