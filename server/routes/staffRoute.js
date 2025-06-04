@@ -86,7 +86,7 @@ router.put('/:id', async(req, res,next)=>{
 });
 router.put('/changeName/:id', async(req, res,next)=>{
     try{
-        let result = await staffService.updateConfirm(req.params.id, req.body);
+        let result = await staffService.updateName(req.params.id, req.body);
         if(result != undefined)
             res.send(result)
         else
