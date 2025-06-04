@@ -17,8 +17,8 @@ class StaffRepository{
         return staff;
     }
     async insert(params){
-        let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm) VALUES(${params.id}, ${params.schoolId},
-            ${params.name}, ${params.confirm})`);
+        let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm) VALUES ($1,$2,$3,$4)`,[params.id, $.schoolId,
+            params.name, params.confirm]);
         return staff;
     }
     async updateConfirm(id, updatedFields){
