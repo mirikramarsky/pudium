@@ -4,8 +4,18 @@ class StaffService extends BaseService{
     constructor(){
         super(staffRepository);
     }
-    async delete(id, schoolid) {   
-        let result = await this.repository.delete(id, schoolid);
+    async getBySchoolId(schoolId) {   
+        let result = await this.repository.getBySchoolId(schoolId);
+        if (result)
+        return result;
+    }
+    async getBySchoolIdAndId(schoolId,id) {   
+        let result = await this.repository.getBySchoolIdAndId(schoolId,id);
+        if (result)
+        return result;
+    }
+    async updateConfirm(id, updatedFields) {   
+        let result = await this.repository.updateConfirm(id, updatedFields);
         if (result)
         return result;
     }

@@ -19,16 +19,16 @@ class StaffRepository{
         let staff = await pool.query(` INSERT INTO staff (${params.id}, ${params.schoolId}, ${params.name}, ${params.confirm})`);
         return staff;
     }
-    async updateConfirm(id, schoolId, name){
+    async updateConfirm(id, updatedFields){
         let staff = await pool.query(` UPDATE staff
-            SET name = ${name}
-            WHERE id = ${id} AND schoolId = ${schoolId}`);
+            SET name = ${updatedFields.name}
+            WHERE id = ${id} AND schoolId = ${updatedFields.schoolId}`);
         return staff;
     }
-     async updateName(id, updatedFields){
+     async update(id, updatedFields){
         let staff = await pool.query(` UPDATE staff
-            SET confirm = ${confirm}
-            WHERE id = ${updatedFields.id} AND schoolId = ${updatedFields.schoolId}`);
+            SET confirm = ${updatedFields.confirm}
+            WHERE id = ${id} AND schoolId = ${updatedFields.schoolId}`);
         return staff;
     }
     async delete(id, schoolId){

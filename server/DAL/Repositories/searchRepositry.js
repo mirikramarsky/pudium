@@ -51,7 +51,7 @@ class SearchRepository{
             ${params.maxgrade}, ${params.countstudents},${params.searchername})`);
         return search;
     }
-    async updateSearch(id, updatedFields) {
+    async update(id, updatedFields) {
         const sets = [];
         const values = [];
         let i = 1;

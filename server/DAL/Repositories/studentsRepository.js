@@ -20,7 +20,7 @@ class StudentsRepository{
         }
 
         const whereClause = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
-        const query = `SELECT * FROM students ${whereClause}`;
+        const query = `SELECT * FROM students ${whereClause} ORDER BY ${params.priority} DESC LIMIT ${params.count}`;
         const result = await pool.query(query, values);
         return result.rows;
     }
@@ -32,7 +32,7 @@ class StudentsRepository{
             ${params.field3able},${params.field4able},${params.grade},${params.schoolid})`);
         return student;
     }
-    async updateStudent(id, updatedFields) {
+    async update(id, updatedFields) {
         const sets = [];
         const values = [];
         let i = 1;
