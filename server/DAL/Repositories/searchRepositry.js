@@ -2,11 +2,11 @@ const pool = require('../db');
 class SearchRepository{
     async get(){
         let searches = await pool.query('SELECT * FROM searches');
-        return searches;
+        return searches.rows;
     }
     async getById(id){
         let search = await pool.query(`SELECT * FROM searches where id = $1`,[id]);
-        return search;
+        return search.rows;
     }
     async getByParams(params) {
         const conditions = [];
@@ -48,8 +48,8 @@ class SearchRepository{
         return result.rows;
     }
     async insert (params){
-        let search = await pool.query(` INSERT INTO students (searchname, searchdate, field, mingrade, maxgrade, countstudents, searchername) 
-            VALUES($1,$2,$3,$4,$5,$6,$7)`,[params.searchname, params.searchdate,params.field, params.mingrade,params.maxgrade,
+        let search = await pool.query(` INSERT INTO students (searchname, field, mingrade, maxgrade, countstudents, searchername) 
+            VALUES($1,$2,$3,$4,$5,$6,$7)`,[params.searchname, params.field, params.mingrade,params.maxgrade,
             params.countstudents,params.searchername]);
         return search;
     }

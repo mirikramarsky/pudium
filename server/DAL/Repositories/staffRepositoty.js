@@ -6,22 +6,22 @@ class StaffRepository{
     }
     async getById(id){
         let staff = await pool.query(`SELECT * FROM staff where id = $1`,[id]);
-        return staff;
+        return staff.rows;
     }
     async getBySchoolId(schoolId){
         let staff = await pool.query(`SELECT * FROM staff where schoolId = $1`,[schoolId]);
-        return staff;
+        return staff.rows;
     }
     async getBySchoolIdAndId(schoolId,id){
         let staff = await pool.query(`SELECT * FROM staff where schoolId = $1 AND id = $2`,[schoolId, id]);
-        return staff;
+        return staff.rows;
     }
     async insert(params){
         let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm) VALUES ($1,$2,$3,$4)`,[params.id, params.schoolId,
             params.name, params.confirm]);
         return staff;
     }
-    async updateConfirm(id, updatedFields){
+    async updateName(id, updatedFields){
         let staff = await pool.query(` UPDATE staff
             SET name = $1
             WHERE id = $2 AND schoolId = $3`,[updatedFields.name, id, updatedFields.schoolId]);

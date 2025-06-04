@@ -14,7 +14,7 @@ class StaffService extends BaseService{
         if (result)
         return result;
     }
-    async updateConfirm(id, updatedFields) {   
+    async updateName(id, updatedFields) {   
         let result = await this.repository.updateConfirm(id, updatedFields);
         if (result)
         return result;

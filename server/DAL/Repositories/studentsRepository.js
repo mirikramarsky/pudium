@@ -2,26 +2,50 @@ const pool = require('../db');
 class StudentsRepository{
     async get(){
         let students = await pool.query('SELECT * FROM students');
-        return students;
+        return students.rows;
     }
     async getById(id){
         let student = await pool.query(`SELECT * FROM students where id = $1`,id);
-        return student;
+        return student.rows;
     }
     async getStudentsByParams(params) {
-        const conditions = [];
         const values = [];
         let i = 1;
 
-        for (const key in params) {
-            if (params[key] !== undefined) {
-                conditions.push(`${key} = $${i++}`);
-                values.push(params[key]);
-            }
-        }
+        // סדר הפרמטרים חשוב כדי להתאים למספרי $ בשאילתה
+        values.push(params.myField);       // $1
+        values.push(params.schoolId);      // $2
+        values.push(params.mingrade);      // $3
+        values.push(params.maxgrade);      // $4
+        values.push(params.count);         // $5
 
-        const whereClause = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
-        const query = `SELECT * FROM students ${whereClause} ORDER BY ${params.priority} DESC LIMIT ${params.count}`;
+        const query = `
+            SELECT *,
+                CASE 
+                    WHEN field1 = $1 THEN field1priority
+                    WHEN field2 = $1 THEN field2priority
+                    WHEN field3 = $1 THEN field3priority
+                    WHEN field4 = $1 THEN field4priority
+                    ELSE 0
+                END AS specific_priority
+            FROM students
+            WHERE $1 IN (field1, field2, field3, field4)
+            AND schoolId = $2
+            AND grade BETWEEN $3 AND $4
+            ORDER BY 
+                GREATEST(severalPriority, 
+                        CASE 
+                            WHEN field1 = $1 THEN field1priority
+                            WHEN field2 = $1 THEN field2priority
+                            WHEN field3 = $1 THEN field3priority
+                            WHEN field4 = $1 THEN field4priority
+                            ELSE 0
+                        END
+                ) DESC,
+                severalPriority DESC,
+                specific_priority DESC
+            LIMIT $5
+        `;
         const result = await pool.query(query, values);
         return result.rows;
     }
