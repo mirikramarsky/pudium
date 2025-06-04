@@ -1,3 +1,4 @@
+const pool = require('../db');
 class SearchRepository{
     async get(){
         let searches = await pool.query('SELECT * FROM searches');

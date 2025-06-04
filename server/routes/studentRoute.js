@@ -1,5 +1,5 @@
 const express = require("express");
-const studentService = require("../BL/studentService")
+const studentService = require("../BL/studentsServise")
 const router = express.Router();
 
 router.get('/', async (req, res,next)=>{

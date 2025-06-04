@@ -1,4 +1,4 @@
-const searchRepository = require("../DAL/Repositories/searchRepository");
+const searchRepository = require("../DAL/Repositories/searchRepositry");
 const BaseService = require("./baseService");
 class SearchService extends BaseService{
     constructor(){

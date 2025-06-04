@@ -1,5 +1,6 @@
 const express = require('express');
 const pool = require('./DAL/db');
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());

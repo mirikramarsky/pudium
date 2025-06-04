@@ -1,3 +1,4 @@
+const pool = require('../db');
 class StudentsRepository{
     async get(){
         let students = await pool.query('SELECT * FROM students');
