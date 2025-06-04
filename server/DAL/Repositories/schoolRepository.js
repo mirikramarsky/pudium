@@ -2,8 +2,8 @@ const pool = require('../db');
 class SchoolRepository {
     async get() {
         let schools = await pool.query('SELECT * FROM schools');
-        console.log(schools);
-        return schools;
+        console.log(schools.rows);
+        return schools.rows;
     }
     async getById(id) {
         let school = await pool.query(`SELECT * FROM schools where id = ${id}`);
@@ -17,8 +17,8 @@ class SchoolRepository {
     }
     async update(SchoolCode, params) {
         let school = await pool.query(` UPDATE schools
-            SET schoolname = ${params.SchoolName}
-            WHERE id = ${SchoolCode};`);
+            SET schoolname = $1
+            WHERE id = $2;`,[params.SchoolName, SchoolCode]);
         return school;
     }
     async delete(SchoolCode) {

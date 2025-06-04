@@ -23,14 +23,14 @@ class StaffRepository{
     }
     async updateConfirm(id, updatedFields){
         let staff = await pool.query(` UPDATE staff
-            SET name = ${updatedFields.name}
-            WHERE id = ${id} AND schoolId = ${updatedFields.schoolId}`);
+            SET name = $1
+            WHERE id = $2 AND schoolId = $3`,[updatedFields.name, id, updatedFields.schoolId]);
         return staff;
     }
      async update(id, updatedFields){
         let staff = await pool.query(` UPDATE staff
-            SET confirm = ${updatedFields.confirm}
-            WHERE id = ${id} AND schoolId = ${updatedFields.schoolId}`);
+            SET confirm = $1
+            WHERE id = $2 AND schoolId = $3`, [updatedFields.confirm, id, updatedFields.schoolId]);
         return staff;
     }
     async delete(id, schoolId){
