@@ -1,11 +1,5 @@
 const express = require('express');
-// const pool = require('./DAL/db');
 const cors = require('cors');
-
-const app = express();
-app.use(express.json());
-
-
 const schoolRoute = require('./routes/schoolRoute');
 const searchRoute = require('./routes/searchRoute');
 const staffRoute = require('./routes/staffRoute');
@@ -16,6 +10,10 @@ process.on('uncaughtException', err => {
 process.on('unhandledRejection', reason => {
     console.error('Unhandled Rejection:', reason);
 });
+
+const app = express();
+app.use(express.json());
+
 app.use(cors());
 
 app.use(express.json());
