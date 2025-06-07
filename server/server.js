@@ -24,7 +24,7 @@ app.use('/api/podium/students', studentRoute);
 
 app.get('/api/podium', async (req, res,next)=>{
     try{
-    let result = "wellcome to podium"
+    let result = `<h1 style="font-size: xx-large;">welcom to pudium 👏👏👏👏👏👏👏👏👏👏👏👏👏👏<h1>`
     if(result.length != undefined)
         res.send(result)
     else
