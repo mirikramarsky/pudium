@@ -15,8 +15,9 @@ class BaseService {
     }
     async insert(params){
         let result = await this.repository.insert(params);
-        console.log(result);
-        return result
+        if(result)
+            return result
+        throw new idError("this id is exist")
     }
     async update(id, updatedFields){
         let result = await this.repository.update(id, updatedFields);
