@@ -10,7 +10,7 @@ process.on('uncaughtException', err => {
 process.on('unhandledRejection', reason => {
     console.error('Unhandled Rejection:', reason);
 });
-
+console.log("Loading server.js step 1");
 const app = express();
 app.use(express.json());
 
@@ -36,6 +36,8 @@ catch{
 app.use((err ,req, res, next)=>{
     res.status(500).send('sorry,😶😶😶😶😟😟😟😳😳 an error in app, pleasy runn again later...')
 });
+
+console.log("Loading server.js step 2");
 
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
