@@ -15,7 +15,7 @@ class BaseService {
     }
     async insert(params){
         let result = await this.repository.insert(params);
-        console.log("trrrrrrrrmnjbhgfcgvhgyutfcghuyftfgchuyfdfcghuyfcghuytyrrrrrrrrrrr " + result);
+        console.log("trrrrrrrrmnjbhgfcgvhgyutfcghuyftfgchuyfdfcghuyfcghuytyrrrrrrrrrrr " + JSON.stringify(result));
         
         if(result)
             return result
