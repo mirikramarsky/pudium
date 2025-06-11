@@ -19,6 +19,11 @@ class StaffService extends BaseService{
         if (result)
         return result;
     }
+    async delete(id,schoolId) {   
+        let result = await this.repository.delete(id, schoolId);
+        if (result)
+        return result;
+    }
 }
 let staffService = new StaffService();
 module.exports = staffService;

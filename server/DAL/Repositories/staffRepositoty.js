@@ -2,7 +2,7 @@ const pool = require('../db');
 class StaffRepository{
     async get(){
         let staffs = await pool.query('SELECT * FROM staff');
-        return staffs;
+        return staffs.rows;
     }
     async getById(id){
         let staff = await pool.query(`SELECT * FROM staff where id = $1`,[id]);
