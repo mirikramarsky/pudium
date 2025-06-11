@@ -1,5 +1,6 @@
 const express = require("express");
-const schoolService = require("../BL/schoolService")
+const schoolService = require("../BL/schoolService");
+const idError = require("../BL/errors/idError");
 const router = express.Router();
 
 router.get('/', async (req, res,next)=>{

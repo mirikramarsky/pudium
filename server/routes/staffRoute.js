@@ -1,5 +1,6 @@
 const express = require("express");
-const staffService = require("../BL/staffService")
+const staffService = require("../BL/staffService");
+const idError = require("../BL/errors/idError");
 const router = express.Router();
 
 router.get('/', async (req, res,next)=>{
@@ -22,8 +23,8 @@ router.get('/schoolId/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -36,8 +37,8 @@ router.get('/schoolId/:schoolId/id/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -50,8 +51,8 @@ try{
         res.status(204).send();
 }
 catch(err){
-    // if (err instanceof idError)
-    //     res.status(400).send(err.message);
+    if (err instanceof idError)
+        res.status(400).send(err.message);
     console.log(err);
     
     next(err);
@@ -65,8 +66,8 @@ router.put('/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -79,8 +80,8 @@ router.put('/changeName/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -93,8 +94,8 @@ router.delete('/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });

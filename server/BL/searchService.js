@@ -6,8 +6,9 @@ class SearchService extends BaseService{
     }
     async getByParams(params) {   
         let result = await this.repository.getByParams(params);
-        if (result)
-        return result;
+        if (result && result.length != 0)
+            return result;
+       throw new idError('this id is not exist');
     }
 }
 let searchService = new SearchService();

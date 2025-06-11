@@ -13,18 +13,19 @@ class SchoolRepository {
         let school = await pool.query(
             `INSERT INTO schools (id, schoolname) VALUES($1, $2)`,
             [params.SchoolCode, params.SchoolName]
-        ); return school;
+        ); 
+        return school;
     }
     async update(SchoolCode, params) {
         let school = await pool.query(` UPDATE schools
             SET schoolname = $1
             WHERE id = $2 `,[params.SchoolName, SchoolCode]);
-        return school;
+        return school.rowCount;
     }
     async delete(SchoolCode) {
         let school = await pool.query(` DELETE FROM schools
             WHERE id = $1`,[SchoolCode]);
-        return school;
+        return school.rowCount;
     }
 }
 let schoolRepository = new SchoolRepository();

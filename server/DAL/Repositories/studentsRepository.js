@@ -82,13 +82,13 @@ class StudentsRepository {
         values.push(id);
         const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i}`;
         const result = await pool.query(query, values);
-        return result.rowCount > 0 ? { message: 'Updated successfully' } : { message: 'Student not found' };
+        return result.rowCount > 0 ;
     }
 
     async delete(id) {
         let student = await pool.query(` DELETE FROM students
             WHERE id = $1`, [id]);
-        return student;
+         return student.rowCount > 0 ;
     }
 }
 let studentsRepository = new StudentsRepository();

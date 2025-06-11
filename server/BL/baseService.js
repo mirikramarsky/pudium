@@ -1,4 +1,4 @@
-//const idError = require("./Errors/idError");
+const idError = require("./errors/idError");
 class BaseService {
     constructor(repository) {
         this.repository = repository;
@@ -15,17 +15,20 @@ class BaseService {
     }
     async insert(params){
         let result = await this.repository.insert(params);
+        console.log(result);
         return result
     }
     async update(id, updatedFields){
         let result = await this.repository.update(id, updatedFields);
-        if(result != null)
+        if(result != 0)
             return result;
+        throw new idError('this id is not exist');
     }
     async delete(id) {   
         let result = await this.repository.delete(id);
-        if (result)
-        return result;
+        if(result != 0)
+            return result;
+        throw new idError('this id is not exist');
     }
 }
 module.exports = BaseService;

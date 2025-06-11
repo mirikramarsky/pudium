@@ -69,12 +69,12 @@ class SearchRepository{
         values.push(id);
         const query = `UPDATE searches SET ${sets.join(', ')} WHERE id = $${i}`;
         const result = await pool.query(query, values);
-        return result.rowCount > 0 ? { message: 'Updated successfully' } : { message: 'Not found' };
+        return result.rowCount > 0 ;
     }	
     async delete(id){
         let search = await pool.query(` DELETE FROM searches
             WHERE id = $1`,[id]);
-        return search;
+        return search.rowCount > 0;
     }
 }
 let searchRepository = new SearchRepository();

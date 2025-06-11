@@ -21,19 +21,19 @@ class StaffRepository{
         let staff = await pool.query(` UPDATE staff
             SET name = $1
             WHERE id = $2 AND schoolId = $3`,[updatedFields.name, id, updatedFields.schoolId]);
-        return staff;
+        return staff.rowCount > 0 ;
     }
      async update(id, updatedFields){
         let staff = await pool.query(` UPDATE staff
             SET confirm = $1
             WHERE id = $2 AND schoolId = $3`, [updatedFields.confirm, id, updatedFields.schoolId]);
-        return staff;
+         return staff.rowCount > 0 ;
     }
     async delete(id, schoolId){
         try{
         let staff = await pool.query(` DELETE FROM staff
             WHERE id = $1 AND schoolId = $2`,[id, schoolId]);
-        return staff;
+        return staff.rowCount > 0 ;
         }
         catch(err){
             console.error(err);

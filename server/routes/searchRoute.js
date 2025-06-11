@@ -1,5 +1,6 @@
 const express = require("express");
-const searchService = require("../BL/searchService")
+const searchService = require("../BL/searchService");
+const idError = require("../BL/errors/idError");
 const router = express.Router();
 
 router.get('/', async (req, res,next)=>{
@@ -22,8 +23,8 @@ router.get('/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -36,8 +37,8 @@ router.post('/params', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -50,8 +51,8 @@ try{
         res.status(204).send();
 }
 catch(err){
-    // if (err instanceof idError)
-    //     res.status(400).send(err.message);    
+    if (err instanceof idError)
+        res.status(400).send(err.message);    
     next(err);
 }});
 router.put('/:id', async(req, res,next)=>{
@@ -63,8 +64,8 @@ router.put('/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
@@ -77,8 +78,8 @@ router.delete('/:id', async(req, res,next)=>{
             res.status(204).send();
     }
     catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
+         if (err instanceof idError)
+            res.status(400).send(err.message);
         next(err);
     }
 });
