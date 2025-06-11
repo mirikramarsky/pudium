@@ -49,7 +49,7 @@ class SearchRepository{
     }
     async insert (params){
         let search = await pool.query(` INSERT INTO searches (searchname, searchdate, field, countstudents, mingrade, maxgrade, searchername) 
-            VALUES($1, $2, $3, $4, $5, $6, $7)`,[params.searchname, '21/02/2025', params.field, params.mingrade,params.maxgrade,
+            VALUES($1, $2, $3, $4, $5, $6, $7)`,[params.searchname, new Date(), params.field, params.mingrade,params.maxgrade,
             params.countstudents,params.searchername]);
         return search;
     }
