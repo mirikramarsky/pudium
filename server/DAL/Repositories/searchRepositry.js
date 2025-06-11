@@ -48,8 +48,8 @@ class SearchRepository{
         return result.rows;
     }
     async insert (params){
-        let search = await pool.query(` INSERT INTO searches (searchname, field, mingrade, maxgrade, countstudents, searchername) 
-            VALUES($1, $2, $3, $4, $5, $6)`,[params.searchname, params.field, params.mingrade,params.maxgrade,
+        let search = await pool.query(` INSERT INTO searches (searchname, searchdate, field, countstudents, mingrade, maxgrade, searchername) 
+            VALUES($1, $2, $3, $4, $5, $6, $7)`,[params.searchname, '21/02/2025', params.field, params.mingrade,params.maxgrade,
             params.countstudents,params.searchername]);
         return search;
     }
@@ -69,8 +69,7 @@ class SearchRepository{
         const query = `UPDATE searches SET ${sets.join(', ')} WHERE id = $${i}`;
         const result = await pool.query(query, values);
         return result.rowCount > 0 ? { message: 'Updated successfully' } : { message: 'Not found' };
-    }
-
+    }	
     async delete(id){
         let search = await pool.query(` DELETE FROM searches
             WHERE id = $1`,[id]);
