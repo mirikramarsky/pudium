@@ -100,7 +100,7 @@ router.put('/changeName/:id', async(req, res,next)=>{
 });
 router.delete('/:id', async(req, res,next)=>{
     try{
-        let result = await staffService.delete(req.params.id, req.body);
+        let result = await staffService.delete(req.params.id, req.body.schoolId);
         if(result != undefined)
             res.send(result)
         else
