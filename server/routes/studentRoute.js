@@ -15,7 +15,7 @@ catch{
 }});
 router.get('/:id', async(req, res,next)=>{
     try{
-        let result = await studentService.getById(req.params.id)
+        let result = await studentService.getById(req.params.id,req.body.schoolId)
         if(result != undefined)
             res.json(result || []);
         else

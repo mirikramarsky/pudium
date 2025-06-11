@@ -13,20 +13,6 @@ router.get('/', async (req, res,next)=>{
 catch{
     next();
 }});
-router.get('/:id', async(req, res,next)=>{
-    try{
-        let result = await staffService.getById(req.params.id)
-        if(result != undefined)
-            res.json(result || []);
-        else
-            res.status(204).send();
-    }
-    catch(err){
-        //  if (err instanceof idError)
-        //     res.status(400).send(err.message);
-        next(err);
-    }
-});
 router.get('/schoolId/:id', async(req, res,next)=>{
     try{
         let result = await staffService.getBySchoolId(req.params.id)

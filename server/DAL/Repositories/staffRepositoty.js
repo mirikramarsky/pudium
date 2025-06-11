@@ -4,10 +4,6 @@ class StaffRepository{
         let staffs = await pool.query('SELECT * FROM staff');
         return staffs.rows;
     }
-    async getById(id){
-        let staff = await pool.query(`SELECT * FROM staff where id = $1`,[id]);
-        return staff.rows;
-    }
     async getBySchoolId(schoolId){
         let staff = await pool.query(`SELECT * FROM staff where schoolId = $1`,[schoolId]);
         return staff.rows;

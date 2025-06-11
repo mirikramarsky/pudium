@@ -4,30 +4,13 @@ class SudentsService extends BaseService{
     constructor(){
         super(studentsRepository);
     }
-    async getStudentsByParams(params) {  
-         switch(params.myField){
-             case(params.field1):
-             {
-
-                break;
-             }
-             case(params.field2):
-             {
-
-                break;
-             }
-              case(params.field3):
-             {
-
-                break;
-             }
-             case(params.field4):
-             {
-
-                break;
-             }
-         }
-        
+     async getById(id,schoolId) {
+        let result = await this.repository.getById(id, schoolId);
+        if (result && result.length != 0)
+            return result;
+       throw new idError('this id is not exist');
+    }
+    async getStudentsByParams(params) {          
         let result = await this.repository.getStudentsByParams(params);
         if (result)
         return result;
