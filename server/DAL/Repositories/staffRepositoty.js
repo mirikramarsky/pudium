@@ -34,9 +34,14 @@ class StaffRepository{
         return staff;
     }
     async delete(id, schoolId){
+        try{
         let staff = await pool.query(` DELETE FROM staff
             WHERE id = $1 AND schoolId = $2`,[id, schoolId]);
         return staff;
+        }
+        catch(err){
+            console.error(err);
+        }
     }
 }
 let staffRepository = new StaffRepository();
