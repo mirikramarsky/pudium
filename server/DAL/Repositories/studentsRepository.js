@@ -29,14 +29,14 @@ class StudentsRepository {
         FROM students
         WHERE $1 IN (field1, field2, field3, field4)
         AND (
-            (field1 = $1 AND field1able = true) OR
-            (field2 = $1 AND field2able = true) OR
-            (field3 = $1 AND field3able = true) OR
-            (field4 = $1 AND field4able = true)
+            (field1 = $1 AND field1priority != 0) OR
+            (field2 = $1 AND field2priority != 0) OR
+            (field3 = $1 AND field3priority != 0) OR
+            (field4 = $1 AND field4priority != 0)
         )
         AND schoolId = $2
         AND grade BETWEEN $3 AND $4
-        AND able = true
+        AND severalPriority != 0
         ORDER BY 
             GREATEST(severalPriority, 
                     CASE 
@@ -58,11 +58,11 @@ class StudentsRepository {
 
     async insert(params) {
         let student = await pool.query(` INSERT INTO students(id, firstname, lastname, field1, field2, field3, field4
-            , severalpriority, able, field1priority, field2priority, field3priority, field4priority, field1able, field2able, field3able
-            ,field4able, grade, schoolid)  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`,
+            , severalpriority, field1priority, field2priority, field3priority, field4priority, grade, schoolid) 
+             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
             [params.id, params.firstname, params.lastname, params.field1, params.field2, params.field3, params.field4,
-            params.severalpriority, params.able, params.field1priority, params.field2priority, params.field3priority, params.field4priority,
-            params.field1able, params.field2able, params.field3able, params.field4able, params.grade, params.schoolid]);
+            params.severalpriority, params.field1priority, params.field2priority, params.field3priority, params.field4priority,
+             params.grade, params.schoolid]);
         return student;
     }
     async update(id, updatedFields) {

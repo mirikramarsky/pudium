@@ -11,6 +11,16 @@ class SudentsService extends BaseService{
             return result;
        throw new idError('this id is not exist');
     }
+      async insert(params){
+        params.able = true;
+        params.severalPriority = 1;
+        
+        let result = await this.repository.insert(params);
+        console.log("trrrrrrrrmnjbhgfcgvhgyutfcghuyftfgchuyfdfcghuyfcghuytyrrrrrrrrrrr " + JSON.stringify(result));
+        if(result)
+            return result
+        throw new idError("this id is exist")
+    }
     async getStudentsByParams(params) {          
         let result = await this.repository.getStudentsByParams(params);
         if (result && result.length != 0)

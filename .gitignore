@@ -4,3 +4,4 @@ package-lock.json
 server/package-lock.json
 .env
 Notes.txt
+.gitignore

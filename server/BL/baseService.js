@@ -16,7 +16,6 @@ class BaseService {
     async insert(params){
         let result = await this.repository.insert(params);
         console.log("trrrrrrrrmnjbhgfcgvhgyutfcghuyftfgchuyfdfcghuyfcghuytyrrrrrrrrrrr " + JSON.stringify(result));
-        
         if(result)
             return result
         throw new idError("this id is exist")
