@@ -14,7 +14,7 @@ router.get('/', async (req, res,next)=>{
 catch{
     next();
 }});
-router.get('/:id', async(req, res,next)=>{
+router.post('/:id', async(req, res,next)=>{
     try{
         let result = await studentService.getById(req.params.id,req.body.schoolId)
         if(result != undefined)
