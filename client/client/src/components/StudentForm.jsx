@@ -1,120 +1,179 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 
 const StudentForm = () => {
-  const [student, setStudent] = useState({
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    idNumber: '',
+    id: '',
     grade: '',
-    subject1: '',
-    subject2: '',
-    subject3: '',
-    subject4: '',
-    otherSubject4: '',
-    school: '',
+    field1: '',
+    field2: '',
+    field3: '',
+    field4: '',
+    otherField1: '',
+    otherField2: '',
+    otherField3: '',
+    otherField4: '',
   });
 
-  const subjects = ['ריקוד', 'שירה', 'אימון מחול', 'מחול', 'עריכה', 'תפאורה', 'אחר'];
-
-  useEffect(() => {
-    const savedSchool = localStorage.getItem('school');
-    if (savedSchool) {
-      setStudent(prev => ({ ...prev, school: savedSchool }));
-    }
-  }, []);
+  const fields = ['ריקוד', 'שירה', 'אימון מחול', 'מחול', 'עריכה', 'תפאורה', 'אחר'];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setStudent(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const dataToSend = { ...student };
-    if (dataToSend.subject4 !== 'אחר') {
-      delete dataToSend.otherSubject4;
-    } else {
-      dataToSend.subject4 = student.otherSubject4;
-    }
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     const schoolId = localStorage.getItem('schoolId');
 
-    try {
-      await axios.post('https://pudium-production.up.railway.app/api/podium/students/', dataToSend);
-      alert('התלמידה נוספה בהצלחה!');
-      // איפוס הטופס
-      setStudent({
-        firstName: '',
-        lastName: '',
-        idNumber: '',
-        grade: '',
-        subject1: '',
-        subject2: '',
-        subject3: '',
-        subject4: '',
-        otherSubject4: '',
-        school: student.school || '',
-      });
-    } catch (error) {
-      console.error(error);
-      alert('אירעה שגיאה בשליחה');
+//     try {
+//         console.log(formData);
+//       await axios.post('https://pudium-production.up.railway.app/api/podium/students/', {
+//         ...formData,
+//         schoolId
+//       });
+//       alert('נשמר בהצלחה');
+//     } catch (error) {
+//       console.error('שגיאה בשליחה:', error);
+//       alert('אירעה שגיאה בשליחה');
+//     }
+//   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+//   const schoolId = localStorage.getItem('schoolId');
+const schoolId = 55;
+ setFormData(prev => ({ ...prev, ['schoolId']: schoolId }));
+  // מעתיקים את הנתונים
+  const submissionData = { ...formData };
+
+  // מחליפים כל "אחר" בטקסט שהוזן
+  for (let i = 1; i <= 4; i++) {
+    const fieldKey = `field${i}`;
+    const otherKey = `otherField${i}`;
+    if (submissionData[fieldKey] === 'אחר' && submissionData[otherKey]) {
+      submissionData[fieldKey] = submissionData[otherKey]; // שמים את הטקסט
     }
-  };
+    delete submissionData[otherKey]; // מוחקים את שדות otherField
+  }
+
+  try {
+    console.log(submissionData);
+    await axios.post('https://pudium-production.up.railway.app/api/podium/students/', {
+      ...submissionData,
+      schoolId,
+    });
+    alert('נשמר בהצלחה');
+  } catch (error) {
+    console.error('שגיאה בשליחה:', error);
+    alert('אירעה שגיאה בשליחה');
+  }
+};
+
+  const renderFieldSelect = (fieldName, otherFieldName) => (
+    <>
+      <Form.Group className="mb-3">
+        <Form.Label>תחום</Form.Label>
+        <Form.Select
+          name={fieldName}
+          value={formData[fieldName]}
+          onChange={handleChange}
+          required
+        >
+            {/* <option value="" disabled hidden>בחרי תחום</option> */}
+          <option value="" disabled hidden>בחרי תחום</option>
+          {fields.map((field, i) => (
+            <option key={i} value={field}>{field}</option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+      {formData[fieldName] === 'אחר' && (
+        <Form.Control
+          type="text"
+          name={otherFieldName}
+          placeholder="כתבי את התחום האחר"
+          value={formData[otherFieldName]}
+          onChange={handleChange}
+          required
+        />
+      )}
+    </>
+  );
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">טופס פרטי תלמידה</h2>
-      <form onSubmit={handleSubmit}>
-
-        <div className="mb-3">
-          <label className="form-label">שם פרטי</label>
-          <input type="text" className="form-control" name="firstName" value={student.firstName} onChange={handleChange} required />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">שם משפחה</label>
-          <input type="text" className="form-control" name="lastName" value={student.lastName} onChange={handleChange} required />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">מספר זהות</label>
-          <input type="text" className="form-control" name="idNumber" value={student.idNumber} onChange={handleChange} required />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">כיתה</label>
-          <input type="text" className="form-control" name="grade" value={student.grade} onChange={handleChange} required />
-        </div>
-
-        {[1, 2, 3, 4].map((num) => (
-          <div className="mb-3" key={num}>
-            <label className="form-label">תחום {num}</label>
-            <select className="form-select" name={`subject${num}`} value={student[`subject${num}`]} onChange={handleChange} required>
-              <option value="">בחרי תחום</option>
-              {subjects.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-            {num === 4 && student.subject4 === 'אחר' && (
-              <input
+    <Container className="mt-5">
+      <h2 className="mb-4 text-center">טופס הוספת תלמידה</h2>
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>שם פרטי *</Form.Label>
+              <Form.Control
                 type="text"
-                className="form-control mt-2"
-                name="otherSubject4"
-                placeholder="נא לציין תחום אחר"
-                value={student.otherSubject4}
+                name="firstName"
+                value={formData.firstName}
                 onChange={handleChange}
+                required
               />
-            )}
-          </div>
-        ))}
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>שם משפחה *</Form.Label>
+              <Form.Control
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-        <div className="mb-3">
-          <label className="form-label">בית ספר</label>
-          <input type="text" className="form-control" name="school" value={student.school} readOnly />
+        <Row>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>מספר זהות *</Form.Label>
+              <Form.Control
+                type="text"
+                name="id"
+                value={formData.id}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>כיתה *</Form.Label>
+              <Form.Control
+                type="text"
+                name="grade"
+                value={formData.grade}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <h5 className="mt-4">תחומים</h5>
+        {renderFieldSelect('field1', 'otherField1')}
+        {renderFieldSelect('field2', 'otherField2')}
+        {renderFieldSelect('field3', 'otherField3')}
+        {renderFieldSelect('field4', 'otherField4')}
+
+        <div className="text-center mt-4">
+          <Button variant="primary" type="submit">
+            שלחי
+          </Button>
         </div>
-
-        <button type="submit" className="btn btn-primary">שלחי</button>
-      </form>
-    </div>
+      </Form>
+    </Container>
   );
 };
 
