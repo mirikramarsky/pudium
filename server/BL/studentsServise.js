@@ -12,9 +12,11 @@ class SudentsService extends BaseService{
        throw new idError('this id is not exist');
     }
       async insert(params){
-        params.able = true;
         params.severalPriority = 1;
-        
+        params.field1Priority = 1;
+        params.field2Priority = 1;
+        params.field3Priority = 1;
+        params.field4Priority = 1;
         let result = await this.repository.insert(params);
         console.log("trrrrrrrrmnjbhgfcgvhgyutfcghuyftfgchuyfdfcghuyfcghuytyrrrrrrrrrrr " + JSON.stringify(result));
         if(result)
