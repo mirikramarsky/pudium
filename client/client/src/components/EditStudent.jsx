@@ -27,8 +27,6 @@ const EditStudent = () => {
                     setError('תלמידה לא נמצאה');
                     return;
                 }
-                console.log(student[0]);
-                
                 setFormData(student[0]);
             } catch (err) {
                 setError('שגיאה בשליפת תלמידה');
@@ -47,7 +45,6 @@ const EditStudent = () => {
     const handleSubmit = async e => {
         e.preventDefault();
         try {
-            console.log(formData);
             await axios.put(
                 `https://pudium-production.up.railway.app/api/podium/students/${id}`,
                 formData
@@ -73,8 +70,8 @@ const EditStudent = () => {
                     <Form.Control
                         type="text"
                         name="firstname"
-                        value={formData?.firstname || ''}
-                        placeholder={formData?.firstname || 'שם פרטי'}
+                        value={formData.firstname || ''}
+                        placeholder="שם פרטי"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -84,7 +81,7 @@ const EditStudent = () => {
                         type="text"
                         name="lastname"
                         value={formData.lastname || ''}
-                        placeholder={formData.lastname || 'שם משפחה'}
+                        placeholder="שם משפחה"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -94,18 +91,31 @@ const EditStudent = () => {
                         type="text"
                         name="id"
                         value={formData.id || ''}
-                        placeholder={formData.id || 'מספר זהות'}
-                        onChange={handleChange}
+                        placeholder="מספר זהות"
                         disabled
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>כיתה</Form.Label>
+                    <Form.Label>אות כיתה</Form.Label>
+                    <Form.Select
+                        name="class"
+                        value={formData.class || ''}
+                        onChange={handleChange}
+                    >
+                        <option value="">בחר אות כיתה</option>
+                        <option value="א">א'</option>
+                        <option value="ב">ב'</option>
+                        <option value="ג">ג'</option>
+                        <option value="ד">ד'</option>
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>מספר כיתה</Form.Label>
                     <Form.Control
                         type="text"
                         name="grade"
                         value={formData.grade || ''}
-                        placeholder={formData.grade || 'כיתה'}
+                        placeholder="מספר כיתה (9, 10, 11 ...)"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -115,17 +125,18 @@ const EditStudent = () => {
                         type="number"
                         name="severalpriority"
                         value={formData.severalpriority || ''}
-                        placeholder={formData.severalpriority !== undefined ? formData.severalpriority.toString() : 'עדיפות כללית'}
+                        placeholder="עדיפות כללית"
                         onChange={handleChange}
                     />
                 </Form.Group>
+                {/* שדות תחומים ועוד כמו קודם */}
                 <Form.Group className="mb-3">
                     <Form.Label>תחום 1</Form.Label>
                     <Form.Control
                         type="text"
                         name="field1"
                         value={formData.field1 || ''}
-                        placeholder={formData.field1 || 'תחום 1'}
+                        placeholder="תחום 1"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -135,17 +146,18 @@ const EditStudent = () => {
                         type="number"
                         name="field1priority"
                         value={formData.field1priority || ''}
-                        placeholder={formData.field1priority !== undefined ? formData.field1priority.toString() : 'עדיפות תחום 1'}
+                        placeholder="עדיפות תחום 1"
                         onChange={handleChange}
                     />
                 </Form.Group>
+                {/* ... שדות נוספים כמו שהיו קודם ... */}
                 <Form.Group className="mb-3">
                     <Form.Label>תחום 2</Form.Label>
                     <Form.Control
                         type="text"
                         name="field2"
                         value={formData.field2 || ''}
-                        placeholder={formData.field2 || 'תחום 2'}
+                        placeholder="תחום 2"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -155,7 +167,7 @@ const EditStudent = () => {
                         type="number"
                         name="field2priority"
                         value={formData.field2priority || ''}
-                        placeholder={formData.field2priority !== undefined ? formData.field2priority.toString() : 'עדיפות תחום 2'}
+                        placeholder="עדיפות תחום 2"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -165,7 +177,7 @@ const EditStudent = () => {
                         type="text"
                         name="field3"
                         value={formData.field3 || ''}
-                        placeholder={formData.field3 || 'תחום 3'}
+                        placeholder="תחום 3"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -175,7 +187,7 @@ const EditStudent = () => {
                         type="number"
                         name="field3priority"
                         value={formData.field3priority || ''}
-                        placeholder={formData.field3priority !== undefined ? formData.field3priority.toString() : 'עדיפות תחום 3'}
+                        placeholder="עדיפות תחום 3"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -185,7 +197,7 @@ const EditStudent = () => {
                         type="text"
                         name="field4"
                         value={formData.field4 || ''}
-                        placeholder={formData.field4 || 'תחום 4'}
+                        placeholder="תחום 4"
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -195,11 +207,10 @@ const EditStudent = () => {
                         type="number"
                         name="field4priority"
                         value={formData.field4priority || ''}
-                        placeholder={formData.field4priority !== undefined ? formData.field4priority.toString() : 'עדיפות תחום 4'}
+                        placeholder="עדיפות תחום 4"
                         onChange={handleChange}
                     />
                 </Form.Group>
-                {/* ניתן להוסיף כאן שדות נוספים */}
 
                 <Button type="submit" variant="primary">שמור</Button>
             </Form>

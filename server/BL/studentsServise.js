@@ -11,6 +11,12 @@ class SudentsService extends BaseService{
             return result;
        throw new idError('this id is not exist');
     }
+     async getBySchoolIdId(schoolId) { 
+        let result = await this.repository.getBySchoolIdId(schoolId);
+        if (result && result.length != 0)
+            return result;
+       throw new idError('this id is not exist');
+    }
       async insert(params){
         params.grade = parseInt(params.grade);
         params.severalPriority = 1;

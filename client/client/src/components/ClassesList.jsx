@@ -4,7 +4,7 @@ import { Container, ListGroup, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const ClassesList = () => {
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState({});
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -18,11 +18,27 @@ const ClassesList = () => {
 
       try {
         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/`);
-        // מסננים תלמידות של אותו מוסד
         const students = response.data.filter(s => s.schoolid === Number(schoolId));
-        // מוצאים את כל הכיתות בלי כפילויות
-        const uniqueClasses = [...new Set(students.map(s => s.grade))];
-        setClasses(uniqueClasses);
+
+        // שליפת כל האותיות שיש בפועל מהתלמידות
+        const classGroups = {};
+
+        students.forEach(s => {
+          const letter = s.class; // עכשיו בעברית: 'א', 'ב', ...
+          const grade = s.grade;
+
+          if (!classGroups[letter]) classGroups[letter] = new Set();
+          classGroups[letter].add(grade);
+        });
+
+        // הפיכת סטים למערכים ממיינים
+        const classesByHebrew = {};
+        for (const [letter, gradesSet] of Object.entries(classGroups)) {
+          const gradesArray = Array.from(gradesSet).sort((a, b) => a - b);
+          classesByHebrew[letter] = gradesArray.map(g => `${letter}${g}`);
+        }
+
+        setClasses(classesByHebrew);
       } catch (err) {
         setError('שגיאה בשליפת תלמידות');
         console.error(err);
@@ -37,18 +53,26 @@ const ClassesList = () => {
   return (
     <Container className="mt-4">
       <h3>בחרי כיתה</h3>
-      <ListGroup>
-        {classes.length === 0 && <ListGroup.Item>אין כיתות להצגה</ListGroup.Item>}
-        {classes.map((grade, idx) => (
-          <ListGroup.Item
-            action
-            key={idx}
-            onClick={() => navigate(`/class/${encodeURIComponent(grade)}`)}
-          >
-            כיתה {grade}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+      {Object.keys(classes).length === 0 ? (
+        <Alert variant="info">אין כיתות להצגה</Alert>
+      ) : (
+        Object.entries(classes).map(([hebrewLetter, classList]) => (
+          <div key={hebrewLetter} className="mb-3">
+            <h5>כיתה {hebrewLetter}</h5>
+            <ListGroup>
+              {classList.map((cls) => (
+                <ListGroup.Item
+                  action
+                  key={cls}
+                  onClick={() => navigate(`/class/${encodeURIComponent(cls)}`)}
+                >
+                  {cls}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </div>
+        ))
+      )}
     </Container>
   );
 };

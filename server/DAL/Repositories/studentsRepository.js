@@ -8,6 +8,10 @@ class StudentsRepository {
         let student = await pool.query(`SELECT * FROM students where id = $1 AND schoolId = $2`, [id, schoolId]);
         return student.rows;
     }
+    async getBySchoolIdId(schoolId) {
+        let student = await pool.query(`SELECT * FROM students schoolId = $1`, [schoolId]);
+        return student.rows;
+    }
     async getStudentsByParams(params) {
         const values = [];
 
