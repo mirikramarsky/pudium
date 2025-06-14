@@ -9,7 +9,7 @@ class StudentsRepository {
         return student.rows;
     }
     async getBySchoolIdId(schoolId) {
-        let student = await pool.query(`SELECT * FROM students schoolId = $1`, [schoolId]);
+        let student = await pool.query(`SELECT * FROM students WHERE schoolId = $1`, [schoolId]);
         return student.rows;
     }
     async getStudentsByParams(params) {
