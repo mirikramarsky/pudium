@@ -4,6 +4,7 @@ const schoolRoute = require('./routes/schoolRoute');
 const searchRoute = require('./routes/searchRoute');
 const staffRoute = require('./routes/staffRoute');
 const studentRoute = require('./routes/studentRoute');
+const stuInSeaRoute = require('./routes/stuInSeaRoute');
 process.on('uncaughtException', err => {
     console.error('Uncaught Exception:', err);
 });
@@ -21,6 +22,7 @@ app.use('/api/podium/schools', schoolRoute);
 app.use('/api/podium/searches', searchRoute);
 app.use('/api/podium/staff', staffRoute);
 app.use('/api/podium/students', studentRoute);
+app.use('/api/podium/stuInSea', stuInSeaRoute);
 
 app.get('/api/podium', async (req, res,next)=>{
     try{
