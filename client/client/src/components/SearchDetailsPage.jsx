@@ -14,10 +14,10 @@ const SearchDetailsPage = () => {
     const fetchSearchAndStudents = async () => {
       try {
         const searchRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
-        // const studentsRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/searchstudents/${id}`);
+        const studentsRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`);
 
         setSearch(searchRes.data);
-        // setStudents(studentsRes.data);
+        setStudents(studentsRes.data);
         setLoading(false);
       } catch (err) {
         setError('שגיאה בטעינת החיפוש או התלמידות');

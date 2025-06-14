@@ -8,6 +8,14 @@ class StuInSeaRepository {
         let studentsinsearches = await pool.query(`SELECT * FROM studentsinsearches where id = $1`,[id]);
         return studentsinsearches.rows;
     }
+    async getBySearchId(id) {
+        let studentsinsearches = await pool.query(`SELECT * FROM studentsinsearches where searchid = $1`,[id]);
+        return studentsinsearches.rows;
+    }
+     async getByStudentId(id) {
+        let studentsinsearches = await pool.query(`SELECT * FROM studentsinsearches where studentid = $1`,[id]);
+        return studentsinsearches.rows;
+    }
     async insert(params) {
         let studentsinsearches = await pool.query(
             `INSERT INTO studentsinsearches (searchid, studentid) VALUES($1, $2)`,

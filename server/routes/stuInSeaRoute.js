@@ -28,6 +28,37 @@ router.get('/:id', async(req, res,next)=>{
         next(err);
     }
 });
+
+router.get('/student/:id', async(req, res,next)=>{
+    try{
+        let result = await stuInSeaService.getByStudentId(req.params.id)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+            res.status(400).send(err.message);
+        next(err);
+    }
+});
+
+router.get('/search/:id', async(req, res,next)=>{
+    try{
+        let result = await stuInSeaService.getBySearchId(req.params.id)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+            res.status(400).send(err.message);
+        next(err);
+    }
+});
+
 router.post('/', async(req, res,next)=>{
 try{
     let result = await stuInSeaService.insert(req.body);
