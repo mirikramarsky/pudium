@@ -58,11 +58,11 @@ class StudentsRepository {
 
     async insert(params) {
         let student = await pool.query(` INSERT INTO students(id, firstname, lastname, field1, field2, field3, field4
-            , severalpriority, field1priority, field2priority, field3priority, field4priority, grade, schoolid) 
-             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+            , severalpriority, field1priority, field2priority, field3priority, field4priority,class, grade, schoolid) 
+             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
             [params.id, params.firstname, params.lastname, params.field1, params.field2, params.field3, params.field4,
             params.severalpriority, params.field1priority, params.field2priority, params.field3priority, params.field4priority,
-             params.grade, params.schoolid]);
+            , params.class, params.grade, params.schoolid]);
         return student;
     }
     async update(id, updatedFields) {

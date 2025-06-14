@@ -12,9 +12,10 @@ const SchoolCode = () => {
     e.preventDefault();
     try {
       const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${code}`);
-      const school = res.data;
+      console.log(res.data[0]);
+      const school = res.data[0];
       localStorage.setItem('schoolId', code);
-      localStorage.setItem('schoolName', school.name);
+      localStorage.setItem('schoolName', school.schoolname);
       navigate('/staff-login');
     } catch (err) {
       setError('קוד המוסד שגוי. אנא נסי שנית.');

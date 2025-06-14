@@ -42,34 +42,33 @@ const StudentsByClass = () => {
     fetchStudents();
   }, [grade]);
 
-const renderLegend = () => (
-  <Table bordered size="sm" className="mb-4" style={{ maxWidth: '100%' }}>
-    <thead>
-      <tr>
-        <th colSpan={9} className="text-center">מקרא צבעים לפי עדיפות</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        {Object.entries(priorityColors).map(([priority, color]) => (
-          <td
-            key={priority}
-            style={{
-              backgroundColor: color,
-              textAlign: 'center',
-              fontWeight: 'bold',
-              color: priority === '0' ? '#000' : '#000',
-              padding: '10px',
-            }}
-          >
-            {priority}  {priority === '0' ? ' - לא מאופשרת' : ``}
-          </td>
-        ))}
-      </tr>
-    </tbody>
-  </Table>
-);
-
+  const renderLegend = () => (
+    <Table bordered size="sm" className="mb-4" style={{ maxWidth: '100%' }}>
+      <thead>
+        <tr>
+          <th colSpan={9} className="text-center">מקרא צבעים לפי עדיפות</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {Object.entries(priorityColors).map(([priority, color]) => (
+            <td
+              key={priority}
+              style={{
+                backgroundColor: color,
+                textAlign: 'center',
+                fontWeight: 'bold',
+                color: '#000',
+                padding: '10px',
+              }}
+            >
+              {priority} {priority === '0' ? ' - לא מאופשרת' : ''}
+            </td>
+          ))}
+        </tr>
+      </tbody>
+    </Table>
+  );
 
   if (error) return <Alert variant="danger">{error}</Alert>;
 
@@ -96,7 +95,10 @@ const renderLegend = () => (
           </thead>
           <tbody>
             {students.map(student => {
-              const rowColor = priorityColors[student.severalPriority] || '#ffffff';
+              const rowColor = priorityColors[Number(student.severalpriority)] || '#ffffff';
+              const getCellStyle = (priority) => ({
+                backgroundColor: priorityColors[priority] || '#ffffff',
+              });
 
               return (
                 <tr key={student.id} style={{ backgroundColor: rowColor }}>
@@ -105,10 +107,10 @@ const renderLegend = () => (
                       ערוך
                     </Button>
                   </td>
-                  <td style={{ backgroundColor: priorityColors[student.field4priority] || '#ffffff' }}>{student.field4}</td>
-                  <td style={{ backgroundColor: priorityColors[student.field3priority] || '#ffffff' }}>{student.field3}</td>
-                  <td style={{ backgroundColor: priorityColors[student.field2priority] || '#ffffff' }}>{student.field2}</td>
-                  <td style={{ backgroundColor: priorityColors[student.field1priority] || '#ffffff' }}>{student.field1}</td>
+                  <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
+                  <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
+                  <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
+                  <td style={getCellStyle(student.field1priority)}>{student.field1}</td>
                   <td>{student.firstname}</td>
                   <td>{student.lastname}</td>
                   <td>{student.id}</td>

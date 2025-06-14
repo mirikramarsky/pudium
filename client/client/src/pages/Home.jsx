@@ -8,6 +8,10 @@ import StaffHome from '../components/StaffHome';
 import ClassesList from '../components/ClassesList';
 import StudentsByClass from '../components/StudentsByClass';
 import EditStudent from '../components/EditStudent';
+import SearchFormPage from '../components/SearchFormPage';
+import SearchResults from '../components/SearchResults';
+import SearchDetailsPage from '../components/SearchDetailsPage';
+import RecentSearchesPage from '../components/RecentSearchesPage';
 
 function Home() {
     return (
@@ -20,8 +24,10 @@ function Home() {
                 <Route path="/classes" element={<ClassesList />} />
                 <Route path="/class/:grade" element={<StudentsByClass />} />
                 <Route path="/edit-student/:id" element={<EditStudent />} />
-                {/* נתיב לשליפת נתונים - נדבר עליו בהמשך */}
-                {/* <Route path="/data-fetch" element={<DataFetch />} /> */}
+                <Route path="/data-fetch" element={<SearchFormPage />} />
+                <Route path="/recent-searches" element={<RecentSearchesPage />} />
+                <Route path="/search-results/:id" element={<SearchResults />} />
+                <Route path="/search-results/:id" element={<SearchDetailsPage />} />
             </Routes>
         </BrowserRouter>
     );

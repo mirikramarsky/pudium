@@ -19,7 +19,7 @@ const StaffLogin = () => {
     const schoolId = localStorage.getItem('schoolId');
     try {
       const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffCode}`);
-      const staff = res.data;
+      const staff = res.data[0];
       localStorage.setItem('staffName', staff.name);
       navigate('/staff-home');
     } catch (err) {
