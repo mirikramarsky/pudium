@@ -59,14 +59,23 @@ class StudentsRepository {
         const result = await pool.query(query, values);
         return result.rows;
     }
-
+    async getClassesBySchoolId(schoolId) {
+        const query = `
+    SELECT DISTINCT class, grade
+    FROM students
+    WHERE schoolid = $1
+    ORDER BY class, grade
+  `;
+        const result = await pool.query(query, [schoolId]);
+        return result.rows.map(row => `${row.class}${row.grade}`);
+    }
     async insert(params) {
         let student = await pool.query(` INSERT INTO students(id, firstname, lastname, field1, field2, field3, field4
             , severalpriority, field1priority, field2priority, field3priority, field4priority,class, grade, schoolid) 
              VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
             [params.id, params.firstname, params.lastname, params.field1, params.field2, params.field3, params.field4,
             params.severalpriority, params.field1priority, params.field2priority, params.field3priority, params.field4priority,
-            , params.class, params.grade, params.schoolid]);
+                , params.class, params.grade, params.schoolid]);
         return student;
     }
     async update(id, updatedFields) {
@@ -86,13 +95,13 @@ class StudentsRepository {
         values.push(id);
         const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i}`;
         const result = await pool.query(query, values);
-        return result.rowCount > 0 ;
+        return result.rowCount > 0;
     }
 
     async delete(id) {
         let student = await pool.query(` DELETE FROM students
             WHERE id = $1`, [id]);
-         return student.rowCount > 0 ;
+        return student.rowCount > 0;
     }
 }
 let studentsRepository = new StudentsRepository();

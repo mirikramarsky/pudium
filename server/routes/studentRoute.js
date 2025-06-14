@@ -28,6 +28,20 @@ router.get('/:schoolId', async(req, res,next)=>{
         next(err);
     }
 });
+router.get('/classes/:schoolId', async (req, res) => {
+    try{
+        let result = await studentService.getClassesBySchoolId(req.params.schoolId)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+            res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.post('/:id', async(req, res,next)=>{
     try{
         let result = await studentService.getById(req.params.id,req.body.schoolId)
