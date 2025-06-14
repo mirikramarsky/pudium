@@ -17,8 +17,28 @@ const RecentSearchesPage = () => {
     searchername: '',
     field: '',
     mingrade: '',
-    countstudents: ''
+    countstudents: '',
+    classes: [],    // <-- מוסיף את המערך של הכיתות
   });
+
+  // מצב לכיתות ולשליטה בפתיחת רשימות הכיתות
+  const [students, setStudents] = useState([]);
+  const [expandedLetter, setExpandedLetter] = useState(null); // איזו אות פתוחה
+
+  // טען את התלמידות מבית הספר לצורך יצירת כפתורי כיתות
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const schoolId = localStorage.getItem('schoolId');
+      if (!schoolId) return;
+      try {
+        const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/${schoolId}`);
+        setStudents(res.data);
+      } catch (err) {
+        setError('שגיאה בטעינת תלמידות');
+      }
+    };
+    fetchStudents();
+  }, []);
 
   useEffect(() => {
     axios.get('https://pudium-production.up.railway.app/api/podium/searches/')
@@ -47,6 +67,45 @@ const RecentSearchesPage = () => {
     );
   };
 
+  // יצירת מפת אותיות לכיתות מתוך התלמידות
+  const classesByLetter = {};
+  students.forEach(s => {
+    if (!s.class || !s.grade) return;
+    const letter = s.class.trim();
+    const fullClass = letter + s.grade;
+    if (!classesByLetter[letter]) classesByLetter[letter] = new Set();
+    classesByLetter[letter].add(fullClass);
+  });
+
+  const toggleExpanded = (letter) => {
+    setExpandedLetter(expandedLetter === letter ? null : letter);
+  };
+
+  const toggleClassSelection = (cls) => {
+    if (filters.classes.includes(cls)) {
+      updateFilter('classes', filters.classes.filter(c => c !== cls));
+    } else {
+      updateFilter('classes', [...filters.classes, cls]);
+    }
+  };
+
+  // לחיצה על כפתור אות בוחרת/מסירה את כל הכיתות תחת האות
+  const selectAllInLetter = (letter) => {
+    const allClasses = Array.from(classesByLetter[letter] || []);
+    const allSelected = allClasses.every(c => filters.classes.includes(c));
+    if (allSelected) {
+      // אם הכל נבחר, הסר את כולם
+      updateFilter('classes', filters.classes.filter(c => !allClasses.includes(c)));
+    } else {
+      // הוסף את כולם שלא נבחרו עדיין
+      const newSelection = [...filters.classes];
+      allClasses.forEach(c => {
+        if (!newSelection.includes(c)) newSelection.push(c);
+      });
+      updateFilter('classes', newSelection);
+    }
+  };
+
   const handleFilter = (e) => {
     e.preventDefault();
     let results = [...searches];
@@ -63,11 +122,32 @@ const RecentSearchesPage = () => {
       results = results.filter(s => !fieldOptions.includes(s.field));
     }
 
+    // סינון לפי mingrade (אם קיים)
     if (filters.mingrade)
       results = results.filter(s => Number(s.mingrade) === Number(filters.mingrade));
 
     if (filters.countstudents)
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
+
+    // סינון לפי classes - בדיקה אם לפחות אחד מהכיתות ב classes נמצא בטווח mingrade-maxgrade של החיפוש
+    if (filters.classes.length > 0) {
+      results = results.filter(search => {
+        // נניח שחיפוש שומר מינגרד ומקסגרייד
+        const minGrade = Number(search.mingrade);
+        const maxGrade = Number(search.maxgrade);
+        // כיתות שנבחרו - למשל "א1", "ב3" - נבדוק אם המספר בכיתה בין המינגרד למקסגרייד ושהאות תואמת
+        for (const cls of filters.classes) {
+          const letter = cls.charAt(0);
+          const gradeNum = Number(cls.slice(1));
+          // בודקים אם הכיתה בקטגוריה שמחפשים
+          // אם באות מתאימה והמספר בכיתה בטווח מינגרד-מקסגרייד => מחזירים true (כלומר שייך לחיפוש)
+          if (gradeNum >= minGrade && gradeNum <= maxGrade) {
+            return true;
+          }
+        }
+        return false;
+      });
+    }
 
     setFilteredSearches(results);
   };
@@ -114,16 +194,46 @@ const RecentSearchesPage = () => {
           </Col>
 
           <Col md={2}>
-            <Form.Label>כיתה</Form.Label>
-            <Form.Select
-              value={filters.mingrade}
-              onChange={(e) => updateFilter('mingrade', e.target.value)}
-            >
-              <option value="">בחר כיתה</option>
-              {[9, 10, 11, 12].map(g => (
-                <option key={g} value={g}>כיתה {g}</option>
+            <Form.Label>כיתה (בחר אות או כיתה מדויקת)</Form.Label>
+            <div>
+              {Object.keys(classesByLetter).sort().map(letter => (
+                <div key={letter} style={{ marginBottom: '5px' }}>
+                  <Button
+                    variant={filters.classes.some(c => c.startsWith(letter)) ? 'primary' : 'outline-primary'}
+                    size="sm"
+                    onClick={() => selectAllInLetter(letter)}
+                  >
+                    {letter} {(() => {
+                      const allClasses = Array.from(classesByLetter[letter]);
+                      const allSelected = allClasses.every(c => filters.classes.includes(c));
+                      return allSelected ? '✓' : '';
+                    })()}
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    style={{ marginLeft: '5px' }}
+                    onClick={() => toggleExpanded(letter)}
+                  >
+                    {expandedLetter === letter ? '▲' : '▼'}
+                  </Button>
+                  {expandedLetter === letter && (
+                    <div style={{ marginTop: '5px', marginLeft: '10px' }}>
+                      {Array.from(classesByLetter[letter]).sort().map(cls => (
+                        <Form.Check
+                          key={cls}
+                          type="checkbox"
+                          id={`chk-${cls}`}
+                          label={cls}
+                          checked={filters.classes.includes(cls)}
+                          onChange={() => toggleClassSelection(cls)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
-            </Form.Select>
+            </div>
           </Col>
 
           <Col md={2}>
