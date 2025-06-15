@@ -85,15 +85,20 @@ const SearchFormPage = () => {
         schoolId: formData.schoolId
       };
 
+      const students ={
+        studentsid: foundStudents
+      }
+    
+
       const resSave = await axios.post(
         'https://pudium-production.up.railway.app/api/podium/searches/',
         searchData
       );
         const saveinstuinsea = await axios.post(
-        'https://pudium-production.up.railway.app/api/podium/stuInSea/',
-        searchData
+        `https://pudium-production.up.railway.app/api/podium/stuInSea/${formData.schoolId}`,
+        students
       );
-      sessionStorage.setItem('lastStudents', JSON.stringify(foundStudents));
+      // sessionStorage.setItem('lastStudents', JSON.stringify(foundStudents));
 
       navigate(`/search-results/${resSave.data.id}`);
     } catch (err) {

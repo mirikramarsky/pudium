@@ -15,6 +15,11 @@ class StudentsRepository {
     async getStudentsByParams(params) {
         const values = [];
 
+        console.log(params.myField);
+        console.log(params.schoolId);
+        console.log(params.classes);
+        console.log(params.count);
+        
         values.push(params.myField);       // $1
         values.push(params.schoolId);      // $2
         values.push(params.classes);        //$3
