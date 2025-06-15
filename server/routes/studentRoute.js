@@ -56,7 +56,7 @@ router.post('/schoolid/:id', async(req, res,next)=>{
         next(err);
     }
 });
-router.post('/params', async(req, res,next)=>{
+router.post('/params/', async(req, res,next)=>{
     try{
         let result = await studentService.getStudentsByParams(req.body)
         if(result != undefined)
