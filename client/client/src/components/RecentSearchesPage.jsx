@@ -44,7 +44,7 @@ const RecentSearchesPage = () => {
 
         // סידור לפי אות
         const byLetter = {};
-        classArray.forEach(cls => {
+        classesList.forEach(cls => {
           const letter = cls.charAt(0);
           if (!byLetter[letter]) byLetter[letter] = new Set();
           byLetter[letter].add(cls);

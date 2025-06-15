@@ -62,7 +62,7 @@ router.get('/search/:id', async(req, res,next)=>{
 router.post('/', async(req, res,next)=>{
 try{
     let result = await stuInSeaService.insert(req.body);
-    if(result.location != null)
+    if(result != null)
         res.json(result)
     else
         res.status(204).send();
@@ -74,6 +74,22 @@ catch(err){
     
     next(err);
 }});
+router.post('/:searchid', async(req, res,next)=>{
+try{
+    let result = await stuInSeaService.insert(req.params.searchid, req.body.studentsid);
+    if(result != null)
+        res.json(result)
+    else
+        res.status(204).send();
+}
+catch(err){
+    if (err instanceof idError)
+        res.status(400).send(err.message);
+    console.log(err);
+    
+    next(err);
+}});
+
 router.put('/:id', async(req, res,next)=>{
     try{
         let result = await stuInSeaService.update(req.params.id, req.body);

@@ -1,5 +1,4 @@
 import React from 'react';
-import SearchForm from '../components/SearchForm';
 import StudentForm from '../components/StudentForm';
 import StaffLogin from '../components/StaffLogin';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -27,7 +26,7 @@ function Home() {
                 <Route path="/data-fetch" element={<SearchFormPage />} />
                 <Route path="/recent-searches" element={<RecentSearchesPage />} />
                 <Route path="/search-results/:id" element={<SearchResults />} />
-                <Route path="/search-results/:id" element={<SearchDetailsPage />} />
+                {/* <Route path="/search-results/:id" element={<SearchDetailsPage />} /> */}
             </Routes>
         </BrowserRouter>
     );

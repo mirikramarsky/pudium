@@ -68,6 +68,7 @@ const SearchFormPage = () => {
     };
 
     try {
+      console.log(searchParams);
       const resStudents = await axios.post(
         'https://pudium-production.up.railway.app/api/podium/students/params',
         searchParams
@@ -88,7 +89,10 @@ const SearchFormPage = () => {
         'https://pudium-production.up.railway.app/api/podium/searches/',
         searchData
       );
-
+        const saveinstuinsea = await axios.post(
+        'https://pudium-production.up.railway.app/api/podium/stuInSea/',
+        searchData
+      );
       sessionStorage.setItem('lastStudents', JSON.stringify(foundStudents));
 
       navigate(`/search-results/${resSave.data.id}`);

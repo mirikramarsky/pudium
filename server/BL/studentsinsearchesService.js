@@ -16,6 +16,12 @@ class StuInSeaService extends BaseService{
             return result;
        throw new idError('this id is not exist');
     } 
+    async insert(searchid, studentsid){
+         let result = await this.repository.insert(searchid, studentsid);
+        if (result && result.length != 0)
+            return result;
+       throw new idError('this id is not exist');
+    } 
 }
 let stuInSeaService = new StuInSeaService();
 module.exports = stuInSeaService;

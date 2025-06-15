@@ -8,53 +8,56 @@ const ClassesList = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      const schoolId = localStorage.getItem('schoolId');
-      if (!schoolId) {
-        setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
-        return;
+useEffect(() => {
+  const fetchClasses = async () => {
+    const schoolId = localStorage.getItem('schoolId');
+    if (!schoolId) {
+      setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
+      return;
+    }
+
+    try {
+      let flatClassList = [];
+
+      const localClasses = localStorage.getItem('classes');
+      if (localClasses) {
+        flatClassList = JSON.parse(localClasses);
+        groupAndSetClasses(flatClassList);
+      } else {
+        const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
+        const classes = res.data || [];
+        localStorage.setItem('classes', JSON.stringify(classes));
+        flatClassList = classes;
+        groupAndSetClasses(flatClassList);
       }
+    } catch (err) {
+      setError('שגיאה בשליפת רשימת הכיתות');
+      console.error(err);
+    }
+  };
 
-      try {
-        const localClasses = localStorage.getItem('classes');
-        if (localClasses) {
-          const flatClassList = JSON.parse(localClasses);
-        } else {
-          axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
-            .then(res => {
-              const classes = res.data || [];
-              localStorage.setItem('classes', JSON.stringify(classes));
-              const flatClassList = classes;
-            })
-        }
+  const groupAndSetClasses = (flatClassList) => {
+    const grouped = {};
+    flatClassList.forEach(classStr => {
+      const letter = classStr[0]; // למשל 'י'
+      if (!grouped[letter]) grouped[letter] = [];
+      grouped[letter].push(classStr);
+    });
 
-        // קיבוץ לפי אות כיתה
-        const grouped = {};
-        flatClassList.forEach(classStr => {
-          const letter = classStr[0]; // למשל 'א'
-          if (!grouped[letter]) grouped[letter] = [];
-          grouped[letter].push(classStr);
-        });
+    for (const key in grouped) {
+      grouped[key].sort((a, b) => {
+        const numA = parseInt(a.slice(1));
+        const numB = parseInt(b.slice(1));
+        return numA - numB;
+      });
+    }
 
-        // מיון פנימי של כל קבוצה לפי מספר
-        for (const key in grouped) {
-          grouped[key].sort((a, b) => {
-            const numA = parseInt(a.slice(1));
-            const numB = parseInt(b.slice(1));
-            return numA - numB;
-          });
-        }
+    setClasses(grouped);
+  };
 
-        setClasses(grouped);
-      } catch (err) {
-        setError('שגיאה בשליפת רשימת הכיתות');
-        console.error(err);
-      }
-    };
+  fetchClasses();
+}, []);
 
-    fetchClasses();
-  }, []);
 
   if (error) return <Alert variant="danger">{error}</Alert>;
 
