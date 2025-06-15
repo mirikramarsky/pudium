@@ -22,7 +22,7 @@ function Home() {
                 <Route path="/student-form" element={<StudentForm />} />
                 <Route path="/staff-home" element={<StaffHome />} />
                 <Route path="/classes" element={<ClassesList />} />
-                <Route path="/class/:grade" element={<StudentsByClass />} />
+                <Route path="/class/:class/:grade" element={<StudentsByClass />} />
                 <Route path="/edit-student/:id" element={<EditStudent />} />
                 <Route path="/data-fetch" element={<SearchFormPage />} />
                 <Route path="/recent-searches" element={<RecentSearchesPage />} />

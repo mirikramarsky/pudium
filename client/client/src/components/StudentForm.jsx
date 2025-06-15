@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 
@@ -7,6 +7,7 @@ const StudentForm = () => {
         firstname: '',
         lastname: '',
         id: '',
+        class: '',
         grade: '',
         field1: '',
         field2: '',
@@ -19,55 +20,58 @@ const StudentForm = () => {
         otherField4: '',
     });
 
+    const [classOptions, setClassOptions] = useState([]);
+
     const fields = ['ריקוד', 'שירה', 'אימון מחול', 'מחול', 'עריכה', 'תפאורה', 'אחר'];
+
+    useEffect(() => {
+        const schoolId = localStorage.getItem('schoolId');
+        if (!schoolId) return;
+
+        const localClasses = localStorage.getItem('classes');
+        if (localClasses) {
+            setClassOptions(JSON.parse(localClasses));
+        } else {
+            axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
+                .then(res => {
+                    const classes = res.data || [];
+                    localStorage.setItem('classes', JSON.stringify(classes));
+                    setClassOptions(classes);
+                })
+                .catch(err => {
+                    console.error('שגיאה בשליפת כיתות:', err);
+                });
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    //   const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const schoolId = localStorage.getItem('schoolId');
-
-    //     try {
-    //         console.log(formData);
-    //       await axios.post('https://pudium-production.up.railway.app/api/podium/students/', {
-    //         ...formData,
-    //         schoolId
-    //       });
-    //       alert('נשמר בהצלחה');
-    //     } catch (error) {
-    //       console.error('שגיאה בשליחה:', error);
-    //       alert('אירעה שגיאה בשליחה');
-    //     }
-    //   };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        //   const schoolId = localStorage.getItem('schoolId');
-        const schoolId = 55; // או localStorage.getItem('schoolId')
+        const schoolId = localStorage.getItem('schoolId');
         const submissionData = {
             ...formData,
             schoolid: schoolId
         };
 
-
-        // מחליפים כל "אחר" בטקסט שהוזן
+        // מחליפים "אחר" בטקסט החופשי
         for (let i = 1; i <= 4; i++) {
             const fieldKey = `field${i}`;
             const otherKey = `otherField${i}`;
             if (submissionData[fieldKey] === 'אחר' && submissionData[otherKey]) {
-                submissionData[fieldKey] = submissionData[otherKey]; // שמים את הטקסט
+                submissionData[fieldKey] = submissionData[otherKey];
             }
-            delete submissionData[otherKey]; // מוחקים את שדות otherField
+            delete submissionData[otherKey];
         }
 
         try {
             console.log(submissionData);
             await axios.post('https://pudium-production.up.railway.app/api/podium/students/', {
                 ...submissionData,
-                schoolId,
+                schoolId
             });
             alert('נשמר בהצלחה');
         } catch (error) {
@@ -86,7 +90,6 @@ const StudentForm = () => {
                     onChange={handleChange}
                     required
                 >
-                    {/* <option value="" disabled hidden>בחרי תחום</option> */}
                     <option value="" disabled hidden>בחרי תחום</option>
                     {fields.map((field, i) => (
                         <option key={i} value={field}>{field}</option>
@@ -150,18 +153,40 @@ const StudentForm = () => {
                             />
                         </Form.Group>
                     </Col>
-                    <Col md={6}>
+
+                    <Col md={3}>
                         <Form.Group className="mb-3">
-                            <Form.Label>כיתה *</Form.Label>
+                            <Form.Label>שכבת כיתה *</Form.Label>
+                            <Form.Control
+                                list="classOptions"
+                                name="class"
+                                value={formData.class}
+                                onChange={handleChange}
+                                required
+                                placeholder="לדוגמה: י'"
+                            />
+                            <datalist id="classOptions">
+                                {Array.from(new Set(classOptions.map(c => c[0]))).map((cl, idx) => (
+                                    <option key={idx} value={cl} />
+                                ))}
+                            </datalist>
+                        </Form.Group>
+                    </Col>
+
+                    <Col md={3}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>מספר כיתה *</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="grade"
                                 value={formData.grade}
                                 onChange={handleChange}
                                 required
+                                placeholder="לדוגמה: 3"
                             />
                         </Form.Group>
                     </Col>
+
                 </Row>
 
                 <h5 className="mt-4">תחומים</h5>
@@ -171,9 +196,7 @@ const StudentForm = () => {
                 {renderFieldSelect('field4', 'otherField4')}
 
                 <div className="text-center mt-4">
-                    <Button variant="primary" type="submit">
-                        שלחי
-                    </Button>
+                    <Button variant="primary" type="submit">שלחי</Button>
                 </div>
             </Form>
         </Container>

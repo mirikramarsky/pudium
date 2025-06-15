@@ -16,34 +16,52 @@ const RecentSearchesPage = () => {
     searchname: '',
     searchername: '',
     field: '',
-    mingrade: '',
     countstudents: '',
-    classes: [],    // <-- מוסיף את המערך של הכיתות
+    classes: [],
   });
 
-  // מצב לכיתות ולשליטה בפתיחת רשימות הכיתות
-  const [students, setStudents] = useState([]);
-  const [expandedLetter, setExpandedLetter] = useState(null); // איזו אות פתוחה
+  const [classesList, setClassesList] = useState([]);
+  const [classesByLetter, setClassesByLetter] = useState({});
+  const [expandedLetter, setExpandedLetter] = useState(null);
 
-  // טען את התלמידות מבית הספר לצורך יצירת כפתורי כיתות
+  // שליפת כיתות מהשרת לפי schoolId
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchClasses = async () => {
       const schoolId = localStorage.getItem('schoolId');
       if (!schoolId) return;
       try {
-        const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/${schoolId}`);
-        setStudents(res.data);
+      const localClasses = localStorage.getItem('classes');
+        if (localClasses) {
+            setClassesList(JSON.parse(localClasses));
+        } else {
+            axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
+                .then(res => {
+                    const classes = res.data || [];
+                    localStorage.setItem('classes', JSON.stringify(classes));
+                    setClassesList(classes);
+                })
+        }
+
+        // סידור לפי אות
+        const byLetter = {};
+        classArray.forEach(cls => {
+          const letter = cls.charAt(0);
+          if (!byLetter[letter]) byLetter[letter] = new Set();
+          byLetter[letter].add(cls);
+        });
+        setClassesByLetter(byLetter);
       } catch (err) {
-        setError('שגיאה בטעינת תלמידות');
+        setError('שגיאה בטעינת הכיתות');
       }
     };
-    fetchStudents();
+    fetchClasses();
   }, []);
 
+  // שליפת כל החיפושים
   useEffect(() => {
     axios.get('https://pudium-production.up.railway.app/api/podium/searches/')
       .then(res => {
-        const sorted = [...res.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sorted = [...res.data].sort((a, b) => new Date(b.searchdate) - new Date(a.searchdate));
         setSearches(sorted);
         setFilteredSearches(sorted);
       })
@@ -67,16 +85,6 @@ const RecentSearchesPage = () => {
     );
   };
 
-  // יצירת מפת אותיות לכיתות מתוך התלמידות
-  const classesByLetter = {};
-  students.forEach(s => {
-    if (!s.class || !s.grade) return;
-    const letter = s.class.trim();
-    const fullClass = letter + s.grade;
-    if (!classesByLetter[letter]) classesByLetter[letter] = new Set();
-    classesByLetter[letter].add(fullClass);
-  });
-
   const toggleExpanded = (letter) => {
     setExpandedLetter(expandedLetter === letter ? null : letter);
   };
@@ -89,15 +97,12 @@ const RecentSearchesPage = () => {
     }
   };
 
-  // לחיצה על כפתור אות בוחרת/מסירה את כל הכיתות תחת האות
   const selectAllInLetter = (letter) => {
     const allClasses = Array.from(classesByLetter[letter] || []);
     const allSelected = allClasses.every(c => filters.classes.includes(c));
     if (allSelected) {
-      // אם הכל נבחר, הסר את כולם
       updateFilter('classes', filters.classes.filter(c => !allClasses.includes(c)));
     } else {
-      // הוסף את כולם שלא נבחרו עדיין
       const newSelection = [...filters.classes];
       allClasses.forEach(c => {
         if (!newSelection.includes(c)) newSelection.push(c);
@@ -122,30 +127,14 @@ const RecentSearchesPage = () => {
       results = results.filter(s => !fieldOptions.includes(s.field));
     }
 
-    // סינון לפי mingrade (אם קיים)
-    if (filters.mingrade)
-      results = results.filter(s => Number(s.mingrade) === Number(filters.mingrade));
-
     if (filters.countstudents)
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
 
-    // סינון לפי classes - בדיקה אם לפחות אחד מהכיתות ב classes נמצא בטווח mingrade-maxgrade של החיפוש
+    // סינון לפי חפיפה בין filters.classes לבין search.classes
     if (filters.classes.length > 0) {
       results = results.filter(search => {
-        // נניח שחיפוש שומר מינגרד ומקסגרייד
-        const minGrade = Number(search.mingrade);
-        const maxGrade = Number(search.maxgrade);
-        // כיתות שנבחרו - למשל "א1", "ב3" - נבדוק אם המספר בכיתה בין המינגרד למקסגרייד ושהאות תואמת
-        for (const cls of filters.classes) {
-          const letter = cls.charAt(0);
-          const gradeNum = Number(cls.slice(1));
-          // בודקים אם הכיתה בקטגוריה שמחפשים
-          // אם באות מתאימה והמספר בכיתה בטווח מינגרד-מקסגרייד => מחזירים true (כלומר שייך לחיפוש)
-          if (gradeNum >= minGrade && gradeNum <= maxGrade) {
-            return true;
-          }
-        }
-        return false;
+        if (!search.classes || !Array.isArray(search.classes)) return false;
+        return search.classes.some(cls => filters.classes.includes(cls));
       });
     }
 
@@ -160,7 +149,6 @@ const RecentSearchesPage = () => {
 
       <Form className="mb-4" onSubmit={handleFilter}>
         <Row className="g-3">
-
           <Col md={3}>
             <Form.Label>שם החיפוש</Form.Label>
             <Form.Control
@@ -261,7 +249,7 @@ const RecentSearchesPage = () => {
               <th>שם החיפוש</th>
               <th>מחפשת</th>
               <th>תחום</th>
-              <th>כיתה</th>
+              <th>כיתות</th>
               <th>כמות</th>
               <th>תאריך</th>
               <th>פעולות</th>
@@ -273,7 +261,7 @@ const RecentSearchesPage = () => {
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>
-                <td>{search.mingrade} - {search.maxgrade}</td>
+                <td>{(search.classes || []).join(', ')}</td>
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.createdAt).toLocaleString('he-IL')}</td>
                 <td>

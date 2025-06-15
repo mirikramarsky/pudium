@@ -14,7 +14,7 @@ const SearchDetailsPage = () => {
         const fetchSearchAndStudents = async () => {
             try {
                 const searchRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
-                const studentsRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/stuInSea/search${id}`);
+                const studentsRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/stuInSea/search/${id}`);
 
                 setSearch(searchRes.data);
                 setStudents(studentsRes.data);
@@ -65,6 +65,7 @@ const SearchDetailsPage = () => {
                             <th>תחום 1</th>
                             <th>תחום 2</th>
                             <th>תחום 3</th>
+                             <th>תחום 4</th>
                             <th>עדיפות כללית</th>
                         </tr>
                     </thead>
@@ -77,6 +78,7 @@ const SearchDetailsPage = () => {
                                 <td>{student.field1}</td>
                                 <td>{student.field2}</td>
                                 <td>{student.field3}</td>
+                                 <td>{student.field4}</td>
                                 <td>{student.severalPriority}</td>
                             </tr>
                         ))}

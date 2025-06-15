@@ -16,7 +16,7 @@ const priorityColors = {
 };
 
 const StudentsByClass = () => {
-  const { grade } = useParams();
+  const { grade, class: className } = useParams();
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -31,7 +31,12 @@ const StudentsByClass = () => {
 
       try {
         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/`);
-        const filtered = response.data.filter(s => s.schoolid === Number(schoolId) && s.grade === Number(grade));
+        // סינון לפי schoolId, grade ומחלקה (className)
+        const filtered = response.data.filter(s =>
+          s.schoolid === Number(schoolId) &&
+          s.grade === Number(grade) &&
+          s.class === className
+        );
         setStudents(filtered);
       } catch (err) {
         setError('שגיאה בשליפת תלמידות');
@@ -40,7 +45,7 @@ const StudentsByClass = () => {
     };
 
     fetchStudents();
-  }, [grade]);
+  }, [grade, className]);
 
   const renderLegend = () => (
     <Table bordered size="sm" className="mb-4" style={{ maxWidth: '100%' }}>
@@ -74,7 +79,7 @@ const StudentsByClass = () => {
 
   return (
     <Container className="mt-4">
-      <h3>תלמידות בכיתה {grade}</h3>
+      <h3>תלמידות בכיתה {grade} שכבה {className}</h3>
       {renderLegend()}
       {students.length === 0 ? (
         <p>אין תלמידות בכיתה זו.</p>
@@ -91,6 +96,7 @@ const StudentsByClass = () => {
               <th>שם משפחה</th>
               <th>מספר זהות</th>
               <th>כיתה</th>
+              <th>שכבת כיתה</th>
             </tr>
           </thead>
           <tbody>
@@ -115,6 +121,7 @@ const StudentsByClass = () => {
                   <td>{student.lastname}</td>
                   <td>{student.id}</td>
                   <td>{student.grade}</td>
+                  <td>{student.class}</td>
                 </tr>
               );
             })}

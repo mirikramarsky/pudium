@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Button, Row, Col, Dropdown, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,58 +7,71 @@ const fieldOptions = [
   'אימון מחול', 'עריכה', 'עיצוב אופנה', 'תפאורה', 'צילום', 'נגינה', 'שירה', 'אחר'
 ];
 
-const gradeLabels = ['ט', 'י', 'י"א', 'י"ב'];
-
 const SearchFormPage = () => {
   const navigate = useNavigate();
-  const [allStudents, setAllStudents] = useState([]);
-  const [gradesMap, setGradesMap] = useState({});
+
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
     field: '',
-    grade: '',
-    subgrade: '',
+    classes: [],
     staffName: localStorage.getItem('staffName') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0
   });
+
+  const [classList, setClassList] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('https://pudium-production.up.railway.app/api/podium/students/')
-      .then(res => {
-        setAllStudents(res.data);
-        const grouped = {};
-        res.data.forEach(s => {
-          const g = s.grade;
-          if (!grouped[g]) grouped[g] = [];
-          grouped[g].push(s);
-        });
-        setGradesMap(grouped);
-      })
-      .catch(() => setError('שגיאה בשליפת התלמידות'));
+    const fetchClasses = async () => {
+      try {
+        const schoolId = localStorage.getItem("schoolId");
+        if (!schoolId) return;
+       const localClasses = localStorage.getItem('classes');
+        if (localClasses) {
+            setClassList(JSON.parse(localClasses));
+        } else {
+            axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
+                .then(res => {
+                    const classes = res.data || [];
+                    localStorage.setItem('classes', JSON.stringify(classes));
+                    setClassList(classes);
+                })
+        }
+      } catch (err) {
+        console.error(err);
+        setError('שגיאה בטעינת כיתות');
+      }
+    };
+
+    fetchClasses();
   }, []);
+
+  const handleClassToggle = (cls) => {
+    setFormData(prev => {
+      const exists = prev.classes.includes(cls);
+      return {
+        ...prev,
+        classes: exists ? prev.classes.filter(c => c !== cls) : [...prev.classes, cls]
+      };
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const mingradeNum = parseInt(formData.subgrade || formData.grade || '0');
 
     const searchParams = {
       myField: formData.field,
       schoolId: formData.schoolId,
-      mingrade: mingradeNum,
-      maxgrade: 12,
+      classes: formData.classes,
       count: Number(formData.amount)
     };
 
     try {
-      console.log(searchParams);
-      
       const resStudents = await axios.post(
         'https://pudium-production.up.railway.app/api/podium/students/params',
         searchParams
       );
-console.log(resStudents);
 
       const foundStudents = resStudents.data;
 
@@ -66,20 +79,16 @@ console.log(resStudents);
         searchname: formData.name,
         countstudents: foundStudents.length,
         field: formData.field,
-        mingrade: mingradeNum,
-        maxgrade: 12,
+        classes: formData.classes,
         searchername: formData.staffName,
         schoolId: formData.schoolId
       };
-console.log(searchData);
 
       const resSave = await axios.post(
         'https://pudium-production.up.railway.app/api/podium/searches/',
         searchData
       );
-console.log(resSave);
 
-      // שמירה זמנית של התלמידות
       sessionStorage.setItem('lastStudents', JSON.stringify(foundStudents));
 
       navigate(`/search-results/${resSave.data.id}`);
@@ -137,33 +146,17 @@ console.log(resSave);
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>בחירת כיתה</Form.Label>
-          <div className="d-flex gap-3 flex-wrap">
-            {gradeLabels.map(gradeLabel => {
-              const subgrades = Object.keys(gradesMap).filter(g =>
-                g.startsWith(gradeLabel)
-              );
-
-              return (
-                <Dropdown key={gradeLabel}>
-                  <Dropdown.Toggle variant="secondary">{gradeLabel}</Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {subgrades.length > 0 ? (
-                      subgrades.map(g => (
-                        <Dropdown.Item
-                          key={g}
-                          onClick={() => setFormData({ ...formData, grade: gradeLabel, subgrade: g })}
-                        >
-                          {g}
-                        </Dropdown.Item>
-                      ))
-                    ) : (
-                      <Dropdown.Item disabled>אין כיתות</Dropdown.Item>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              );
-            })}
+          <Form.Label>בחירת כיתות</Form.Label>
+          <div className="d-flex flex-wrap gap-3">
+            {classList.map(cls => (
+              <Form.Check
+                key={cls}
+                type="checkbox"
+                label={cls}
+                checked={formData.classes.includes(cls)}
+                onChange={() => handleClassToggle(cls)}
+              />
+            ))}
           </div>
         </Form.Group>
 

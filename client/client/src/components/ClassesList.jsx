@@ -9,7 +9,7 @@ const ClassesList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchClasses = async () => {
       const schoolId = localStorage.getItem('schoolId');
       if (!schoolId) {
         setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
@@ -17,35 +17,43 @@ const ClassesList = () => {
       }
 
       try {
-        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/`);
-        const students = response.data.filter(s => s.schoolid === Number(schoolId));
-
-        // שליפת כל האותיות שיש בפועל מהתלמידות
-        const classGroups = {};
-
-        students.forEach(s => {
-          const letter = s.class; // עכשיו בעברית: 'א', 'ב', ...
-          const grade = s.grade;
-
-          if (!classGroups[letter]) classGroups[letter] = new Set();
-          classGroups[letter].add(grade);
-        });
-
-        // הפיכת סטים למערכים ממיינים
-        const classesByHebrew = {};
-        for (const [letter, gradesSet] of Object.entries(classGroups)) {
-          const gradesArray = Array.from(gradesSet).sort((a, b) => a - b);
-          classesByHebrew[letter] = gradesArray.map(g => `${letter}${g}`);
+        const localClasses = localStorage.getItem('classes');
+        if (localClasses) {
+          const flatClassList = JSON.parse(localClasses);
+        } else {
+          axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
+            .then(res => {
+              const classes = res.data || [];
+              localStorage.setItem('classes', JSON.stringify(classes));
+              const flatClassList = classes;
+            })
         }
 
-        setClasses(classesByHebrew);
+        // קיבוץ לפי אות כיתה
+        const grouped = {};
+        flatClassList.forEach(classStr => {
+          const letter = classStr[0]; // למשל 'א'
+          if (!grouped[letter]) grouped[letter] = [];
+          grouped[letter].push(classStr);
+        });
+
+        // מיון פנימי של כל קבוצה לפי מספר
+        for (const key in grouped) {
+          grouped[key].sort((a, b) => {
+            const numA = parseInt(a.slice(1));
+            const numB = parseInt(b.slice(1));
+            return numA - numB;
+          });
+        }
+
+        setClasses(grouped);
       } catch (err) {
-        setError('שגיאה בשליפת תלמידות');
+        setError('שגיאה בשליפת רשימת הכיתות');
         console.error(err);
       }
     };
 
-    fetchStudents();
+    fetchClasses();
   }, []);
 
   if (error) return <Alert variant="danger">{error}</Alert>;
@@ -64,7 +72,11 @@ const ClassesList = () => {
                 <ListGroup.Item
                   action
                   key={cls}
-                  onClick={() => navigate(`/class/${encodeURIComponent(cls)}`)}
+                  onClick={() => {
+                    const letter = cls.charAt(0);
+                    const number = cls.slice(1);
+                    navigate(`/class/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
+                  }}
                 >
                   {cls}
                 </ListGroup.Item>

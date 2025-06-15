@@ -103,6 +103,7 @@ const EditStudent = () => {
                         onChange={handleChange}
                     >
                         <option value="">בחר אות כיתה</option>
+                        {/* שישלוף מהאותיות הקיימות באותו בית הספר? */}
                         <option value="א">א'</option>
                         <option value="ב">ב'</option>
                         <option value="ג">ג'</option>

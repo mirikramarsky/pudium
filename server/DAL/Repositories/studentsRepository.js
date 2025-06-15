@@ -5,7 +5,7 @@ class StudentsRepository {
         return students.rows;
     }
     async getById(id, schoolId) {
-        let student = await pool.query(`SELECT * FROM students where id = $1 AND schoolId = $2`, [id, schoolId]);
+        let student = await pool.query(`SELECT * FROM students WHERE id = $1 AND schoolId = $2`, [id, schoolId]);
         return student.rows;
     }
     async getBySchoolIdId(schoolId) {
@@ -17,9 +17,8 @@ class StudentsRepository {
 
         values.push(params.myField);       // $1
         values.push(params.schoolId);      // $2
-        values.push(params.mingrade);      // $3
-        values.push(params.maxgrade);      // $4
-        values.push(params.count);         // $5
+        values.push(params.classes);        //$3
+        values.push(params.count);         // $4
 
         const query = `
         SELECT *,
@@ -39,7 +38,7 @@ class StudentsRepository {
             (field4 = $1 AND field4priority != 0)
         )
         AND schoolId = $2
-        AND grade BETWEEN $3 AND $4
+        AND (class || grade::text) = ANY($3)
         AND severalPriority != 0
         ORDER BY 
             GREATEST(severalPriority, 
@@ -53,7 +52,7 @@ class StudentsRepository {
             ) DESC,
             severalPriority DESC,
             specific_priority DESC
-        LIMIT $5
+        LIMIT $4
     `;
 
         const result = await pool.query(query, values);
@@ -70,12 +69,34 @@ class StudentsRepository {
         return result.rows.map(row => `${row.class}${row.grade}`);
     }
     async insert(params) {
-        let student = await pool.query(` INSERT INTO students(id, firstname, lastname, field1, field2, field3, field4
-            , severalpriority, field1priority, field2priority, field3priority, field4priority,class, grade, schoolid) 
-             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
-            [params.id, params.firstname, params.lastname, params.field1, params.field2, params.field3, params.field4,
-            params.severalpriority, params.field1priority, params.field2priority, params.field3priority, params.field4priority,
-                , params.class, params.grade, params.schoolid]);
+        const query = `
+        INSERT INTO students(
+            id, firstname, lastname, field1, field2, field3, field4,
+            severalpriority, field1priority, field2priority, field3priority, field4priority,
+            class, grade, schoolid
+        ) 
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+    `;
+
+        const values = [
+            params.id,
+            params.firstname,
+            params.lastname,
+            params.field1,
+            params.field2,
+            params.field3,
+            params.field4,
+            params.severalpriority,
+            params.field1priority,
+            params.field2priority,
+            params.field3priority,
+            params.field4priority,
+            params.class,
+            params.grade,
+            params.schoolid
+        ];
+
+        const student = await pool.query(query, values);
         return student;
     }
     async update(id, updatedFields) {

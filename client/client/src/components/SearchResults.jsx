@@ -8,14 +8,25 @@ const SearchResultsPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // כל עוד searchstudents לא פעיל, נשתמש בזיכרון זמני
-    const saved = sessionStorage.getItem('lastStudents');
-    if (saved) {
-      setStudents(JSON.parse(saved));
-    } else {
-      setError('לא נמצאו תלמידות להצגה');
-    }
-  }, []);
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch(`https://pudium-production.up.railway.app/api/podium/stuInSea/search/${searchId}`);
+        const data = await response.json();
+
+        if (data.length === 0) {
+          setError('לא נמצאו תלמידות להצגה.');
+        } else {
+          setStudents(filtered);
+        }
+      } catch (err) {
+        setError('שגיאה בעת שליפת התלמידות מהשרת.');
+        console.error(err);
+      }
+    };
+
+    fetchStudents();
+  }, [searchId]);
+
 
   const handleRemove = (studentId) => {
     const updated = students.filter(s => s.id !== studentId);
