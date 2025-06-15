@@ -55,8 +55,8 @@ router.post('/params', async(req, res,next)=>{
 router.post('/', async(req, res,next)=>{
 try{
     let result = await searchService.insert(req.body);
-    if(result.location != null)
-        res.json(result)
+    if(result != null)
+        res.status(201).json({ id: result });
     else
         res.status(204).send();
 }

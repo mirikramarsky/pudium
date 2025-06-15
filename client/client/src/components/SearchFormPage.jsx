@@ -89,7 +89,7 @@ const SearchFormPage = () => {
     };
 
     try {
-      console.log(searchParams);
+      // נסה לשלוח את הבקשה ולשלוף תלמידות
       const resStudents = await axios.post(
         'https://pudium-production.up.railway.app/api/podium/students/params',
         searchParams
@@ -97,6 +97,7 @@ const SearchFormPage = () => {
 
       const foundStudents = resStudents.data;
 
+      // ממשיכים רק אם הצליח
       const searchData = {
         searchname: formData.name,
         countstudents: foundStudents.length,
@@ -107,25 +108,33 @@ const SearchFormPage = () => {
 
       const students = {
         studentsid: foundStudents
-      }
+      };
 
-      console.log(searchData)
       const resSave = await axios.post(
         'https://pudium-production.up.railway.app/api/podium/searches/',
         searchData
       );
-      const saveinstuinsea = await axios.post(
+      await axios.post(
         `https://pudium-production.up.railway.app/api/podium/stuInSea/${formData.schoolId}`,
         students
       );
-      // sessionStorage.setItem('lastStudents', JSON.stringify(foundStudents));
-
+      console.log(resSave);
+      
       navigate(`/search-results/${resSave.data.id}`);
     } catch (err) {
       console.error(err);
-      setError('אירעה שגיאה בעת ביצוע החיפוש או השמירה');
+      if (
+        err.response &&
+        err.response.status === 400 &&
+        err.config.url.includes('/students/params')
+      ) {
+        setError('תלמידות תואמות לחיפוש לא נמצאו');
+      } else {
+        setError('אירעה שגיאה בעת ביצוע החיפוש או השמירה');
+      }
     }
   };
+
   const toggleExpanded = (letter) => {
     setExpandedLetter(expandedLetter === letter ? null : letter);
   };
