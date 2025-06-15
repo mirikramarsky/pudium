@@ -19,7 +19,7 @@ class StudentsRepository {
         console.log(params.schoolId);
         console.log(params.classes);
         console.log(params.count);
-        
+
         values.push(params.myField);       // $1
         values.push(params.schoolId);      // $2
         values.push(params.classes);        //$3
@@ -59,8 +59,9 @@ class StudentsRepository {
             specific_priority DESC
         LIMIT $4
     `;
-
+        
         const result = await pool.query(query, values);
+        console.log(`the return ${result.rows}`);
         return result.rows;
     }
     async getClassesBySchoolId(schoolId) {
