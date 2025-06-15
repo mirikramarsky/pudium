@@ -3,7 +3,7 @@ import { Container, Form, Row, Col, Button, Table, Alert } from 'react-bootstrap
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const fieldOptions = ['אימון מחול', 'עריכה', 'עיצוב אופנה', 'תפאורה', 'צילום', 'נגינה', 'שירה', 'אחר'];
+const fieldOptions = ['אימון מחול', 'עריכה', 'עיצוב אופנה', 'תפאורה', 'צילום', 'נגינה', 'שירה'];
 
 const RecentSearchesPage = () => {
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ const RecentSearchesPage = () => {
     searchname: '',
     searchername: '',
     field: '',
+    otherField: '',
     countstudents: '',
     classes: [],
   });
@@ -24,40 +25,37 @@ const RecentSearchesPage = () => {
   const [classesByLetter, setClassesByLetter] = useState({});
   const [expandedLetter, setExpandedLetter] = useState(null);
 
-  // שליפת כיתות מהשרת לפי schoolId
   useEffect(() => {
     const fetchClasses = async () => {
       const schoolId = localStorage.getItem('schoolId');
       if (!schoolId) return;
       try {
-      const localClasses = localStorage.getItem('classes');
+        let classList;
+        const localClasses = localStorage.getItem('classes');
         if (localClasses) {
-            setClassesList(JSON.parse(localClasses));
+          classList = JSON.parse(localClasses);
         } else {
-            axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
-                .then(res => {
-                    const classes = res.data || [];
-                    localStorage.setItem('classes', JSON.stringify(classes));
-                    setClassesList(classes);
-                })
+          const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
+          classList = res.data || [];
+          localStorage.setItem('classes', JSON.stringify(classList));
         }
 
-        // סידור לפי אות
         const byLetter = {};
-        classesList.forEach(cls => {
+        classList.forEach(cls => {
           const letter = cls.charAt(0);
           if (!byLetter[letter]) byLetter[letter] = new Set();
           byLetter[letter].add(cls);
         });
+
         setClassesByLetter(byLetter);
       } catch (err) {
+        console.error(err);
         setError('שגיאה בטעינת הכיתות');
       }
     };
     fetchClasses();
   }, []);
 
-  // שליפת כל החיפושים
   useEffect(() => {
     axios.get('https://pudium-production.up.railway.app/api/podium/searches/')
       .then(res => {
@@ -67,6 +65,34 @@ const RecentSearchesPage = () => {
       })
       .catch(() => setError('שגיאה בטעינת החיפושים'));
   }, []);
+
+  useEffect(() => {
+    let results = [...searches];
+
+    if (filters.searchname)
+      results = results.filter(s => isSimilar(s.searchname, filters.searchname));
+
+    if (filters.searchername)
+      results = results.filter(s => isSimilar(s.searchername, filters.searchername));
+
+    if (filters.field && filters.field !== "other") {
+      results = results.filter(s => s.field === filters.field);
+    } else if (filters.field === "other" && filters.otherField) {
+      results = results.filter(s => isSimilar(s.field, filters.otherField));
+    }
+
+    if (filters.countstudents)
+      results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
+
+    if (filters.classes.length > 0) {
+      results = results.filter(search => {
+        if (!search.classes || !Array.isArray(search.classes)) return false;
+        return search.classes.some(cls => filters.classes.includes(cls));
+      });
+    }
+
+    setFilteredSearches(results);
+  }, [filters, searches]);
 
   const updateFilter = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -111,43 +137,13 @@ const RecentSearchesPage = () => {
     }
   };
 
-  const handleFilter = (e) => {
-    e.preventDefault();
-    let results = [...searches];
-
-    if (filters.searchname)
-      results = results.filter(s => isSimilar(s.searchname, filters.searchname));
-
-    if (filters.searchername)
-      results = results.filter(s => isSimilar(s.searchername, filters.searchername));
-
-    if (filters.field && filters.field !== "other") {
-      results = results.filter(s => s.field === filters.field);
-    } else if (filters.field === "other") {
-      results = results.filter(s => !fieldOptions.includes(s.field));
-    }
-
-    if (filters.countstudents)
-      results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
-
-    // סינון לפי חפיפה בין filters.classes לבין search.classes
-    if (filters.classes.length > 0) {
-      results = results.filter(search => {
-        if (!search.classes || !Array.isArray(search.classes)) return false;
-        return search.classes.some(cls => filters.classes.includes(cls));
-      });
-    }
-
-    setFilteredSearches(results);
-  };
-
   return (
     <Container className="mt-4">
       <h4 className="mb-4">חיפושים אחרונים</h4>
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <Form className="mb-4" onSubmit={handleFilter}>
+      <Form className="mb-4">
         <Row className="g-3">
           <Col md={3}>
             <Form.Label>שם החיפוש</Form.Label>
@@ -179,6 +175,15 @@ const RecentSearchesPage = () => {
               ))}
               <option value="other">אחר</option>
             </Form.Select>
+            {filters.field === "other" && (
+              <Form.Control
+                type="text"
+                placeholder="הקלד תחום"
+                className="mt-2"
+                value={filters.otherField || ""}
+                onChange={(e) => updateFilter('otherField', e.target.value)}
+              />
+            )}
           </Col>
 
           <Col md={2}>
@@ -233,10 +238,6 @@ const RecentSearchesPage = () => {
               onChange={(e) => updateFilter('countstudents', e.target.value)}
             />
           </Col>
-
-          <Col md={2} className="d-flex align-items-end">
-            <Button type="submit" variant="primary">סנן</Button>
-          </Col>
         </Row>
       </Form>
 
@@ -263,7 +264,7 @@ const RecentSearchesPage = () => {
                 <td>{search.field}</td>
                 <td>{(search.classes || []).join(', ')}</td>
                 <td>{search.countstudents}</td>
-                <td>{new Date(search.createdAt).toLocaleString('he-IL')}</td>
+                <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
                 <td>
                   <Button variant="outline-primary" size="sm" onClick={() => navigate(`/search-results/${search.id}`)}>
                     צפייה

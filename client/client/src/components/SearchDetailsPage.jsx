@@ -13,21 +13,53 @@ const SearchDetailsPage = () => {
     useEffect(() => {
         const fetchSearchAndStudents = async () => {
             try {
+                const schoolid = localStorage.getItem('schoolId');
+                if (!schoolid) {
+                    setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
+                    setLoading(false);
+                    return;
+                }
+
+                // שליפת פרטי החיפוש
                 const searchRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
+                setSearch(searchRes.data[0]);
+
+                // שליפת מזהי התלמידות
                 const studentsRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/stuInSea/search/${id}`);
 
-                setSearch(searchRes.data);
-                setStudents(studentsRes.data);
+                // קריאה לכל תלמידה לפי ה-ID שלה והוספת schoolId
+                const detailedStudentsPromises = studentsRes.data.map(student =>
+                    axios
+                        .post(`https://pudium-production.up.railway.app/api/podium/students/schoolid/${student.studentid}`, {
+                            schoolId: schoolid
+                        })
+                        .then(res => {
+                            const data = res.data;
+                            // אם חוזר מערך – נחזיר אותו, אם זה אובייקט בודד – נהפוך אותו למערך
+                            return Array.isArray(data) ? data : [data];
+                        })
+                );
+
+                // מחכים שכולן יסתיימו
+                const detailedStudentsNested = await Promise.all(detailedStudentsPromises);
+
+                // שיטוח מערכים לתוך רשימה אחת
+                const detailedStudents = detailedStudentsNested.flat();
+
+                // שמירת התלמידות לסטייט
+                setStudents(detailedStudents);
                 setLoading(false);
             } catch (err) {
+                console.error('שגיאה בטעינה:', err);
                 setError('שגיאה בטעינת החיפוש או התלמידות');
                 setLoading(false);
             }
         };
 
+
         fetchSearchAndStudents();
     }, [id]);
-
+    console.log(students);
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
@@ -44,10 +76,10 @@ const SearchDetailsPage = () => {
                         <strong>כיתות:</strong>{' '}
                         {search.classes && search.classes.length > 0
                             ? search.classes.join(', ')
-                            : `${search.mingrade} - ${search.maxgrade}`}
+                            :[]}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search.countstudents}</Col>
-                    <Col md={8}><strong>תאריך:</strong> {new Date(search.createdAt).toLocaleString('he-IL')}</Col>
+                    <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>
                 </Row>
             </Card>
 
@@ -59,27 +91,27 @@ const SearchDetailsPage = () => {
                 <Table striped bordered hover>
                     <thead>
                         <tr>
-                            <th>שם פרטי</th>
-                            <th>שם משפחה</th>
-                            <th>כיתה</th>
-                            <th>תחום 1</th>
-                            <th>תחום 2</th>
-                            <th>תחום 3</th>
-                             <th>תחום 4</th>
                             <th>עדיפות כללית</th>
+                            <th>תחום 4</th>
+                            <th>תחום 3</th>
+                            <th>תחום 2</th>
+                            <th>תחום 1</th>
+                            <th>כיתה</th>
+                            <th>שם משפחה</th>
+                            <th>שם פרטי</th>
                         </tr>
                     </thead>
                     <tbody>
                         {students.map(student => (
                             <tr key={student.id}>
-                                <td>{student.firstName}</td>
-                                <td>{student.lastName}</td>
-                                <td>{student.class} {student.grade}</td>
-                                <td>{student.field1}</td>
-                                <td>{student.field2}</td>
+                                <td>{student.severalpriority}</td>
+                                <td>{student.field4}</td>
                                 <td>{student.field3}</td>
-                                 <td>{student.field4}</td>
-                                <td>{student.severalPriority}</td>
+                                <td>{student.field2}</td>
+                                <td>{student.field1}</td>
+                                <td>{student.class} {student.grade}</td>
+                                <td>{student.lastname}</td>
+                                <td>{student.firstname}</td>
                             </tr>
                         ))}
                     </tbody>

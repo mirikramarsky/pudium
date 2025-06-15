@@ -25,8 +25,8 @@ function Home() {
                 <Route path="/edit-student/:id" element={<EditStudent />} />
                 <Route path="/data-fetch" element={<SearchFormPage />} />
                 <Route path="/recent-searches" element={<RecentSearchesPage />} />
-                <Route path="/search-results/:id" element={<SearchResults />} />
-                {/* <Route path="/search-results/:id" element={<SearchDetailsPage />} /> */}
+                {/* <Route path="/search-results/:id" element={<SearchResults />} /> */}
+                <Route path="/search-results/:id" element={<SearchDetailsPage />} />
             </Routes>
         </BrowserRouter>
     );

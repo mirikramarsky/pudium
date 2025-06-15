@@ -74,6 +74,24 @@ const StudentForm = () => {
                 schoolId
             });
             alert('נשמר בהצלחה');
+
+            // איפוס הטופס
+            setFormData({
+                firstname: '',
+                lastname: '',
+                id: '',
+                class: '',
+                grade: '',
+                field1: '',
+                field2: '',
+                field3: '',
+                field4: '',
+                schoolid: '',
+                otherField1: '',
+                otherField2: '',
+                otherField3: '',
+                otherField4: '',
+            });
         } catch (error) {
             console.error('שגיאה בשליחה:', error);
             alert('אירעה שגיאה בשליחה');

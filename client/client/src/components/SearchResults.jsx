@@ -16,7 +16,7 @@ const SearchResultsPage = () => {
         if (data.length === 0) {
           setError('לא נמצאו תלמידות להצגה.');
         } else {
-          setStudents(filtered);
+          setStudents(data);
         }
       } catch (err) {
         setError('שגיאה בעת שליפת התלמידות מהשרת.');
@@ -55,7 +55,7 @@ const SearchResultsPage = () => {
             <tr key={st.id}>
               <td>{st.firstName}</td>
               <td>{st.lastName}</td>
-              <td>{st.grade}</td>
+              <td>{st.class}{st.grade}</td>
               <td>
                 <Button variant="danger" size="sm" onClick={() => handleRemove(st.id)}>X</Button>
               </td>
