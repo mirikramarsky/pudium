@@ -61,7 +61,7 @@ class StudentsRepository {
     `;
         
         const result = await pool.query(query, values);
-        console.log(`the return ${result.rows}`);
+        console.log(`the return ${result}`);
         return result.rows;
     }
     async getClassesBySchoolId(schoolId) {
