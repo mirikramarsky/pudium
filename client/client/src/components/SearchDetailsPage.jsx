@@ -63,6 +63,7 @@ const SearchDetailsPage = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
+console.log(JSON.parse(search.classes));
 
     return (
         <Container className="mt-4">
@@ -74,9 +75,9 @@ const SearchDetailsPage = () => {
                     <Col md={4}><strong>תחום:</strong> {search.field}</Col>
                     <Col md={4}>
                         <strong>כיתות:</strong>{' '}
-                        {search.classes && search.classes.length > 0
-                            ? search.classes.join(', ')
-                            :[]}
+                        {search.classes
+                            ? JSON.parse(search.classes).join(', ')
+                        : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search.countstudents}</Col>
                     <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>

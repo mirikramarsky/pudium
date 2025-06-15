@@ -114,12 +114,17 @@ const SearchFormPage = () => {
         'https://pudium-production.up.railway.app/api/podium/searches/',
         searchData
       );
+      console.log(students);
+      
+      const studentsIds = students.studentsid.map(student => student.id);
       await axios.post(
-        `https://pudium-production.up.railway.app/api/podium/stuInSea/${formData.schoolId}`,
-        students
+        `https://pudium-production.up.railway.app/api/podium/stuInSea/${resSave.data.id}`,
+        {studentsid:studentsIds}
       );
       console.log(resSave);
-      
+
+
+
       navigate(`/search-results/${resSave.data.id}`);
     } catch (err) {
       console.error(err);
