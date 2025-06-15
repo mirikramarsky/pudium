@@ -92,6 +92,9 @@ class SearchRepository {
         let search = await pool.query(`INSERT INTO searches (searchname, searchdate, field, countstudents, searchername, classes, mingrade, maxgrade)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) `, [params.searchname, now, params.field, params.countstudents, params.searchername,
                 JSON.stringify(params.classes), 0,0]);
+                console.log(search);
+                console.log(search.rows[0]);
+                
         return search.rows[0].id;
     }
     async update(id, updatedFields) {
