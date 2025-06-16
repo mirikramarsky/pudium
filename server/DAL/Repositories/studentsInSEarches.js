@@ -22,7 +22,7 @@ class StuInSeaRepository {
             `SELECT s.*, sis.id as searchstudentid
             FROM studentsinsearches sis
             JOIN students s ON s.id = sis.studentid::integer
-            WHERE sis.searchid = $1`
+            WHERE sis.searchid = $1`,
             [searchId]
         );
         return result.rows;
