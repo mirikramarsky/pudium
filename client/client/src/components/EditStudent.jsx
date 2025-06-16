@@ -19,7 +19,7 @@ const EditStudent = () => {
 
             try {
                 const response = await axios.post(
-                    `https://pudium-production.up.railway.app/api/podium/students/${id}`,
+                    `https://pudium-production.up.railway.app/api/podium/students/schoolid/${id}`,
                     { schoolId: Number(schoolid) }
                 );
                 const student = response.data;
@@ -212,6 +212,23 @@ const EditStudent = () => {
                         onChange={handleChange}
                     />
                 </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>עדיפות חינוכית</Form.Label>
+                    <Form.Select
+                        name="educpriority"
+                        value={formData.educpriority ? "true" : "false"}
+                        onChange={e =>
+                            setFormData(prev => ({
+                                ...prev,
+                                educpriority: e.target.value === "true"
+                            }))
+                        }
+                    >
+                        <option value="false">לא</option>
+                        <option value="true">כן</option>
+                    </Form.Select>
+                </Form.Group>
+
 
                 <Button type="submit" variant="primary">שמור</Button>
             </Form>
