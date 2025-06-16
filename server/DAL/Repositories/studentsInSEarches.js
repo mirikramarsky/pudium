@@ -20,7 +20,7 @@ class StuInSeaRepository {
         const res = await pool.query(`
         SELECT s.*, sis.id as searchstudentid
         FROM studentsinsearches sis
-        JOIN students s ON s.id = sis.studentsid
+        JOIN students s ON s.id = sis.studentid
         WHERE sis.searchid = $1
     `, [searchId]);
         return res.rows;
