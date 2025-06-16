@@ -17,7 +17,7 @@ class StuInSeaRepository {
         return studentsinsearches.rows;
     }
     async getStudentsInSearch(searchId) {
-        const res = await db.query(`
+        const res = await pool.query(`
         SELECT s.*, sis.id as searchstudentid
         FROM studentsinsearch sis
         JOIN students s ON s.id = sis.studentsid

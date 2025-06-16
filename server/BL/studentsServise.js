@@ -24,7 +24,7 @@ class SudentsService extends BaseService{
        throw new idError('this id is not exist');
     }
       async insert(params){
-        params.severalPriority = 1;
+        params.severalPriority = 8;
         params.field1Priority = 1;
         params.field2Priority = 1;
         params.field3Priority = 1;

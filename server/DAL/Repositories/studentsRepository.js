@@ -119,7 +119,12 @@ class StudentsRepository {
         const result = await pool.query(query, values);
         return result.rowCount > 0;
     }
-
+    async decreaseSeveralPriority(id) {
+        const resultp = await pool.query(`SELECT severalpriority FROM students WHERE id = $1`, [id]);
+        console.log(resultp);
+        const result = await pool.query(`UPDATE students SET severalpriority = $1 WHERE id = $2`, [resultp-1, id]);
+        return result.rowCount > 0;
+    }
     async delete(id) {
         let student = await pool.query(` DELETE FROM students
             WHERE id = $1`, [id]);
