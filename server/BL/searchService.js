@@ -31,7 +31,7 @@ class SearchService extends BaseService {
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
 
         const students = await stuInSeaRepository.getStudentsInSearch(searchId);
-        console.log(JSON.parse(search.classes).join(', '));
+        // console.log(JSON.parse(search.classes).join(', '));
         console.log(search.classes);
         const classes = search.classes ? JSON.parse(search.classes) : [];
 
