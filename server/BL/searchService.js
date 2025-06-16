@@ -21,9 +21,8 @@ class SearchService extends BaseService {
             return result;
         throw new idError('this id is not exist');
     }
-
     async sendApprovalMail(searchId) {
-        const search = await repository.getById(searchId);
+        const search = await this.repository.getById(searchId);
         if (!search) throw new Error('חיפוש לא נמצא');
 
         const school = await schoolRepository.getById(search.schoolid);

@@ -18,9 +18,9 @@ const SearchFormPage = () => {
     staffName: localStorage.getItem('staffName') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0
   });
+
   const [expandedLetter, setExpandedLetter] = useState(null);
   const [classesByLetter, setClassesByLetter] = useState({});
-  const [classList, setClassList] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -41,7 +41,6 @@ const SearchFormPage = () => {
           classList = classes;
         }
 
-        // סידור לפי אות
         const byLetter = {};
         classList.forEach(cls => {
           const letter = cls.charAt(0);
@@ -59,15 +58,6 @@ const SearchFormPage = () => {
     fetchClasses();
   }, []);
 
-  // const handleClassToggle = (cls) => {
-  //   setFormData(prev => {
-  //     const exists = prev.classes.includes(cls);
-  //     return {
-  //       ...prev,
-  //       classes: exists ? prev.classes.filter(c => c !== cls) : [...prev.classes, cls]
-  //     };
-  //   });
-  // };
   const toggleClass = (cls) => {
     setFormData(prev => {
       const exists = prev.classes.includes(cls);
@@ -77,93 +67,6 @@ const SearchFormPage = () => {
       };
     });
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const searchParams = {
-      myField: formData.field,
-      schoolId: formData.schoolId,
-      classes: formData.classes,
-      count: Number(formData.amount)
-    };
-
-    try {
-      // נסה לשלוח את הבקשה ולשלוף תלמידות
-      const resStudents = await axios.post(
-        'https://pudium-production.up.railway.app/api/podium/students/params',
-        searchParams
-      );
-
-      const foundStudents = resStudents.data;
-
-      // ממשיכים רק אם הצליח
-      const searchData = {
-        searchname: formData.name,
-        countstudents: foundStudents.length,
-        field: formData.field,
-        classes: formData.classes,
-        searchername: formData.staffName
-      };
-
-      const students = {
-        studentsid: foundStudents
-      };
-
-      const resSave = await axios.post(
-        'https://pudium-production.up.railway.app/api/podium/searches/',
-        searchData
-      );
-      console.log(students);
-      
-      const studentsIds = students.studentsid.map(student => student.id);
-      await axios.post(
-        `https://pudium-production.up.railway.app/api/podium/stuInSea/${resSave.data.id}`,
-        {studentsid:studentsIds}
-      );
-      console.log(resSave);
-
-
-
-      navigate(`/search-results/${resSave.data.id}`);
-    } catch (err) {
-      console.error(err);
-      if (
-        err.response &&
-        err.response.status === 400 &&
-        err.config.url.includes('/students/params')
-      ) {
-        setError('תלמידות תואמות לחיפוש לא נמצאו');
-      } else {
-        setError('אירעה שגיאה בעת ביצוע החיפוש או השמירה');
-      }
-    }
-  };
-
-  const toggleExpanded = (letter) => {
-    setExpandedLetter(expandedLetter === letter ? null : letter);
-  };
-
-  // const toggleClassSelection = (cls) => {
-  //   if (formData.classes.includes(cls)) {
-  //     handleClassToggle('classes', formData.classes.filter(c => c !== cls));
-  //   } else {
-  //     handleClassToggle('classes', [...formData.classes, cls]);
-  //   }
-  // };
-  // const selectAllInLetter = (letter) => {
-  //   const allClasses = Array.from(classesByLetter[letter] || []);
-  //   const allSelected = allClasses.every(c => formData.classes.includes(c));
-  //   if (allSelected) {
-  //     toggleClass('classes', formData.classes.filter(c => !allClasses.includes(c)));
-  //   } else {
-  //     const newSelection = [...formData.classes];
-  //     allClasses.forEach(c => {
-  //       if (!newSelection.includes(c)) newSelection.push(c);
-  //     });
-  //     toggleClass('classes', newSelection);
-  //   }
-  // };
 
   const selectAllInLetter = (letter) => {
     const allClasses = Array.from(classesByLetter[letter] || []);
@@ -181,7 +84,59 @@ const SearchFormPage = () => {
     }
   };
 
+  const toggleExpanded = (letter) => {
+    setExpandedLetter(expandedLetter === letter ? null : letter);
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // const searchParams = {
+    //   myField: formData.field,
+    //   schoolId: formData.schoolId,
+    //   classes: formData.classes,
+    //   count: Number(formData.amount)
+    // };
+
+    try {
+      // const resStudents = await axios.post(
+      //   'https://pudium-production.up.railway.app/api/podium/students/params',
+      //   searchParams
+      // );
+      // const foundStudents = resStudents.data;
+
+      const searchData = {
+        searchname: formData.name,
+        countstudents:  Number(formData.amount),
+        field: formData.field,
+        classes: formData.classes,
+        searchername: formData.staffName
+      };
+
+      // const studentsIds = foundStudents.map(student => student.id);
+
+      const resSave = await axios.post(
+        'https://pudium-production.up.railway.app/api/podium/searches/',
+        searchData
+      );
+
+      // await axios.post(
+      //   `https://pudium-production.up.railway.app/api/podium/stuInSea/${resSave.data.id}`,
+      //   { studentsid: studentsIds }
+      // );
+      // sessionStorage.setItem(`students-${resSave.data.id}`, JSON.stringify(studentsIds));
+      sessionStorage.setItem(`search-${resSave.data.id}`, JSON.stringify(searchData));
+      await new Promise(resolve => setTimeout(resolve, 200));
+      navigate(`/search-results/${resSave.data.id}`);
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.status === 400 && err.config.url.includes('/students/params')) {
+        setError('תלמידות תואמות לחיפוש לא נמצאו');
+      } else {
+        setError('אירעה שגיאה בעת ביצוע החיפוש או השמירה');
+      }
+    }
+  };
 
   return (
     <Container className="mt-4">
@@ -229,6 +184,7 @@ const SearchFormPage = () => {
             ))}
           </Form.Select>
         </Form.Group>
+
         <Form.Group className="mb-3">
           <Form.Label>כיתה (בחר אות או כיתה מדויקת)</Form.Label>
           <div>
@@ -271,63 +227,6 @@ const SearchFormPage = () => {
             ))}
           </div>
         </Form.Group>
-        {/* <Form.Group className="mb-3">
-          <Form.Label>כיתה (בחר אות או כיתה מדויקת)</Form.Label>
-          <div>
-            {Object.keys(classesByLetter).sort().map(letter => (
-              <div key={letter} style={{ marginBottom: '5px' }}>
-                <Button
-                  variant={formData.classes.some(c => c.startsWith(letter)) ? 'primary' : 'outline-primary'}
-                  size="sm"
-                  onClick={() => selectAllInLetter(letter)}
-                >
-                  {letter} {(() => {
-                    const allClasses = Array.from(classesByLetter[letter]);
-                    const allSelected = allClasses.every(c => formData.classes.includes(c));
-                    return allSelected ? '✓' : '';
-                  })()}
-                </Button>
-                <Button
-                  variant="outline-secondary"
-                  size="sm"
-                  style={{ marginLeft: '5px' }}
-                  onClick={() => toggleExpanded(letter)}
-                >
-                  {expandedLetter === letter ? '▲' : '▼'}
-                </Button>
-                {expandedLetter === letter && (
-                  <div style={{ marginTop: '5px', marginLeft: '10px' }}>
-                    {Array.from(classesByLetter[letter]).sort().map(cls => (
-                      <Form.Check
-                        key={cls}
-                        type="checkbox"
-                        id={`chk-${cls}`}
-                        label={cls}
-                        checked={formData.classes.includes(cls)}
-                        onChange={() => toggleClass(cls)}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </Form.Group> */}
-
-        {/* <Form.Group className="mb-3">
-          <Form.Label>בחירת כיתות</Form.Label>
-          <div className="d-flex flex-wrap gap-3">
-            {classList.map(cls => (
-              <Form.Check
-                key={cls}
-                type="checkbox"
-                label={cls}
-                checked={formData.classes.includes(cls)}
-                onChange={() => handleClassToggle(cls)}
-              />
-            ))}
-          </div>
-        </Form.Group> */}
 
         <Button variant="primary" type="submit">שלח</Button>
       </Form>

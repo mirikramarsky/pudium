@@ -29,37 +29,40 @@ const SearchDetailsPage = () => {
     useEffect(() => {
         const fetchSearchAndStudents = async () => {
             try {
-                const schoolid = localStorage.getItem('schoolId');
-                if (!schoolid) {
+                const schoolId = localStorage.getItem('schoolId');
+                if (!schoolId) {
                     setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
                     setLoading(false);
                     return;
                 }
 
-                const searchRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
-                setSearch(searchRes.data[0]);
+                // שליפת פרטי החיפוש לפי מזהה
+                const resSearch = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
+                const searchData = resSearch.data[0];
+                setSearch(searchData);
+                // בניית פרמטרים לשליפת תלמידות לפי פרטי החיפוש
+                const searchParams = {
+                    myField: searchData.field,
+                    schoolId: schoolId,
+                    count: searchData.countstudents,
+                    classes: searchData.classes ? JSON.parse(searchData.classes) : [],
+                };
 
-                const studentsRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/stuInSea/search/${id}`);
-
-                const detailedStudentsPromises = studentsRes.data.map(student =>
-                    axios
-                        .post(`https://pudium-production.up.railway.app/api/podium/students/schoolid/${student.studentid}`, {
-                            schoolId: schoolid
-                        })
-                        .then(res => {
-                            const data = res.data;
-                            const fullData = Array.isArray(data) ? data : [data];
-                            return fullData.map(s => ({ ...s, searchstudentid: student.id }));
-                        })
+                
+                
+                // שליפת התלמידות לפי פרמטרים
+                const resStudents = await axios.post(
+                    'https://pudium-production.up.railway.app/api/podium/students/params',
+                    searchParams
                 );
-
-                const detailedStudentsNested = await Promise.all(detailedStudentsPromises);
-                const detailedStudents = detailedStudentsNested.flat();
-                setStudents(detailedStudents);
-                setLoading(false);
+                const foundStudents = resStudents.data;
+                console.log(foundStudents);
+                
+                setStudents(foundStudents);
             } catch (err) {
                 console.error('שגיאה בטעינה:', err);
                 setError('שגיאה בטעינת החיפוש או התלמידות');
+            } finally {
                 setLoading(false);
             }
         };
@@ -67,10 +70,21 @@ const SearchDetailsPage = () => {
         fetchSearchAndStudents();
     }, [id]);
 
+
+
+    // useEffect(() => {
+    //     return () => {
+    //         // sessionStorage.removeItem(`search-${id}`);
+    //         // sessionStorage.removeItem(`students-${id}`);
+    //     };
+    // }, []);
+
+
     const handleDeleteStudentFromSearch = async (studentSearchId) => {
         try {
-            await axios.delete(`https://pudium-production.up.railway.app/api/podium/stuInSea/${studentSearchId}`);
-            setStudents(prev => prev.filter(s => s.searchstudentid !== studentSearchId));
+            const updated = students.filter(s => s.searchstudentid !== studentSearchId);
+            setStudents(updated);
+            // sessionStorage.setItem(`students-${id}`, JSON.stringify(updated));
         } catch (err) {
             console.error('שגיאה במחיקה:', err);
             alert('שגיאה במחיקת תלמידה מהחיפוש');
@@ -105,6 +119,22 @@ const SearchDetailsPage = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
+    const handleFinalSave = async () => {
+        try {
+            const payload = students.map(s => ({
+                searchId: id,
+                studentId: s.id
+            }));
+            
+            const studentsIds = payload.map(student => student.studentId);
+            console.log(studentsIds);
+            await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, {studentsid :studentsIds});
+            alert('התלמידות נשמרו בהצלחה!');
+        } catch (err) {
+            console.error('שגיאה בשמירה הסופית:', err);
+            alert('שגיאה בשמירה הסופית');
+        }
+    };
 
     return (
         <Container className="mt-4">
@@ -175,6 +205,9 @@ const SearchDetailsPage = () => {
                             disabled={mailSent}
                         >
                             {mailSent ? 'המייל נשלח' : 'שלח מייל לאישור ושמירת החיפוש'}
+                        </Button>
+                        <Button variant="primary" onClick={handleFinalSave}>
+                            שמירה סופית של החיפוש
                         </Button>
                     </div>
                 </>
