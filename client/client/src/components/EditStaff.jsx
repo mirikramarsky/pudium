@@ -42,11 +42,11 @@ const EditStaff = () => {
           <Form.Control value={name} onChange={(e) => setName(e.target.value)} required />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Confirm (0 או 1)</Form.Label>
+          <Form.Label>הרשאת גישה <br/>0 למנהלת מערכת<br/> 1 לגישה לכל התלמידות <br/>2 למחנכת- יש להזין את כיתת החינוך<br/>3 עובדת כללית - אין גישה לפרטי התלמידות ועריכתן</Form.Label>
           <Form.Control
             type="number"
             min="0"
-            max="1"
+            max="3"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required

@@ -17,17 +17,13 @@ class StuInSeaRepository {
         return studentsinsearches.rows;
     }
     async getStudentsInSearch(searchId) {
-        console.log('searchId:', searchId);
-        console.log('typeof searchId:', typeof searchId);
-        console.log('numericId:', numericId);
-         console.log('typeof numericId:', typeof numericId);
-        const numericId = Number(searchId); // זה התיקון הקריטי
+         
         const result = await pool.query(
             `SELECT s.*, sis.id as searchstudentid
-         FROM studentsinsearches sis
-         JOIN students s ON s.id = sis.studentid
-         WHERE sis.searchid = $1`,
-            [numericId]
+            FROM studentsinsearches sis
+            JOIN students s ON s.id = sis.studentid::integer
+            WHERE sis.searchid = $1`
+            [searchId]
         );
         return result.rows;
     }

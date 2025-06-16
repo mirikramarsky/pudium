@@ -18,9 +18,9 @@ const StaffHome = () => {
         const response = await axios.get(
           `https://pudium-production.up.railway.app/api/podium/staff/${staffId}`
         );
-        console.log(response.data);
+        console.log(response.data[0].confirm);
         
-        if (response.data[0].confirm === 0) {
+        if (response.data[0].confirm == 0) {
           setShowAdminButtons(true);
         }
       } catch (err) {

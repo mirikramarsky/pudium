@@ -11,6 +11,9 @@ import SearchFormPage from '../components/SearchFormPage';
 import SearchResults from '../components/SearchResults';
 import SearchDetailsPage from '../components/SearchDetailsPage';
 import RecentSearchesPage from '../components/RecentSearchesPage';
+import EditStaff from '../components/EditStaff';
+import AddStaff from '../components/AddStaff';
+import DeleteStaff from '../components/DeleteStaff';
 
 function Home() {
     return (
@@ -25,6 +28,9 @@ function Home() {
                 <Route path="/edit-student/:id" element={<EditStudent />} />
                 <Route path="/data-fetch" element={<SearchFormPage />} />
                 <Route path="/recent-searches" element={<RecentSearchesPage />} />
+                <Route path="/staff/edit" element={<EditStaff />} />
+                <Route path="/staff/add" element={<AddStaff />} />
+                <Route path="/staff/delete" element={<DeleteStaff />} />
                 {/* <Route path="/search-results/:id" element={<SearchResults />} /> */}
                 <Route path="/search-results/:id" element={<SearchDetailsPage />} />
             </Routes>
