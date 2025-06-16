@@ -18,7 +18,7 @@ class StuInSeaRepository {
     }
     async getStudentsInSearch(searchId) {
         const numericId = Number(searchId); // זה התיקון הקריטי
-        const result = await db.query(
+        const result = await pool.query(
             `SELECT s.*, sis.id as searchstudentid
          FROM studentsinsearches sis
          JOIN students s ON s.id = sis.studentid

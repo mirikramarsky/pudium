@@ -7,6 +7,8 @@ const StaffHome = () => {
   const navigate = useNavigate();
   const name = localStorage.getItem('staffName');
   const staffId = localStorage.getItem('staffId');
+  console.log(staffId);
+  
   const [showAdminButtons, setShowAdminButtons] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +18,9 @@ const StaffHome = () => {
         const response = await axios.get(
           `https://pudium-production.up.railway.app/api/podium/staff/${staffId}`
         );
-        if (response.data.confirm === 0) {
+        console.log(response.data);
+        
+        if (response.data[0].confirm === 0) {
           setShowAdminButtons(true);
         }
       } catch (err) {
