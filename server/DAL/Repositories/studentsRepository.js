@@ -13,59 +13,61 @@ class StudentsRepository {
         return student.rows;
     }
     async getStudentsByParams(params) {
-    const values = [];
+        const values = [];
 
-    console.log(params.myField);
-    console.log(params.schoolId);
-    console.log(params.classes);
-    console.log(params.count);
-    console.log(params.excludeIds);  // ⬅️ חדש
+        console.log(params.myField);
+        console.log(params.schoolId);
+        console.log(params.classes);
+        console.log(params.count);
+        console.log(params.excludeIds);  // ⬅️ חדש
 
-    values.push(params.myField);       // $1
-    values.push(params.schoolId);      // $2
-    values.push(params.classes);       // $3
-    values.push(params.count);         // $4
-    values.push(params.excludeIds || []); // $5 - רשימת מזהים להחרגה
+        values.push(params.myField);       // $1
+        values.push(params.schoolId);      // $2
+        values.push(params.classes);       // $3
+        values.push(params.count);         // $4
+        values.push(params.excludeIds || []); // $5 - רשימת מזהים להחרגה
 
-    const query = `
-    SELECT *,
-        CASE 
-            WHEN field1 = $1 THEN field1priority
-            WHEN field2 = $1 THEN field2priority
-            WHEN field3 = $1 THEN field3priority
-            WHEN field4 = $1 THEN field4priority
-            ELSE 0
-        END AS specific_priority
-    FROM students
-    WHERE $1 IN (field1, field2, field3, field4)
-      AND (
-          (field1 = $1 AND field1priority != 0) OR
-          (field2 = $1 AND field2priority != 0) OR
-          (field3 = $1 AND field3priority != 0) OR
-          (field4 = $1 AND field4priority != 0)
-      )
-      AND schoolId = $2
-      AND (class || grade::text) = ANY($3)
-      AND severalPriority != 0
-      AND id != ALL($5::int[])  -- ⬅️ החרגת תלמידות לפי מזהים
-    ORDER BY 
-        GREATEST(severalPriority, 
+        const query = `
+            SELECT *,
                 CASE 
                     WHEN field1 = $1 THEN field1priority
                     WHEN field2 = $1 THEN field2priority
                     WHEN field3 = $1 THEN field3priority
                     WHEN field4 = $1 THEN field4priority
                     ELSE 0
-                END
-        ) DESC,
-        severalPriority DESC,
-        specific_priority DESC
-    LIMIT $4
-    `;
+                END AS specific_priority
+            FROM students
+            WHERE $1 IN (field1, field2, field3, field4)
+            AND (
+                (field1 = $1 AND field1priority != 0) OR
+                (field2 = $1 AND field2priority != 0) OR
+                (field3 = $1 AND field3priority != 0) OR
+                (field4 = $1 AND field4priority != 0)
+            )
+            AND schoolId = $2
+            AND (class || grade::text) = ANY($3)
+            AND severalPriority != 0
+            AND id != ALL($5::int[])  -- החרגת מזהים
+            ORDER BY 
+                educpriority DESC,  -- ✅ קודם כל מי שיש לה עדיפות חינוכית
+                GREATEST(severalPriority, 
+                        CASE 
+                            WHEN field1 = $1 THEN field1priority
+                            WHEN field2 = $1 THEN field2priority
+                            WHEN field3 = $1 THEN field3priority
+                            WHEN field4 = $1 THEN field4priority
+                            ELSE 0
+                        END
+                ) DESC,
+                severalPriority DESC,
+                specific_priority DESC
+            LIMIT $4
+            `;
 
-    const result = await pool.query(query, values);
-    return result.rows;
-}
+
+        const result = await pool.query(query, values);
+        return result.rows;
+    }
 
     async insert(params) {
         const query = `

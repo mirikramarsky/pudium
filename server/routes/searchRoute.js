@@ -65,10 +65,9 @@ catch(err){
         res.status(400).send(err.message);    
     next(err);
 }});
-router.post('/send-approval-mail/:searchId', async (req, res) => {
-    const { searchId } = req.params;
+router.post('/send-approval-mail/:searchId/school/:schoolid', async (req, res) => {
     try {
-        await searchService.sendApprovalMail(searchId);
+        await searchService.sendApprovalMail(req.params.searchId, req.params.schoolid);
         res.status(200).json({ message: 'המייל נשלח בהצלחה' });
     } catch (err) {
         console.error(err);

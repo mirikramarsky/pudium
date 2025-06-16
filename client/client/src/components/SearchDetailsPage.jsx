@@ -108,7 +108,7 @@ const SearchDetailsPage = () => {
                 editUrl: `http://localhost:5173/search-results/${id}` // שנה לפי ה-URL שלך בפרודקשן
             };
 
-            await axios.post(`https://pudium-production.up.railway.app/api/podium/searches/send-approval-mail/${id}`, emailContent);
+            await axios.post(`https://pudium-production.up.railway.app/api/podium/searches/send-approval-mail/${id}/school/${schoolId}`, emailContent);
             setMailSent(true);
         } catch (err) {
             console.error('שגיאה בשליחת המייל:', err);

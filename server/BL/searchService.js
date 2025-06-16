@@ -21,11 +21,11 @@ class SearchService extends BaseService {
             return result;
         throw new idError('this id is not exist');
     }
-    async sendApprovalMail(searchId) {
+    async sendApprovalMail(searchId, schoolid) {
         const search = await this.repository.getById(searchId);
         if (!search) throw new Error('חיפוש לא נמצא');
 
-        const school = await schoolRepository.getById(search.schoolid);
+        const school = await schoolRepository.getById(schoolid);
         console.log(school);
         const schoolEmail = school.data.emailaddress;
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
