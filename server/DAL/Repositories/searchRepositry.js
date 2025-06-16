@@ -86,39 +86,38 @@ class SearchRepository {
         const { rows: students } = await db.query(query, params);
         return students;
     }
-
     async insert(params) {
-        const now = new Date();
-        let search = await pool.query(`INSERT INTO searches (searchname, searchdate, field, countstudents, searchername, classes, mingrade, maxgrade)
+    const now = new Date();
+    let search = await pool.query(`INSERT INTO searches (searchname, searchdate, field, countstudents, searchername, classes, mingrade, maxgrade)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)  RETURNING id`, [params.searchname, now, params.field, params.countstudents, params.searchername,
-                JSON.stringify(params.classes), 0,0]);
-                console.log(search);
-                console.log(search.rows[0]);
-                
-        return search.rows[0].id;
-    }
+    JSON.stringify(params.classes), 0, 0]);
+    console.log(search);
+    console.log(search.rows[0]);
+
+    return search.rows[0].id;
+}
     async update(id, updatedFields) {
-        const sets = [];
-        const values = [];
-        let i = 1;
+    const sets = [];
+    const values = [];
+    let i = 1;
 
-        for (const key in updatedFields) {
-            sets.push(`${key} = $${i++}`);
-            values.push(updatedFields[key]);
-        }
-
-        if (sets.length === 0) return { message: 'Nothing to update.' };
-
-        values.push(id);
-        const query = `UPDATE searches SET ${sets.join(', ')} WHERE id = $${i}`;
-        const result = await pool.query(query, values);
-        return result.rowCount > 0;
+    for (const key in updatedFields) {
+        sets.push(`${key} = $${i++}`);
+        values.push(updatedFields[key]);
     }
-    async delete(id) {
-        let search = await pool.query(` DELETE FROM searches
+
+    if (sets.length === 0) return { message: 'Nothing to update.' };
+
+    values.push(id);
+    const query = `UPDATE searches SET ${sets.join(', ')} WHERE id = $${i}`;
+    const result = await pool.query(query, values);
+    return result.rowCount > 0;
+}
+    async delete (id) {
+    let search = await pool.query(` DELETE FROM searches
             WHERE id = $1`, [id]);
-        return search.rowCount > 0;
-    }
+    return search.rowCount > 0;
+}
 }
 let searchRepository = new SearchRepository();
 

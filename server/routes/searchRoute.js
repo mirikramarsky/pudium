@@ -65,6 +65,16 @@ catch(err){
         res.status(400).send(err.message);    
     next(err);
 }});
+router.post('/send-approval-mail/:searchId', async (req, res) => {
+    const { searchId } = req.params;
+    try {
+        await searchService.sendApprovalMail(searchId);
+        res.status(200).json({ message: 'המייל נשלח בהצלחה' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'שגיאה בשליחת המייל' });
+    }
+});
 router.put('/:id', async(req, res,next)=>{
     try{
         let result = await searchService.update(req.params.id, req.body);
