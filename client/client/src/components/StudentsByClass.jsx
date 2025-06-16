@@ -117,11 +117,11 @@ const StudentsByClass = () => {
                   <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
                   <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
                   <td style={getCellStyle(student.field1priority)}>{student.field1}</td>
-                  <td>{student.firstname}</td>
-                  <td>{student.lastname}</td>
-                  <td>{student.id}</td>
-                  <td>{student.grade}</td>
-                  <td>{student.class}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.firstname}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.lastname}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.id}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.grade}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.class}</td>
                 </tr>
               );
             })}
