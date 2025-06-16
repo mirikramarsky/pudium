@@ -21,6 +21,7 @@ const StaffLogin = () => {
       const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffCode}`);
       const staff = res.data[0];
       localStorage.setItem('staffName', staff.name);
+      localStorage.setItem('staffId', staff.id);
       navigate('/staff-home');
     } catch (err) {
       setError('קוד איש הצוות שגוי');

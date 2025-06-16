@@ -17,14 +17,17 @@ class StuInSeaRepository {
         return studentsinsearches.rows;
     }
     async getStudentsInSearch(searchId) {
-        const res = await pool.query(`
-        SELECT s.*, sis.id as searchstudentid
-        FROM studentsinsearches sis
-        JOIN students s ON s.id = sis.studentid
-        WHERE sis.searchid = $1
-    `, [searchId]);
-        return res.rows;
+        const numericId = Number(searchId); // זה התיקון הקריטי
+        const result = await db.query(
+            `SELECT s.*, sis.id as searchstudentid
+         FROM studentsinsearches sis
+         JOIN students s ON s.id = sis.studentid
+         WHERE sis.searchid = $1`,
+            [numericId]
+        );
+        return result.rows;
     }
+
     async insert(params) {
         let studentsinsearches = await pool.query(
             `INSERT INTO studentsinsearches (searchid, studentid) VALUES($1, $2)`,
