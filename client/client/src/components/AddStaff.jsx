@@ -36,9 +36,16 @@ const AddStaff = () => {
                     <Form.Control name="name" value={formData.name} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Confirm</Form.Label>
+                    <Form.Label>קוד</Form.Label>
+                    <Form.Control name="id" value={formData.id} onChange={handleChange} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>הרשאת גישה </Form.Label>
+                    {/* צריך להיות תיבת בחירה ואם בוחרים 2 אז צריך להכניס את הכיתת חינוך שלה */}
                     <Form.Control name="confirm" type="number" value={formData.confirm} onChange={handleChange} />
                 </Form.Group>
+
+
                 <Button className="mt-3" type="submit">שמור</Button>
             </Form>
         </Container>

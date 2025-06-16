@@ -31,6 +31,9 @@ class SearchService extends BaseService {
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
 
         const students = await stuInSeaRepository.getStudentsInSearch(searchId);
+        console.log(JSON.parse(search.classes).join(', '));
+        console.log(search.classes);
+        const classes = search.classes ? JSON.parse(search.classes) : [];
 
         let studentRows = students.map(s => `
         <tr>
@@ -47,7 +50,7 @@ class SearchService extends BaseService {
         <ul>
             <li><b>שם מחפשת:</b> ${search.searchername}</li>
             <li><b>תחום:</b> ${search.field}</li>
-            <li><b>כיתות:</b> ${JSON.parse(search.classes).join(', ')}</li>
+            <li><b>כיתות:</b> ${classes.join(', ')}</li>
             <li><b>כמות תלמידות:</b> ${search.countstudents}</li>
         </ul>
         <p>רשימת התלמידות:</p>
