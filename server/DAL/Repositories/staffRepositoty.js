@@ -5,11 +5,15 @@ class StaffRepository{
         return staffs.rows;
     }
     async getBySchoolId(schoolId){
-        let staff = await pool.query(`SELECT * FROM staff where schoolId = $1`,[schoolId]);
+        let staff = await pool.query(`SELECT * FROM staff WHERE schoolId = $1`,[schoolId]);
+        return staff.rows;
+    }
+    async getById(id){
+        let staff = await pool.query(`SELECT * FROM staff WHERE id = $1`,[id]);
         return staff.rows;
     }
     async getBySchoolIdAndId(schoolId,id){
-        let staff = await pool.query(`SELECT * FROM staff where schoolId = $1 AND id = $2`,[schoolId, id]);
+        let staff = await pool.query(`SELECT * FROM staff WHERE schoolId = $1 AND id = $2`,[schoolId, id]);
         return staff.rows;
     }
     async insert(params){

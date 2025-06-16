@@ -17,6 +17,10 @@ class StuInSeaRepository {
         return studentsinsearches.rows;
     }
     async getStudentsInSearch(searchId) {
+        console.log('searchId:', searchId);
+        console.log('typeof searchId:', typeof searchId);
+        console.log('numericId:', numericId);
+         console.log('typeof numericId:', typeof numericId);
         const numericId = Number(searchId); // זה התיקון הקריטי
         const result = await pool.query(
             `SELECT s.*, sis.id as searchstudentid
