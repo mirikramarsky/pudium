@@ -1,4 +1,5 @@
 const StuInSeaRepository = require("../DAL/Repositories/studentsInSEarches");
+const studentsRepository = require("../DAL/Repositories/studentsRepository");
 const BaseService = require("./baseService");
 class StuInSeaService extends BaseService{
     constructor(){
@@ -17,6 +18,7 @@ class StuInSeaService extends BaseService{
        throw new idError('this id is not exist');
     } 
     async insert(searchid, studentsid){
+        await studentsRepository.decreaseSeveralPriority(studentsid);
          let result = await this.repository.insert(searchid, studentsid);
         if (result && result.length != 0)
             return result;
