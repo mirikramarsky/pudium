@@ -342,7 +342,7 @@ const SearchDetailsPage = () => {
                     excludeIds: savedIds
                 };
                 console.log(searchParams);
-                
+
 
                 const resStudents = await axios.post(
                     'https://pudium-production.up.railway.app/api/podium/students/params',
@@ -370,22 +370,17 @@ const SearchDetailsPage = () => {
         fetchSearchAndStudents();
     }, [id]);
 
-    const handleDeleteStudentFromSearch = async (studentSearchId, studentId) => {
+    const handleDeleteStudentFromSearch = async (student, studentId) => {
         try {
-            const updatedStudents = students.filter(s => s.id !== studentId);
-            setStudents(updatedStudents);
-
-            const updatedIds = shownStudentIds.filter(id => id !== studentId);
-            setShownStudentIds(updatedIds);
-            sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
-
             const schoolId = localStorage.getItem('schoolId');
+
+            // כאן את שולחת את excludeIds כולל התלמידה הנוכחית (שעדיין לא הוסרה)
             const searchParams = {
                 myField: search.field,
                 schoolId,
                 count: 1,
                 classes: search.classes ? JSON.parse(search.classes) : [],
-                excludeIds: updatedIds
+                excludeIds: [...shownStudentIds, studentId]  // מוסיפה אותה רק לשליחה
             };
 
             const res = await axios.post(
@@ -394,23 +389,36 @@ const SearchDetailsPage = () => {
             );
 
             const newStudent = res.data[0];
-            if (newStudent) {
-                setStudents(prev => [...prev, newStudent]);
-                setShownStudentIds(prev => [...prev, newStudent.id]);
-                setAllShownStudents(prev => [...prev, newStudent]);
-                sessionStorage.setItem(`shown-${id}`, JSON.stringify([...updatedIds, newStudent.id]));
-            } else {
+
+            // ואז מעדכנת את המצביעים
+            const updatedStudents = students.filter(s => s.id !== studentId);
+            setStudents([...updatedStudents, ...(newStudent ? [newStudent] : [])]);
+
+            const updatedIds = [...shownStudentIds, ...(newStudent ? [newStudent.id] : [])];
+            setShownStudentIds(updatedIds);
+            sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
+
+            setAllShownStudents(prev => [
+                ...prev.filter(s => s.id !== studentId),
+                ...(newStudent ? [newStudent] : [])
+            ]);
+
+            if (!newStudent) {
                 alert("אין עוד תלמידות מתאימות לפרמטרים");
             }
+
         } catch (err) {
             console.error('שגיאה בהבאת תלמידה חלופית:', err);
             alert('שגיאה בשליפת תלמידה חלופית');
         }
     };
 
+
     const handleFinalSave = async () => {
         try {
             const studentsIds = students.map(s => s.id);
+            console.log(studentsIds);
+            
             await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: studentsIds });
             alert('התלמידות נשמרו בהצלחה!');
         } catch (err) {
