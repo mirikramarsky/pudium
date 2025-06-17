@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const DeleteStaff = () => {
+  const navigate = useNavigate();
   const [id, setId] = useState('');
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://pudium-production.up.railway.app/api/podium/staff/${id}`);
+      const schoolId = localStorage.getItem('schoolId')
+      console.log(schoolId);
+      await axios.delete(`https://pudium-production.up.railway.app/api/podium/staff/${id}`, {
+        data: { schoolId }
+      });
       setSuccess(true);
       setError(null);
+      navigate('/staff-home')
     } catch (err) {
       setError('שגיאה במחיקת אשת צוות');
       console.error(err);

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AddStaff = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({  id: '', name: '', confirm: 3 ,class: "all"});
+    const [formData, setFormData] = useState({ id: '', name: '', confirm: 3, class: "all" });
     const [message, setMessage] = useState(null);
 
     const handleChange = e => {
@@ -17,13 +17,14 @@ const AddStaff = () => {
         e.preventDefault();
         const schoolId = localStorage.getItem('schoolId');
         console.log(formData);
-        
+
         try {
             await axios.post('https://pudium-production.up.railway.app/api/podium/staff', {
                 ...formData,
                 schoolId: Number(schoolId)
             });
             setMessage('נוספה בהצלחה');
+            navigate('/staff-home')
         } catch (err) {
             setMessage('שגיאה בהוספה');
         }
@@ -42,35 +43,35 @@ const AddStaff = () => {
                     <Form.Label>קוד</Form.Label>
                     <Form.Control name="id" value={formData.id} onChange={handleChange} />
                 </Form.Group>
-               <Form.Group className="mb-3">
-                           <Form.Label>הרשאת גישה</Form.Label>
-                           <Form.Select
-                            name="confirm"
-                             value={formData.confirm}
-                             onChange={handleChange}
-                             required
-                           >
-                             <option value="">בחר הרשאה</option>
-                             <option value="0">0 - מנהלת מערכת</option>
-                             <option value="1">1 - גישה לכל התלמידות</option>
-                             <option value="2">2 - למחנכת (יש להזין כיתת חינוך)</option>
-                             <option value="3">3 - עובדת כללית (אין גישה לפרטי התלמידות ועריכתן)</option>
-                           </Form.Select>
-                         </Form.Group>
-             
-                         {formData.confirm === '2' && (
-                           <Form.Group className="mb-3">
-                             <Form.Label>כיתת חינוך</Form.Label>
-                             <Form.Control
-                             name="class"
-                               type="text"
-                               placeholder="כיתה"
+                <Form.Group className="mb-3">
+                    <Form.Label>הרשאת גישה</Form.Label>
+                    <Form.Select
+                        name="confirm"
+                        value={formData.confirm}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">בחר הרשאה</option>
+                        <option value="0">0 - מנהלת מערכת</option>
+                        <option value="1">1 - גישה לכל התלמידות</option>
+                        <option value="2">2 - למחנכת (יש להזין כיתת חינוך)</option>
+                        <option value="3">3 - עובדת כללית (אין גישה לפרטי התלמידות ועריכתן)</option>
+                    </Form.Select>
+                </Form.Group>
+
+                {formData.confirm === '2' && (
+                    <Form.Group className="mb-3">
+                        <Form.Label>כיתת חינוך</Form.Label>
+                        <Form.Control
+                            name="class"
+                            type="text"
+                            placeholder="כיתה"
                             //    value={formData.class}
-                               onChange={handleChange}
-                               required={formData.confirm === '2'}
-                             />
-                           </Form.Group>
-                         )}
+                            onChange={handleChange}
+                            required={formData.confirm === '2'}
+                        />
+                    </Form.Group>
+                )}
 
 
                 <Button className="mt-3" type="submit">שמור</Button>

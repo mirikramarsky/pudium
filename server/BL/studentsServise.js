@@ -43,6 +43,8 @@ class SudentsService extends BaseService{
     }
     async getStudentsByParams(params) {          
         let result = await this.repository.getStudentsByParams(params);
+        console.log(result);
+        
         if (result && result.length != 0)
             return result;
        throw new idError('this id is not exist');
