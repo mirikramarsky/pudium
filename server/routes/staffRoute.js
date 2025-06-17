@@ -14,20 +14,20 @@ router.get('/', async (req, res,next)=>{
 catch{
     next();
 }});
-router.get('/:id', async(req, res,next)=>{
-    try{
-        let result = await staffService.getById(req.params.id)
-        if(result != undefined)
-            res.json(result || []);
-        else
-            res.status(204).send();
-    }
-    catch(err){
-         if (err instanceof idError)
-            res.status(400).send(err.message);
-        next(err);
-    }
-});
+// router.get('/:id', async(req, res,next)=>{
+//     try{
+//         let result = await staffService.getById(req.params.id)
+//         if(result != undefined)
+//             res.json(result || []);
+//         else
+//             res.status(204).send();
+//     }
+//     catch(err){
+//          if (err instanceof idError)
+//             res.status(400).send(err.message);
+//         next(err);
+//     }
+// });
 router.get('/schoolId/:id', async(req, res,next)=>{
     try{
         let result = await staffService.getBySchoolId(req.params.id)
@@ -59,7 +59,7 @@ router.get('/schoolId/:schoolId/id/:id', async(req, res,next)=>{
 router.post('/', async(req, res,next)=>{
 try{
     let result = await staffService.insert(req.body);
-    if(result.location != null)
+    if(result != null)
         res.json(result)
     else
         res.status(204).send();
@@ -85,20 +85,20 @@ router.put('/:id', async(req, res,next)=>{
         next(err);
     }
 });
-router.put('/changeName/:id', async(req, res,next)=>{
-    try{
-        let result = await staffService.updateName(req.params.id, req.body);
-        if(result != undefined)
-            res.send(result)
-        else
-            res.status(204).send();
-    }
-    catch(err){
-         if (err instanceof idError)
-            res.status(400).send(err.message);
-        next(err);
-    }
-});
+// router.put('/changeName/:id', async(req, res,next)=>{
+//     try{
+//         let result = await staffService.updateName(req.params.id, req.body);
+//         if(result != undefined)
+//             res.send(result)
+//         else
+//             res.status(204).send();
+//     }
+//     catch(err){
+//          if (err instanceof idError)
+//             res.status(400).send(err.message);
+//         next(err);
+//     }
+// });
 router.delete('/:id', async(req, res,next)=>{
     try{
         let result = await staffService.delete(req.params.id, req.body.schoolId);

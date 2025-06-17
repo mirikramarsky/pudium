@@ -17,12 +17,20 @@ class StaffService extends BaseService{
             return result;
        throw new idError('this id is not exist');
     }
-    async updateName(id, updatedFields) {   
-        let result = await this.repository.updateName(id, updatedFields);
-         if (result != 0)
-            return result;
-       throw new idError('this id is not exist');
+     async insert(params){
+        if(!params.class)
+            params.class = "all"
+        let result = await this.repository.insert(params);
+        if(result)
+            return result
+        throw new idError("this id is exist")
     }
+    // async updateName(id, updatedFields) {   
+    //     let result = await this.repository.updateName(id, updatedFields);
+    //      if (result != 0)
+    //         return result;
+    //    throw new idError('this id is not exist');
+    // }
     async delete(id,schoolId) {   
         let result = await this.repository.delete(id, schoolId);
         if(result != 0)
