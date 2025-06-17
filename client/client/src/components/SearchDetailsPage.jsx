@@ -5,15 +5,15 @@ import { Container, Table, Alert, Spinner, Row, Col, Card, Button } from 'react-
 
 const getPriorityColor = (priority) => {
     switch (priority) {
-        case 0: return '#d3d3d3'; // אפור
-        case 1: return 'white';   // לבן
-        case 2: return '#e0f7fa'; // תכלת
-        case 3: return '#b2ebf2'; // תכלת כהה
-        case 4: return '#81d4fa'; // כחול בהיר
-        case 5: return '#4fc3f7'; // כחול
-        case 6: return '#0288d1'; // כחול כהה
-        case 7: return '#9575cd'; // סגול
-        case 8: return '#e57373'; // אדום
+        case 0: return '#d3d3d3';
+        case 1: return 'white';
+        case 2: return '#e0f7fa';
+        case 3: return '#b2ebf2';
+        case 4: return '#81d4fa';
+        case 5: return '#4fc3f7';
+        case 6: return '#0288d1';
+        case 7: return '#9575cd';
+        case 8: return '#e57373';
         default: return 'white';
     }
 };
@@ -22,6 +22,7 @@ const SearchDetailsPage = () => {
     const { id } = useParams();
     const [search, setSearch] = useState(null);
     const [students, setStudents] = useState([]);
+    const [shownStudentIds, setShownStudentIds] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [mailSent, setMailSent] = useState(false);
@@ -36,29 +37,37 @@ const SearchDetailsPage = () => {
                     return;
                 }
 
-                // שליפת פרטי החיפוש לפי מזהה
+                // שליפת פרטי החיפוש
                 const resSearch = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
                 const searchData = resSearch.data[0];
                 setSearch(searchData);
-                // בניית פרמטרים לשליפת תלמידות לפי פרטי החיפוש
+
+                // קריאה ראשונית - טען את המזהים השמורים אם קיימים
+                const savedIds = JSON.parse(sessionStorage.getItem(`shown-${id}`) || '[]');
+                setShownStudentIds(savedIds);
+
+                // שליפת תלמידות חדשות בלבד
                 const searchParams = {
                     myField: searchData.field,
-                    schoolId: schoolId,
+                    schoolId,
                     count: searchData.countstudents,
                     classes: searchData.classes ? JSON.parse(searchData.classes) : [],
+                    excludeIds: savedIds
                 };
 
-                
-                
-                // שליפת התלמידות לפי פרמטרים
                 const resStudents = await axios.post(
                     'https://pudium-production.up.railway.app/api/podium/students/params',
                     searchParams
                 );
                 const foundStudents = resStudents.data;
-                console.log(foundStudents);
-                
-                setStudents(foundStudents);
+
+                // עדכון סטייט ורשימת מזהים
+                const newIds = foundStudents.map(s => s.id);
+                const updatedIds = [...savedIds, ...newIds];
+                setStudents(prev => [...prev, ...foundStudents]);
+                setShownStudentIds(updatedIds);
+                sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
+
             } catch (err) {
                 console.error('שגיאה בטעינה:', err);
                 setError('שגיאה בטעינת החיפוש או התלמידות');
@@ -70,24 +79,63 @@ const SearchDetailsPage = () => {
         fetchSearchAndStudents();
     }, [id]);
 
-
-
-    // useEffect(() => {
-    //     return () => {
-    //         // sessionStorage.removeItem(`search-${id}`);
-    //         // sessionStorage.removeItem(`students-${id}`);
-    //     };
-    // }, []);
-
-
-    const handleDeleteStudentFromSearch = async (studentSearchId) => {
+    const handleDeleteStudentFromSearch = async (studentSearchId, studentId) => {
         try {
-            const updated = students.filter(s => s.searchstudentid !== studentSearchId);
-            setStudents(updated);
-            // sessionStorage.setItem(`students-${id}`, JSON.stringify(updated));
+            // 1. הסרת התלמידה מהטבלה
+            const updatedStudents = students.filter(s => s.searchstudentid !== studentSearchId);
+            setStudents(updatedStudents);
+
+            // 2. הסרה מה-sessionStorage
+            const updatedIds = shownStudentIds.filter(id => id !== studentId);
+            setShownStudentIds(updatedIds);
+            sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
+
+            // 3. שליפת תלמידה חדשה והוספה
+            const schoolId = localStorage.getItem('schoolId');
+            const searchParams = {
+                myField: search.field,
+                schoolId,
+                count: 1,
+                classes: search.classes ? JSON.parse(search.classes) : [],
+                excludeIds: updatedIds
+            };
+
+            const res = await axios.post(
+                'https://pudium-production.up.railway.app/api/podium/students/params',
+                searchParams
+            );
+
+            const newStudent = res.data[0];
+            if (newStudent) {
+                setStudents(prev => [...prev, newStudent]);
+                const newIds = [...updatedIds, newStudent.id];
+                setShownStudentIds(newIds);
+                sessionStorage.setItem(`shown-${id}`, JSON.stringify(newIds));
+            }
+            else {
+                alert("אין עוד תלמידות מתאימות לפרמטרים");
+            }
         } catch (err) {
-            console.error('שגיאה במחיקה:', err);
-            alert('שגיאה במחיקת תלמידה מהחיפוש');
+            console.error('שגיאה בהבאת תלמידה חלופית:', err);
+            alert('שגיאה בשליפת תלמידה חלופית');
+        }
+    };
+
+
+    const handleFinalSave = async () => {
+        try {
+            const payload = students.map(s => ({
+                searchId: id,
+                studentId: s.id
+            }));
+
+            const studentsIds = payload.map(s => s.studentId);
+            console.log(studentsIds);
+            await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: studentsIds });
+            alert('התלמידות נשמרו בהצלחה!');
+        } catch (err) {
+            console.error('שגיאה בשמירה הסופית:', err);
+            alert('שגיאה בשמירה הסופית');
         }
     };
 
@@ -102,10 +150,10 @@ const SearchDetailsPage = () => {
                 subject: `אישור חיפוש - ${search.searchname}`,
                 searchId: id,
                 searchDetails: search,
-                students: students,
+                students,
                 approveUrl: `https://pudium-production.up.railway.app/api/podium/approve/${id}`,
                 deleteUrl: `https://pudium-production.up.railway.app/api/podium/searches/${id}`,
-                editUrl: `http://localhost:5173/search-results/${id}` // שנה לפי ה-URL שלך בפרודקשן
+                editUrl: `http://localhost:5173/search-results/${id}`
             };
 
             await axios.post(`https://pudium-production.up.railway.app/api/podium/searches/send-approval-mail/${id}/school/${schoolId}`, emailContent);
@@ -116,25 +164,38 @@ const SearchDetailsPage = () => {
         }
     };
 
+    const loadMoreStudents = async () => {
+        try {
+            const schoolId = localStorage.getItem('schoolId');
+            const searchParams = {
+                myField: search.field,
+                schoolId,
+                count: search.countstudents,
+                classes: search.classes ? JSON.parse(search.classes) : [],
+                excludeIds: shownStudentIds
+            };
+
+            const resStudents = await axios.post(
+                'https://pudium-production.up.railway.app/api/podium/students/params',
+                searchParams
+            );
+            const newStudents = resStudents.data;
+
+            const newIds = newStudents.map(s => s.id);
+            const updatedIds = [...shownStudentIds, ...newIds];
+            setStudents(prev => [...prev, ...newStudents]);
+            setShownStudentIds(updatedIds);
+            sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
+
+        } catch (err) {
+            console.error('שגיאה בשליפת תלמידות נוספות:', err);
+            alert('שגיאה בשליפת תלמידות נוספות');
+        }
+    };
+
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-    const handleFinalSave = async () => {
-        try {
-            const payload = students.map(s => ({
-                searchId: id,
-                studentId: s.id
-            }));
-            
-            const studentsIds = payload.map(student => student.studentId);
-            console.log(studentsIds);
-            await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, {studentsid :studentsIds});
-            alert('התלמידות נשמרו בהצלחה!');
-        } catch (err) {
-            console.error('שגיאה בשמירה הסופית:', err);
-            alert('שגיאה בשמירה הסופית');
-        }
-    };
 
     return (
         <Container className="mt-4">
@@ -180,35 +241,40 @@ const SearchDetailsPage = () => {
                                         <Button
                                             variant="danger"
                                             size="sm"
-                                            onClick={() => handleDeleteStudentFromSearch(student.searchstudentid)}
+                                            onClick={() => handleDeleteStudentFromSearch(student.searchstudentid, student.id)}
                                         >
                                             מחק
                                         </Button>
+
                                     </td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.severalpriority}</td>
+                                    <td>{student.severalpriority}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.field4priority) }}>{student.field4}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.field3priority) }}>{student.field3}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.field2priority) }}>{student.field2}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.field1priority) }}>{student.field1}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.class} {student.grade}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.lastname}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.firstname}</td>
+                                    <td>{student.class} {student.grade}</td>
+                                    <td>{student.lastname}</td>
+                                    <td>{student.firstname}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </Table>
 
-                    <div className="text-end">
-                        <Button
-                            variant="success"
-                            onClick={handleSendApprovalEmail}
-                            disabled={mailSent}
-                        >
-                            {mailSent ? 'המייל נשלח' : 'שלח מייל לאישור ושמירת החיפוש'}
-                        </Button>
-                        <Button variant="primary" onClick={handleFinalSave}>
-                            שמירה סופית של החיפוש
-                        </Button>
+                    <div className="text-end d-flex justify-content-between mt-3">
+                        <Button variant="secondary" onClick={loadMoreStudents}>שלוף עוד תלמידות</Button>
+                        <div>
+                            <Button
+                                variant="success"
+                                onClick={handleSendApprovalEmail}
+                                disabled={mailSent}
+                                className="ms-2"
+                            >
+                                {mailSent ? 'המייל נשלח' : 'שלח מייל לאישור ושמירת החיפוש'}
+                            </Button>
+                            <Button variant="primary" onClick={handleFinalSave}>
+                                שמירה סופית של החיפוש
+                            </Button>
+                        </div>
                     </div>
                 </>
             )}

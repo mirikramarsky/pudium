@@ -15,12 +15,6 @@ class StudentsRepository {
     async getStudentsByParams(params) {
         const values = [];
 
-        console.log(params.myField);
-        console.log(params.schoolId);
-        console.log(params.classes);
-        console.log(params.count);
-        console.log(params.excludeIds);  // ⬅️ חדש
-
         values.push(params.myField);       // $1
         values.push(params.schoolId);      // $2
         values.push(params.classes);       // $3
@@ -123,10 +117,24 @@ class StudentsRepository {
         let result;
         const resultp = await pool.query(`SELECT severalpriority FROM students WHERE id = $1`, [id]);
         console.log(resultp);
-        if(resultp > 1)
-         result = await pool.query(`UPDATE students SET severalpriority = $1 WHERE id = $2`, [resultp-1, id]);
+        if (resultp > 1)
+            result = await pool.query(`UPDATE students SET severalpriority = $1 WHERE id = $2`, [resultp - 1, id]);
         return result;
     }
+    async goUpGrade(schoolid) {
+        const query = `
+    UPDATE students
+    SET class = CASE 
+      WHEN class = 'ט' THEN 'י'
+      WHEN class = 'י' THEN 'יא'
+      WHEN class = 'יא' THEN 'יב'
+      ELSE class
+    END
+    WHERE schoolid = $1
+  `;
+        await pool.query(query, [schoolid]);
+    }
+
     async delete(id) {
         let student = await pool.query(` DELETE FROM students
             WHERE id = $1`, [id]);

@@ -9,9 +9,10 @@ const StaffHome = () => {
   const staffId = localStorage.getItem('staffId');
   const schoolId = localStorage.getItem('schoolId');
   console.log(staffId);
-  
+
   const [showAdminButtons, setShowAdminButtons] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showClassesButton, setShowClassesButton] = useState(true);
 
   useEffect(() => {
     const fetchStaff = async () => {
@@ -20,10 +21,12 @@ const StaffHome = () => {
           `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
         );
         console.log(response.data[0].confirm);
-        
+
         if (response.data[0].confirm == 0) {
           setShowAdminButtons(true);
         }
+        if (response.data[0].confirm == 3)
+          setShowClassesButton(false)
       } catch (err) {
         console.error('שגיאה בשליפת נתוני אשת צוות:', err);
       } finally {
@@ -40,9 +43,10 @@ const StaffHome = () => {
     <Container className="mt-5 text-center">
       <h2>שלום ל{name}</h2>
 
+      {showClassesButton &&(
       <Button variant="primary" className="m-3" onClick={() => navigate('/classes')}>
         מילוי פרטים - הצגת כיתות
-      </Button>
+      </Button>)}
 
       <Button variant="secondary" className="m-3" onClick={() => navigate('/data-fetch')}>
         שליפת נתונים
