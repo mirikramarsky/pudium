@@ -7,6 +7,7 @@ const StaffHome = () => {
   const navigate = useNavigate();
   const name = localStorage.getItem('staffName');
   const staffId = localStorage.getItem('staffId');
+  const schoolId = localStorage.getItem('schoolId');
   console.log(staffId);
   
   const [showAdminButtons, setShowAdminButtons] = useState(false);
@@ -16,7 +17,7 @@ const StaffHome = () => {
     const fetchStaff = async () => {
       try {
         const response = await axios.get(
-          `https://pudium-production.up.railway.app/api/podium/staff/${staffId}`
+          `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
         );
         console.log(response.data[0].confirm);
         

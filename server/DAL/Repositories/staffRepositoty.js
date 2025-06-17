@@ -17,7 +17,7 @@ class StaffRepository{
         return staff.rows;
     }
     async insert(params){
-        let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm, class) VALUES ($1,$2,$3,$4)`,[params.id, params.schoolId,
+        let staff = await pool.query(` INSERT INTO staff (id, schoolId, name, confirm, class) VALUES ($1,$2,$3,$4,$5)`,[params.id, params.schoolId,
             params.name, params.confirm, params.class]);
         return staff;
     }
