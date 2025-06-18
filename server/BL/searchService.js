@@ -38,13 +38,11 @@ class SearchService extends BaseService {
         if (!search) throw new Error('חיפוש לא נמצא');
 
         const school = await schoolRepository.getById(schoolid);
-        console.log(school[0]);
         const schoolEmail = school[0].emailaddress;
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
-
+        console.log(dataFromClient);
+        
         const students = JSON.parse(dataFromClient.students)
-        // console.log(JSON.parse(search.classes).join(', '));
-        console.log(search[0].classes);
         const parsed = JSON.parse(search[0].classes);
         const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
         console.log(students);
