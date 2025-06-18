@@ -13,6 +13,7 @@ const SearchFormPage = () => {
     field: '',
     classes: [],
     staffName: localStorage.getItem('staffName') || '',
+    searcherId:localStorage.getItem('staffId') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0
   });
   const [fieldOptions, setFieldOptions] = useState([]);
@@ -109,6 +110,7 @@ const SearchFormPage = () => {
         countstudents:  Number(formData.amount),
         field: formData.field,
         classes: formData.classes,
+        searcherId: formData.searcherId,
         searchername: formData.staffName
       };
 
@@ -144,6 +146,7 @@ console.log(fieldOptions);
         <Col><h4>טופס חיפוש תלמידות</h4></Col>
         <Col className="text-end">
           <Button onClick={() => navigate('/recent-searches')}>חיפושים אחרונים 🔎</Button>
+           <Button variant='secondary' onClick={() => navigate('/')}>חיפושים מושהים 🔎</Button>
         </Col>
       </Row>
 

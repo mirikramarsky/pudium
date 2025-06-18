@@ -288,7 +288,7 @@
 // export default SearchDetailsPage;
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Table, Alert, Spinner, Row, Col, Card, Button } from 'react-bootstrap';
 
@@ -308,6 +308,7 @@ const getPriorityColor = (priority) => {
 };
 
 const SearchDetailsPage = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const [search, setSearch] = useState(null);
     const [students, setStudents] = useState([]);
@@ -331,35 +332,42 @@ const SearchDetailsPage = () => {
                 const searchData = resSearch.data[0];
                 setSearch(searchData);
 
-                const savedIds = JSON.parse(sessionStorage.getItem(`shown-${id}`) || '[]');
-                setShownStudentIds(savedIds);
+                const allShownKey = `shown_${id}`;
+                const activeKey = `active_${id}`;
+                const savedAllShown = JSON.parse(localStorage.getItem(allShownKey) || '[]');
+                const savedActive = JSON.parse(localStorage.getItem(activeKey) || '[]');
 
-                const searchParams = {
-                    myField: searchData.field,
-                    schoolId,
-                    count: searchData.countstudents,
-                    classes: searchData.classes ? JSON.parse(searchData.classes) : [],
-                    excludeIds: savedIds
-                };
-                console.log(searchParams);
+                if (savedAllShown.length > 0 && savedActive.length > 0) {
+                    const resAllStudents = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/`);
+                    const allStudents = resAllStudents.data;
+                    const filteredActive = allStudents.filter(s => savedActive.includes(s.id));
+                    const filteredAll = allStudents.filter(s => savedAllShown.includes(s.id));
+                    setStudents(filteredActive);
+                    setAllShownStudents(filteredAll);
+                    setShownStudentIds(savedAllShown);
+                } else {
+                    const searchParams = {
+                        myField: searchData.field,
+                        schoolId,
+                        count: searchData.countstudents,
+                        classes: searchData.classes ? JSON.parse(searchData.classes) : [],
+                        excludeIds: []
+                    };
 
-
-                const resStudents = await axios.post(
-                    'https://pudium-production.up.railway.app/api/podium/students/params',
-                    searchParams
-                );
-                const foundStudents = resStudents.data;
-
-                setStudents(foundStudents);
-                setAllShownStudents(foundStudents);
-
-                const newIds = foundStudents.map(s => s.id);
-                const updatedIds = [...savedIds, ...newIds];
-                setShownStudentIds(updatedIds);
-                sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
+                    const resStudents = await axios.post(
+                        'https://pudium-production.up.railway.app/api/podium/students/params',
+                        searchParams
+                    );
+                    const foundStudents = resStudents.data;
+                    const newIds = foundStudents.map(s => s.id);
+                    setStudents(foundStudents);
+                    setAllShownStudents(foundStudents);
+                    setShownStudentIds(newIds);
+                    localStorage.setItem(allShownKey, JSON.stringify(newIds));
+                    localStorage.setItem(activeKey, JSON.stringify(newIds));
+                }
 
             } catch (err) {
-                console.log("❌ שגיאת שליחה:", err.response?.data || err.message);
                 console.error('שגיאה בטעינה:', err);
                 setError('שגיאה בטעינת החיפוש או התלמידות');
             } finally {
@@ -373,14 +381,12 @@ const SearchDetailsPage = () => {
     const handleDeleteStudentFromSearch = async (student, studentId) => {
         try {
             const schoolId = localStorage.getItem('schoolId');
-
-            // כאן את שולחת את excludeIds כולל התלמידה הנוכחית (שעדיין לא הוסרה)
             const searchParams = {
                 myField: search.field,
                 schoolId,
                 count: 1,
                 classes: search.classes ? JSON.parse(search.classes) : [],
-                excludeIds: [...shownStudentIds, studentId]  // מוסיפה אותה רק לשליחה
+                excludeIds: [...shownStudentIds, studentId]
             };
 
             const res = await axios.post(
@@ -390,36 +396,28 @@ const SearchDetailsPage = () => {
 
             const newStudent = res.data[0];
 
-            // ואז מעדכנת את המצביעים
             const updatedStudents = students.filter(s => s.id !== studentId);
             setStudents([...updatedStudents, ...(newStudent ? [newStudent] : [])]);
+            localStorage.setItem(`active_${id}`, JSON.stringify([...updatedStudents, ...(newStudent ? [newStudent] : [])].map(s => s.id)));
 
-            const updatedIds = [...shownStudentIds, ...(newStudent ? [newStudent.id] : [])];
-            setShownStudentIds(updatedIds);
-            sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
-
-            setAllShownStudents(prev => [
-                ...prev.filter(s => s.id !== studentId),
-                ...(newStudent ? [newStudent] : [])
-            ]);
-
-            if (!newStudent) {
-                alert("אין עוד תלמידות מתאימות לפרמטרים");
+            if (newStudent) {
+                const updatedAll = [...shownStudentIds, newStudent.id];
+                setAllShownStudents(prev => [...prev.filter(s => s.id !== studentId), newStudent]);
+                setShownStudentIds(updatedAll);
+                localStorage.setItem(`shown_${id}`, JSON.stringify(updatedAll));
             }
+
+            if (!newStudent) alert("אין עוד תלמידות מתאימות לפרמטרים");
 
         } catch (err) {
             console.error('שגיאה בהבאת תלמידה חלופית:', err);
-            alert( err.response?.data || err.message);
+            alert(err.response?.data || err.message);
         }
     };
-
 
     const handleFinalSave = async () => {
         try {
             const studentsIds = students.map(s => s.id);
-            console.log(studentsIds);
-            console.log(JSON.stringify(studentsIds) );
-            
             await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
             alert('התלמידות נשמרו בהצלחה!');
         } catch (err) {
@@ -445,7 +443,10 @@ const SearchDetailsPage = () => {
                 editUrl: `http://localhost:5173/search-results/${id}`
             };
 
-            await axios.post(`https://pudium-production.up.railway.app/api/podium/searches/send-approval-mail/${id}/school/${schoolId}`, emailContent);
+            await axios.post(
+                `https://pudium-production.up.railway.app/api/podium/searches/send-approval-mail/${id}/school/${schoolId}`,
+                emailContent
+            );
             setMailSent(true);
         } catch (err) {
             console.error('שגיאה בשליחת המייל:', err);
@@ -469,24 +470,27 @@ const SearchDetailsPage = () => {
                 searchParams
             );
             const newStudents = resStudents.data;
-
             const newIds = newStudents.map(s => s.id);
-            const updatedIds = [...shownStudentIds, ...newIds];
-            setStudents(prev => [...prev, ...newStudents]);
-            setShownStudentIds(updatedIds);
+            const updatedAll = [...shownStudentIds, ...newIds];
+            const updatedActive = [...students, ...newStudents];
+
+            setStudents(updatedActive);
             setAllShownStudents(prev => [...prev, ...newStudents]);
-            sessionStorage.setItem(`shown-${id}`, JSON.stringify(updatedIds));
+            setShownStudentIds(updatedAll);
+            localStorage.setItem(`shown_${id}`, JSON.stringify(updatedAll));
+            localStorage.setItem(`active_${id}`, JSON.stringify(updatedActive.map(s => s.id)));
 
         } catch (err) {
             console.error('שגיאה בשליפת תלמידות נוספות:', err);
             alert('שגיאה בשליפת תלמידות נוספות');
         }
     };
-
+    const  waitTheSearch = async ()=>{
+        navigate('../../data-fetch')
+    }
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-
     return (
         <Container className="mt-4">
             <h4>פרטי חיפוש: {search.searchname}</h4>
@@ -564,6 +568,9 @@ const SearchDetailsPage = () => {
                             <Button variant="primary" onClick={handleFinalSave}>
                                 שמירה סופית של החיפוש
                             </Button>
+                            <Button variant="dark" onClick={waitTheSearch}>
+                                השהיית החיפוש
+                            </Button>
                         </div>
                     </div>
                 </>
@@ -573,3 +580,4 @@ const SearchDetailsPage = () => {
 };
 
 export default SearchDetailsPage;
+

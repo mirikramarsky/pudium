@@ -22,35 +22,56 @@ const StudentForm = () => {
 
     const [classOptions, setClassOptions] = useState([]);
 
-     const [fields, setFields] = useState();
-    useEffect(async() => {
-        const schoolId = localStorage.getItem('schoolId');
-        if (!schoolId) return;
-        try{
-         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
-        const schoolFields = response.data[0]?.fields || [];
-        setFieldOptions(schoolFields);
-        const localClasses = localStorage.getItem('classes');
-        if (localClasses) {
-            setClassOptions(JSON.parse(localClasses));
-        } else {
-            axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`)
-                .then(res => {
+    const [fields, setFields] = useState([]);
+    useEffect(() => {
+        const fetchFieldsAndClasses = async () => {
+            const schoolId = localStorage.getItem('schoolId');
+            if (!schoolId) return;
+
+            try {
+                const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+                const schoolFields = JSON.parse(response.data[0]?.fields);
+                
+                if (!schoolFields || schoolFields.length === 0) {
+                    throw new Error("לא נמצאו תחומים לבית הספר הזה");
+                }
+
+                setFields(schoolFields);
+
+                const localClasses = localStorage.getItem('classes');
+                if (localClasses) {
+                    setClassOptions(JSON.parse(localClasses));
+                } else {
+                    const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
                     const classes = res.data || [];
                     localStorage.setItem('classes', JSON.stringify(classes));
                     setClassOptions(classes);
-                })
-                .catch(err => {
-                    console.error('שגיאה בשליפת כיתות:', err);
-                });
-        }}
-        catch(err){
-            console.error(`error message: ${err}`)
-        }
+                }
+            } catch (err) {
+                console.error("שגיאה בטעינת התחומים או הכיתות:", err);
+                alert("שגיאה בטעינת הנתונים. נסי לרענן את הדף או לבדוק את החיבור לשרת.");
+            }
+        };
+
+        fetchFieldsAndClasses();
     }, []);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        // בדיקה אם מדובר בשדה תחום
+        if (name.startsWith("field")) {
+            const selectedValues = Object.entries(formData)
+                .filter(([key]) => key.startsWith("field") && key !== name)
+                .map(([_, val]) => val);
+
+            if (selectedValues.includes(value)) {
+                alert("אין אפשרות לבחור את אותו תחום פעמיים");
+                return;
+            }
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -103,34 +124,50 @@ const StudentForm = () => {
         }
     };
 
-    const renderFieldSelect = (fieldName, otherFieldName) => (
-        <>
-            <Form.Group className="mb-3">
-                <Form.Label>תחום</Form.Label>
-                <Form.Select
-                    name={fieldName}
-                    value={formData[fieldName]}
-                    onChange={handleChange}
-                    required
-                >
-                    <option value="" disabled hidden>בחרי תחום</option>
-                    {fields.map((field, i) => (
-                        <option key={i} value={field}>{field}</option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            {formData[fieldName] === 'אחר' && (
-                <Form.Control
-                    type="text"
-                    name={otherFieldName}
-                    placeholder="כתבי את התחום האחר"
-                    value={formData[otherFieldName]}
-                    onChange={handleChange}
-                    required
-                />
-            )}
-        </>
-    );
+    const renderFieldSelect = (fieldName, otherFieldName) => {
+        const selectedFields = Object.entries(formData)
+            .filter(([key]) => key.startsWith("field") && key !== fieldName)
+            .map(([_, val]) => val);
+
+        const availableFields = fields?.filter(field => !selectedFields.includes(field)) || [];
+        if (fields.length === 0) {
+            return (
+                <div className="text-center mt-5">
+                    <div className="spinner-border text-primary" role="status"></div>
+                    <p className="mt-3">טוען תחומים...</p>
+                </div>
+            );
+        }
+        return (
+            <>
+                <Form.Group className="mb-3">
+                    <Form.Label>תחום</Form.Label>
+                    <Form.Select
+                        name={fieldName}
+                        value={formData[fieldName]}
+                        onChange={handleChange}
+                    >
+                        <option value="" disabled hidden>בחרי תחום</option>
+                        {availableFields.map((field, i) => (
+                            <option key={i} value={field}>{field}</option>
+                        ))}
+                        <option value="אחר">אחר</option>
+                    </Form.Select>
+                </Form.Group>
+                {formData[fieldName] === 'אחר' && (
+                    <Form.Control
+                        type="text"
+                        name={otherFieldName}
+                        placeholder="כתבי את התחום האחר"
+                        value={formData[otherFieldName]}
+                        onChange={handleChange}
+                        required
+                    />
+                )}
+            </>
+        );
+    };
+
 
     return (
         <Container className="mt-5">
@@ -166,7 +203,7 @@ const StudentForm = () => {
                 <Row>
                     <Col md={6}>
                         <Form.Group className="mb-3">
-                            <Form.Label>מספר זהות *</Form.Label>
+                            <Form.Label> קוד תלמידה *</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="id"

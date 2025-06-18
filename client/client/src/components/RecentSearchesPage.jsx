@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom';
 
 const RecentSearchesPage = () => {
   const navigate = useNavigate();
- const [fieldOptions, setFieldOptions] = useState({});
+  const [fieldOptions, setFieldOptions] = useState([]);
   const [searches, setSearches] = useState([]);
   const [filteredSearches, setFilteredSearches] = useState([]);
   const [error, setError] = useState(null);
+  const [fieldError, setFieldError] = useState(null);
   const staffId = localStorage.getItem('staffId');
-    const schoolId = localStorage.getItem('schoolId');
+  const schoolId = localStorage.getItem('schoolId');
+
   const [filters, setFilters] = useState({
     searchname: '',
     searchername: '',
@@ -20,27 +22,33 @@ const RecentSearchesPage = () => {
     classes: [],
   });
 
-  const [classesList, setClassesList] = useState([]);
   const [classesByLetter, setClassesByLetter] = useState({});
   const [expandedLetter, setExpandedLetter] = useState(null);
- const [showAdminButtons, setShowAdminButtons] = useState(false);
+
   useEffect(() => {
-    const fetchClasses = async () => {
-    
-      if (!schoolId) return;
+    const fetchInitialData = async () => {
       try {
-         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
-        const schoolFields = response.data[0]?.fields || [];
-        setFieldOptions(schoolFields);
+        if (!schoolId) return;
+
+        // שליפת תחומים
+        const schoolRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+        const fields = schoolRes.data[0]?.fields;
+
+        if (!fields || !Array.isArray(fields)) {
+          setFieldError('שגיאה בטעינת התחומים מהשרת');
+        } else {
+          setFieldOptions(fields);
+        }
+
+        // שליפת כיתות
         let classList;
-        const localClasses = localStorage.getItem('classes');
-        if (localClasses) {
-          classList = JSON.parse(localClasses);
+        const cached = localStorage.getItem('classes');
+        if (cached) {
+          classList = JSON.parse(cached);
         } else {
           const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
           classList = res.data || [];
           localStorage.setItem('classes', JSON.stringify(classList));
-
         }
 
         const byLetter = {};
@@ -49,35 +57,43 @@ const RecentSearchesPage = () => {
           if (!byLetter[letter]) byLetter[letter] = new Set();
           byLetter[letter].add(cls);
         });
-
         setClassesByLetter(byLetter);
       } catch (err) {
         console.error(err);
-        setError('שגיאה בטעינת הכיתות');
+        setError('שגיאה בטעינת נתונים');
       }
     };
-    fetchClasses();
-  }, []);
 
-  useEffect(async() => {
-    axios.get('https://pudium-production.up.railway.app/api/podium/searches/')
-      .then(res => {
-        const sorted = [...res.data].sort((a, b) => new Date(b.searchdate) - new Date(a.searchdate));
-        setSearches(sorted);
-        setFilteredSearches(sorted);
-      })
-      .catch(() => setError('שגיאה בטעינת החיפושים'));
-       const responseC = await axios.get(
+    fetchInitialData();
+  }, [schoolId]);
+
+  useEffect(() => {
+    const fetchSearches = async () => {
+      try {
+        const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
+        const allSearches = response.data || [];
+
+        const confirmRes = await axios.get(
           `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
         );
+        const confirm = confirmRes.data[0]?.confirm;
 
-        const confirm = responseC.data[0]?.confirm;
-
-        if (confirm === 2|| confirm === 3) {
-          const mySearches = searches.map.filter(s=>s.searcherid == staffId);//ראות אם עובד...
-          setSearches(mySearches);
+        let filtered = allSearches;
+        if (confirm === 2 || confirm === 3) {
+          filtered = allSearches.filter(s => s.searcherid == staffId);
         }
-  }, []);
+
+        const sorted = filtered.sort((a, b) => new Date(b.searchdate) - new Date(a.searchdate));
+        setSearches(sorted);
+        setFilteredSearches(sorted);
+      } catch (err) {
+        console.error(err);
+        setError('שגיאה בטעינת החיפושים');
+      }
+    };
+
+    fetchSearches();
+  }, [schoolId, staffId]);
 
   useEffect(() => {
     let results = [...searches];
@@ -98,10 +114,10 @@ const RecentSearchesPage = () => {
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
 
     if (filters.classes.length > 0) {
-      results = results.filter(search => {
-        if (!search.classes || !Array.isArray(search.classes)) return false;
-        return search.classes.some(cls => filters.classes.includes(cls));
-      });
+      results = results.filter(search =>
+        Array.isArray(search.classes) &&
+        search.classes.some(cls => filters.classes.includes(cls))
+      );
     }
 
     setFilteredSearches(results);
@@ -155,6 +171,7 @@ const RecentSearchesPage = () => {
       <h4 className="mb-4">חיפושים אחרונים</h4>
 
       {error && <Alert variant="danger">{error}</Alert>}
+      {fieldError && <Alert variant="warning">{fieldError}</Alert>}
 
       <Form className="mb-4">
         <Row className="g-3">
@@ -200,7 +217,7 @@ const RecentSearchesPage = () => {
           </Col>
 
           <Col md={2}>
-            <Form.Label>כיתה (בחר אות או כיתה מדויקת)</Form.Label>
+            <Form.Label>כיתה</Form.Label>
             <div>
               {Object.keys(classesByLetter).sort().map(letter => (
                 <div key={letter} style={{ marginBottom: '5px' }}>
@@ -209,11 +226,7 @@ const RecentSearchesPage = () => {
                     size="sm"
                     onClick={() => selectAllInLetter(letter)}
                   >
-                    {letter} {(() => {
-                      const allClasses = Array.from(classesByLetter[letter]);
-                      const allSelected = allClasses.every(c => filters.classes.includes(c));
-                      return allSelected ? '✓' : '';
-                    })()}
+                    {letter}
                   </Button>
                   <Button
                     variant="outline-secondary"
@@ -242,7 +255,7 @@ const RecentSearchesPage = () => {
             </div>
           </Col>
 
-          <Col md={2}>
+          <Col md={1}>
             <Form.Label>כמות</Form.Label>
             <Form.Control
               type="number"
@@ -275,11 +288,15 @@ const RecentSearchesPage = () => {
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>
-                <td>{(search.classes || []).join(', ')}</td>
+                <td>{Array.isArray(search.classes) ? search.classes.join(', ') : ''}</td>
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
                 <td>
-                  <Button variant="outline-primary" size="sm" onClick={() => navigate(`/search-results/${search.id}`)}>
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => navigate(`/search-results/${search.id}`)}
+                  >
                     צפייה
                   </Button>
                 </td>
