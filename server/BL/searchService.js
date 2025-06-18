@@ -40,9 +40,8 @@ class SearchService extends BaseService {
         const school = await schoolRepository.getById(schoolid);
         const schoolEmail = school[0].emailaddress;
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
-        console.log(dataFromClient);
         
-        const students = JSON.parse(dataFromClient.students)
+        const students = dataFromClient.students
         const parsed = JSON.parse(search[0].classes);
         const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
         console.log(students);
@@ -110,7 +109,7 @@ class SearchService extends BaseService {
             `;
 
 
-        await mailer.sendMail(schoolEmail, 'אישור חיפוש תלמידות', html);
+        await mailer.sendMail(schoolEmail, dataFromClient.subject, html);
     }
 
 }
