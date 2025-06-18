@@ -28,6 +28,20 @@ router.get('/:id', async(req, res,next)=>{
         next(err);
     }
 });
+router.get('/without/', async(req, res,next)=>{
+    try{
+        let result = await getSearchesWithStudents.getById()
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+            res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.get('/:id/students', async (req, res) => {
     try {
         const students = await getStudentsBySearchId(req.params.id);
