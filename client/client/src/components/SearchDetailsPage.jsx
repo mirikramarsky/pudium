@@ -378,7 +378,7 @@ const SearchDetailsPage = () => {
         fetchSearchAndStudents();
     }, [id]);
 
-    const handleDeleteStudentFromSearch = async (student, studentId) => {
+    const handleDeleteStudentFromSearch = async (studentId) => {
         try {
             const schoolId = localStorage.getItem('schoolId');
             const searchParams = {
@@ -418,12 +418,13 @@ const SearchDetailsPage = () => {
     const handleFinalSave = async () => {
         try {
             const studentsIds = students.map(s => s.id);
+            console.log(studentsIds);
             await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
             alert('התלמידות נשמרו בהצלחה!');
             navigate('../../data-fetch')
         } catch (err) {
-            console.error('שגיאה בשמירה הסופית:', err);
-            alert('שגיאה בשמירה הסופית');
+            console.error('שגיאה בשמירה הסופית:', err.response?.data ||err.message);
+            alert(err.response?.data ||err.message);
         }
     };
 
@@ -537,7 +538,7 @@ const SearchDetailsPage = () => {
                                         <Button
                                             variant="danger"
                                             size="sm"
-                                            onClick={() => handleDeleteStudentFromSearch(student, student.id)}
+                                            onClick={() => handleDeleteStudentFromSearch(student.id)}
                                         >
                                             מחק
                                         </Button>
