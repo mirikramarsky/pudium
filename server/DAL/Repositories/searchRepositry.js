@@ -102,6 +102,14 @@ class SearchRepository {
         `);
         return result.rows;
     }
+    async getSearchesWithoutStudents() {
+        const result = await pool.query(`
+            SELECT s.*
+            FROM searches s
+            WHERE s.id NOT IN (SELECT searchid FROM studentsinsearches)
+        `);
+        return result.rows;
+    }
     async update(id, updatedFields) {
         const sets = [];
         const values = [];

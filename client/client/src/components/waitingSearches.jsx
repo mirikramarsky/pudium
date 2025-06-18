@@ -3,7 +3,7 @@ import { Container, Form, Row, Col, Button, Table, Alert } from 'react-bootstrap
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const waitingSearches = () => {
+const WaitingSearches = () => {
   const navigate = useNavigate();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [searches, setSearches] = useState([]);
@@ -34,8 +34,8 @@ const waitingSearches = () => {
           `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
         );
         const confirm = confirmRes.data[0]?.confirm;
-        
-        const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
+
+        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/stuInSea/without/`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;
@@ -228,7 +228,7 @@ const waitingSearches = () => {
 
   return (
     <Container className="mt-4">
-      <h4 className="mb-4">חיפושים אחרונים</h4>
+      <h4 className="mb-4">חיפושים מושהים</h4>
 
       {error && <Alert variant="danger">{error}</Alert>}
       {fieldError && <Alert variant="warning">{fieldError}</Alert>}
@@ -404,4 +404,4 @@ const waitingSearches = () => {
   );
 };
 
-export default waitingSearches;
+export default WaitingSearches;

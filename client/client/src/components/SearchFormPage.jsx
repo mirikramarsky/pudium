@@ -146,7 +146,7 @@ console.log(fieldOptions);
         <Col><h4>טופס חיפוש תלמידות</h4></Col>
         <Col className="text-end">
           <Button onClick={() => navigate('/recent-searches')}>חיפושים אחרונים 🔎</Button>
-           <Button variant='secondary' onClick={() => navigate('/')}>חיפושים מושהים 🔎</Button>
+           <Button variant='secondary' onClick={() => navigate('/wait-searches')}>חיפושים מושהים 🔎</Button>
         </Col>
       </Row>
 

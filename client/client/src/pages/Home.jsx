@@ -16,6 +16,7 @@ import AddStaff from '../components/AddStaff';
 import DeleteStaff from '../components/DeleteStaff';
 import StaffManage from '../components/StaffManage';
 import FieldsManagementPage from '../components/FieldsManagementPage';
+import WaitingSearches from '../components/waitingSearches';
 
 function Home() {
     return (
@@ -34,7 +35,9 @@ function Home() {
                 <Route path="/staff/add" element={<AddStaff />} />
                 <Route path="/staff/delete" element={<DeleteStaff />} />
                 <Route path="/staff-manage" element={<StaffManage />} />
-                <Route path="/manage-fields" element={<FieldsManagementPage/>}/>
+                <Route path="/manage-fields" element={<FieldsManagementPage />} />
+                <Route path="/wait-searches" element={<WaitingSearches />} />
+
                 {/* <Route path="/search-results/:id" element={<SearchResults />} /> */}
                 <Route path="/search-results/:id" element={<SearchDetailsPage />} />
             </Routes>
