@@ -390,7 +390,7 @@ const RecentSearchesPage = () => {
                   <Button
                     variant="outline-primary"
                     size="sm"
-                    onClick={() => navigate(`/search-results/${search.id}`)}
+                    onClick={() => navigate(`/serch-result-not-to-edit/${search.id}`)}
                   >
                     צפייה
                   </Button>
