@@ -45,10 +45,10 @@ class SearchService extends BaseService {
         const students = await stuInSeaRepository.getStudentsInSearch(searchId);
         // console.log(JSON.parse(search.classes).join(', '));
         console.log(search[0].classes);
-            const parsed = JSON.parse(search.classes);
-            classes =  Array.isArray(parsed) ? parsed.join(', ') : '';
-            console.log(students);
-            
+        const parsed = JSON.parse(search.classes);
+        const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
+        console.log(students);
+
         let studentRows = students.map(s => `
         <tr>
             <td>${s.firstname}</td>
@@ -62,17 +62,19 @@ class SearchService extends BaseService {
         </tr>`).join('');
 
         const html = `
-        <p>שלום,</p>
-        <p>להלן פרטי החיפוש:</p>
-        <ul>
-            <li><b>שם מחפשת:</b> ${search[0].searchername}</li>
-            <li><b>תחום:</b> ${search[0].field}</li>
-            <li><b>כיתות:</b> ${classes.join(', ')}</li>
-            <li><b>כמות תלמידות:</b> ${search[0].countstudents}</li>
-        </ul>
-        <p>רשימת התלמידות:</p>
-        <table border="1" cellspacing="0" cellpadding="4">
-            <thead>
+            <div dir="rtl" style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; color: #333;">
+            <h2 style="color: #2c3e50;">📝 פרטי החיפוש שלך</h2>
+            
+            <ul style="list-style: none; padding: 0;">
+                <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
+                <li><strong>תחום:</strong> ${search[0].field}</li>
+                <li><strong>כיתות:</strong> ${classes}</li>
+                <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
+            </ul>
+
+            <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
+            <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; background-color: #fff; text-align: right;">
+                <thead style="background-color: #dfe6e9;">
                 <tr>
                     <th>שם פרטי</th>
                     <th>שם משפחה</th>
@@ -83,18 +85,30 @@ class SearchService extends BaseService {
                     <th>תחום 4</th>
                     <th>עדיפות כללית</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 ${studentRows}
-            </tbody>
-        </table>
-        <p>בחרו פעולה:</p>
-        <p>
-            <a href="${BASE_URL}/searches/${searchId}/approve" style="margin-left:10px;">✔️ אשר חיפוש</a>
-            <a href="${BASE_URL}/searches/${searchId}/edit" style="margin-left:10px;">📝 ערוך חיפוש</a>
-            <a href="${BASE_URL}/searches/${searchId}/delete" style="color:red; margin-left:10px;">❌ מחק חיפוש</a>
-        </p>
-    `;
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 30px;">📩 בחרו פעולה</h3>
+            <div style="margin-top: 10px;">
+                <a href="${BASE_URL}/searches/${searchId}/approve"
+                style="padding: 10px 20px; background-color: #2ecc71; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
+                ✔️ אשר חיפוש
+                </a>
+                <a href="${BASE_URL}/searches/${searchId}/edit"
+                style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
+                📝 ערוך חיפוש
+                </a>
+                <a href="${BASE_URL}/searches/${searchId}/delete"
+                style="padding: 10px 20px; background-color: #e74c3c; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
+                ❌ מחק חיפוש
+                </a>
+            </div>
+            </div>
+            `;
+
 
         await mailer.sendMail(schoolEmail, 'אישור חיפוש תלמידות', html);
     }
