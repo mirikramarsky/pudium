@@ -43,7 +43,6 @@ class SudentsService extends BaseService{
     }
     async getStudentsByParams(params) {          
         let result = await this.repository.getStudentsByParams(params);
-        console.log(result);
         if(result == [])
             throw new Error("לא נמצאו תלמידות התואמות את החיפוש");
         else if (result && result.length != 0)

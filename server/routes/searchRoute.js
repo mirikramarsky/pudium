@@ -134,7 +134,8 @@ router.get('/:id/delete', async (req, res) => {
 router.post('/:id/approve', async (req, res) => {
     const { id } = req.params;
     const studentsRaw = req.body.studentsid || '[]';
-
+    console.log("I in approve Route");
+    
     let studentsids;
     try {
         studentsids = JSON.parse(studentsRaw);
