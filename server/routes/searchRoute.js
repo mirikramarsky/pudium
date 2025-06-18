@@ -30,7 +30,7 @@ router.get('/:id', async(req, res,next)=>{
 });
 router.get('/without/', async(req, res,next)=>{
     try{
-        let result = await getSearchesWithoutStudents.getById()
+        let result = await searchService.getSearchesWithoutStudents()
         if(result != undefined)
             res.json(result || []);
         else
@@ -44,7 +44,7 @@ router.get('/without/', async(req, res,next)=>{
 });
 router.get('/with/', async(req, res,next)=>{
     try{
-        let result = await getSearchesWithStudents.getById()
+        let result = await searchService.getSearchesWithStudents()
         if(result != undefined)
             res.json(result || []);
         else

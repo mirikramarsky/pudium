@@ -35,7 +35,7 @@ const RecentSearchesPage = () => {
         );
         const confirm = confirmRes.data[0]?.confirm;
 
-        const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
+        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/with/`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;
