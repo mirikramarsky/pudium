@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const StudentForm = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
@@ -118,6 +120,7 @@ const StudentForm = () => {
                 otherField3: '',
                 otherField4: '',
             });
+            navigate('../staff-login')
         } catch (error) {
             console.error('שגיאה בשליחה:', error);
             alert('אירעה שגיאה בשליחה');

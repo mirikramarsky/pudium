@@ -115,9 +115,10 @@ class StudentsRepository {
     async decreaseSeveralPriority(id) {
         let result;
         const resultp = await pool.query(`SELECT severalpriority FROM students WHERE id = $1`, [id]);
-        console.log(resultp);
-        if (resultp > 1)
-            result = await pool.query(`UPDATE students SET severalpriority = $1 WHERE id = $2`, [resultp - 1, id]);
+        lastseveralPriority = resultp.rows[0].severalPriority;
+        console.log(lastseveralPriority);
+        if (lastseveralPriority > 1)
+            result = await pool.query(`UPDATE students SET severalpriority = $1 WHERE id = $2`, [lastseveralPriority - 1, id]);
         return result;
     }
     async goUpGrade(schoolid) {

@@ -12,7 +12,7 @@ const FieldsManagementPage = () => {
         const fetchFields = async () => {
             try {
                 const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
-                const schoolFields = response.data[0]?.fields || [];
+                const schoolFields = JSON.parse(response.data[0]?.fields) || [];
                 setFields(schoolFields);
             } catch (error) {
                 console.error('שגיאה בשליפת התחומים:', error);
@@ -51,7 +51,7 @@ const FieldsManagementPage = () => {
     const handleSave = async () => {
         try {
             await axios.put(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`, {
-                fields: fields.filter(f => f.trim() !== ''),
+                fields: JSON.stringify(fields.filter(f => f.trim() !== '')),
             });
             setMessage('✅ התחומים נשמרו בהצלחה!');
         } catch (error) {

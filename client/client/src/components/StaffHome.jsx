@@ -22,10 +22,10 @@ const StaffHome = () => {
 
         const confirm = response.data[0]?.confirm;
 
-        if (confirm === 0) {
+        if (confirm == 0) {
           setShowAdminButtons(true);
         }
-        if (confirm === 3) {
+        if (confirm == 3) {
           setShowClassesButton(false);
         }
       } catch (err) {

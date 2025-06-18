@@ -18,9 +18,6 @@ class StuInSeaService extends BaseService {
         throw new idError('this id is not exist');
     }
     async insert(searchid, studentsid) {
-        console.log(studentsid);
-        console.log(JSON.parse(studentsid));
-        
         const studentsids = JSON.parse(studentsid);
         await Promise.all(
             studentsids.map(s => studentsRepository.decreaseSeveralPriority(s))

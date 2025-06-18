@@ -294,15 +294,15 @@ import { Container, Table, Alert, Spinner, Row, Col, Card, Button } from 'react-
 
 const getPriorityColor = (priority) => {
     switch (priority) {
-        case 0: return '#d3d3d3';
-        case 1: return 'white';
+        case 0: return '#e0e0e0';
+        case 1: return '#ffffff';
         case 2: return '#e0f7fa';
         case 3: return '#b2ebf2';
-        case 4: return '#81d4fa';
-        case 5: return '#4fc3f7';
-        case 6: return '#0288d1';
-        case 7: return '#9575cd';
-        case 8: return '#e57373';
+        case 4: return '#80deea';
+        case 5: return '#a5d6a7';
+        case 6: return '#66bb6a';
+        case 7: return '#388e3c';
+        case 8: return '#ffd700';
         default: return 'white';
     }
 };
@@ -420,6 +420,7 @@ const SearchDetailsPage = () => {
             const studentsIds = students.map(s => s.id);
             await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
             alert('התלמידות נשמרו בהצלחה!');
+            navigate('../../data-fetch')
         } catch (err) {
             console.error('שגיאה בשמירה הסופית:', err);
             alert('שגיאה בשמירה הסופית');

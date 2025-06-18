@@ -27,7 +27,7 @@ const SearchFormPage = () => {
         const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
          const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
-        const schoolFields = response.data[0]?.fields || [];
+        const schoolFields = JSON.parse(response.data[0]?.fields || []);
         setFieldOptions(schoolFields);
         const localClasses = localStorage.getItem('classes');
         let classList = [];

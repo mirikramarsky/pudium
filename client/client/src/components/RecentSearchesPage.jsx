@@ -26,59 +26,21 @@ const RecentSearchesPage = () => {
   const [expandedLetter, setExpandedLetter] = useState(null);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        if (!schoolId) return;
-
-        // שליפת תחומים
-        const schoolRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
-        const fields = schoolRes.data[0]?.fields;
-
-        if (!fields || !Array.isArray(fields)) {
-          setFieldError('שגיאה בטעינת התחומים מהשרת');
-        } else {
-          setFieldOptions(fields);
-        }
-
-        // שליפת כיתות
-        let classList;
-        const cached = localStorage.getItem('classes');
-        if (cached) {
-          classList = JSON.parse(cached);
-        } else {
-          const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
-          classList = res.data || [];
-          localStorage.setItem('classes', JSON.stringify(classList));
-        }
-
-        const byLetter = {};
-        classList.forEach(cls => {
-          const letter = cls.charAt(0);
-          if (!byLetter[letter]) byLetter[letter] = new Set();
-          byLetter[letter].add(cls);
-        });
-        setClassesByLetter(byLetter);
-      } catch (err) {
-        console.error(err);
-        setError('שגיאה בטעינת נתונים');
-      }
-    };
-
-    fetchInitialData();
-  }, [schoolId]);
-
-  useEffect(() => {
     const fetchSearches = async () => {
       try {
-        const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
-        const allSearches = response.data || [];
+        if (!schoolId || !staffId) return;
 
         const confirmRes = await axios.get(
           `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
         );
         const confirm = confirmRes.data[0]?.confirm;
 
+        const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
+        const allSearches = response.data || [];
+
         let filtered = allSearches;
+
+        // סינון לפי confirm
         if (confirm === 2 || confirm === 3) {
           filtered = allSearches.filter(s => s.searcherid == staffId);
         }
@@ -94,6 +56,79 @@ const RecentSearchesPage = () => {
 
     fetchSearches();
   }, [schoolId, staffId]);
+
+
+  // useEffect(() => {
+  //   const fetchSearches = async () => {
+  //     try {
+  //       if (!schoolId || !staffId) return;
+
+  //       // שליפת confirm של אשת הצוות
+  //       const confirmRes = await axios.get(
+  //         `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
+  //       );
+  //       const confirm = confirmRes.data[0]?.confirm;
+
+  //       // שליפת כל החיפושים
+  //       const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
+  //       const allSearches = response.data || [];
+
+  //       // סינון לפי confirm
+  //       let filtered = allSearches;
+  //       if (confirm !== 0 && confirm !== 1) {
+  //         filtered = allSearches.filter(s => s.searcherid == staffId);
+  //       }
+
+  //       const sorted = filtered.sort((a, b) => new Date(b.searchdate) - new Date(a.searchdate));
+  //       setSearches(sorted);
+  //       setFilteredSearches(sorted);
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError('שגיאה בטעינת החיפושים');
+  //     }
+  //   };
+
+  //   fetchSearches();
+  // }, [schoolId, staffId]);
+
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const schoolId = localStorage.getItem("schoolId");
+        if (!schoolId) return;
+        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+        const schoolFields = JSON.parse(response.data[0]?.fields || []);
+
+        setFieldOptions(schoolFields);
+        const localClasses = localStorage.getItem('classes');
+        let classList = [];
+
+        if (localClasses) {
+          classList = JSON.parse(localClasses);
+        } else {
+          const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
+          const classes = res.data || [];
+          localStorage.setItem('classes', JSON.stringify(classes));
+          classList = classes;
+        }
+
+        const byLetter = {};
+        classList.forEach(cls => {
+          const letter = cls.charAt(0);
+          if (!byLetter[letter]) byLetter[letter] = new Set();
+          byLetter[letter].add(cls);
+        });
+
+        setClassesByLetter(byLetter);
+      } catch (err) {
+        console.error(err);
+        setError('שגיאה בטעינת כיתות');
+      }
+    };
+
+    fetchClasses();
+  }, []);
 
   useEffect(() => {
     let results = [...searches];
@@ -114,11 +149,34 @@ const RecentSearchesPage = () => {
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
 
     if (filters.classes.length > 0) {
-      results = results.filter(search =>
-        Array.isArray(search.classes) &&
-        search.classes.some(cls => filters.classes.includes(cls))
-      );
+      results = results.filter(search => {
+        try {
+          const parsedClasses = JSON.parse(search.classes);
+          if (!Array.isArray(parsedClasses)) return false;
+
+          // יוצרים מיפוי לפי אות
+          const filtersByLetter = {};
+          filters.classes.forEach(cls => {
+            const letter = cls[0];
+            if (!filtersByLetter[letter]) filtersByLetter[letter] = [];
+            filtersByLetter[letter].push(cls);
+          });
+
+          // עבור כל אות - נבדוק האם כל הכיתות שלה מופיעות ב-search
+          for (const letter in filtersByLetter) {
+            const requiredClasses = filtersByLetter[letter];
+            const allRequiredInSearch = requiredClasses.every(cls => parsedClasses.includes(cls));
+            if (!allRequiredInSearch) return false;
+          }
+
+          return true;
+        } catch (e) {
+          return false;
+        }
+      });
     }
+
+
 
     setFilteredSearches(results);
   }, [filters, searches]);
@@ -165,6 +223,8 @@ const RecentSearchesPage = () => {
       updateFilter('classes', newSelection);
     }
   };
+
+
 
   return (
     <Container className="mt-4">
@@ -288,7 +348,42 @@ const RecentSearchesPage = () => {
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>
-                <td>{Array.isArray(search.classes) ? search.classes.join(', ') : ''}</td>
+                <td>
+                  {(() => {
+                    try {
+                      const parsed = JSON.parse(search.classes);
+                      if (!Array.isArray(parsed)) return '';
+
+                      const allClasses = JSON.parse(localStorage.getItem('classes') || '[]');
+                      const classesByLetter = {};
+
+                      // מחלקים את כל הכיתות לפי אות
+                      allClasses.forEach(cls => {
+                        const letter = cls[0];
+                        if (!classesByLetter[letter]) classesByLetter[letter] = [];
+                        classesByLetter[letter].push(cls);
+                      });
+
+                      const resultLetters = [];
+                      const remainingClasses = [];
+
+                      Object.entries(classesByLetter).forEach(([letter, classList]) => {
+                        const allInSearch = classList.every(cls => parsed.includes(cls));
+                        if (allInSearch) {
+                          resultLetters.push(letter);
+                        } else {
+                          const partial = classList.filter(cls => parsed.includes(cls));
+                          remainingClasses.push(...partial);
+                        }
+                      });
+
+                      return [...resultLetters, ...remainingClasses].join(', ');
+                    } catch (e) {
+                      return '';
+                    }
+                  })()}
+                </td>
+
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
                 <td>
