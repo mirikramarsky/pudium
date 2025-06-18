@@ -28,10 +28,8 @@ router.get('/:id', async(req, res,next)=>{
         next(err);
     }
 });
-router.get('/without/', async(req, res,next)=>{
-    try{
-        console.log("I am in Route without");
-        
+router.get('/without/students/saved/', async(req, res,next)=>{
+    try{        
         let result = await searchService.getSearchesWithoutStudents()
         if(result != undefined)
             res.json(result || []);
@@ -44,9 +42,8 @@ router.get('/without/', async(req, res,next)=>{
         next(err);
     }
 });
-router.get('/with/', async(req, res,next)=>{
+router.get('/with/students/saved/', async(req, res,next)=>{
     try{
-         console.log("I am in Route with");
         let result = await searchService.getSearchesWithStudents()
         if(result != undefined)
             res.json(result || []);
