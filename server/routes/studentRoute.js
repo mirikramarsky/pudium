@@ -95,9 +95,9 @@ try{
 }
 catch(err){
     if (err instanceof DuplicateIdError) {
-          res.status(err.statusCode).send(err.message);
-    next(err);
-}}});
+         return res.status(err.statusCode).send(err.message);
+  }  next(err);
+}});
 router.put('/:id', async(req, res,next)=>{
     try{
         let result = await studentService.update(req.params.id, req.body);

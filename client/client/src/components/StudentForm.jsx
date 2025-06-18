@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const StudentForm = () => {
     const navigate = useNavigate();
+    const [message, setMessage] = useState({ text: '', variant: '' });
+
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
@@ -33,7 +35,7 @@ const StudentForm = () => {
             try {
                 const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
                 const schoolFields = JSON.parse(response.data[0]?.fields);
-                
+
                 if (!schoolFields || schoolFields.length === 0) {
                     throw new Error("לא נמצאו תחומים לבית הספר הזה");
                 }
@@ -57,7 +59,7 @@ const StudentForm = () => {
 
         fetchFieldsAndClasses();
     }, []);
-    
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -96,14 +98,13 @@ const StudentForm = () => {
         }
 
         try {
-            console.log(submissionData);
             await axios.post('https://pudium-production.up.railway.app/api/podium/students/', {
                 ...submissionData,
                 schoolId
             });
-            alert('נשמר בהצלחה');
 
-            // איפוס הטופס
+            setMessage({ text: 'התלמידה נוספה בהצלחה ✅', variant: 'success' });
+
             setFormData({
                 firstname: '',
                 lastname: '',
@@ -120,11 +121,18 @@ const StudentForm = () => {
                 otherField3: '',
                 otherField4: '',
             });
-            navigate('../staff-login')
+
+            setTimeout(() => navigate('../staff-login'), 1500);
         } catch (error) {
             console.error('שגיאה בשליחה:', error);
-            alert('אירעה שגיאה בשליחה');
+
+            if (error.response?.status == 409) {
+                setMessage({ text: '⚠️ תלמידה עם מספר זהות זה כבר קיימת במערכת.', variant: 'danger' });
+            } else {
+                setMessage({ text: '❌ שגיאה כללית בשליחה. נסי שוב או פני למנהלת המערכת.', variant: 'danger' });
+            }
         }
+
     };
 
     const renderFieldSelect = (fieldName, otherFieldName) => {
@@ -143,6 +151,11 @@ const StudentForm = () => {
         }
         return (
             <>
+                {message.text && (
+                    <Alert variant={message.variant} className="text-center">
+                        {message.text}
+                    </Alert>
+                )}
                 <Form.Group className="mb-3">
                     <Form.Label>תחום</Form.Label>
                     <Form.Select

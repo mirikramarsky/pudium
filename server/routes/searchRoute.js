@@ -122,7 +122,6 @@ router.put('/:id', async (req, res, next) => {
 router.get('/:id/delete', async (req, res) => {
     const { id } = req.params;
     try {
-        await stuInSeaService.deleteallsearchsstu(id);
         await searchService.delete(id);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נמחק בהצלחה</div>`);
     } catch (err) {
@@ -133,18 +132,18 @@ router.get('/:id/delete', async (req, res) => {
 
 router.post('/:id/approve', async (req, res) => {
     const { id } = req.params;
+    console.log(`body : ${req.body}`)
     const studentsRaw = req.body.studentsid || '[]';
     console.log("I in approve Route");
-    
+
     let studentsids;
     try {
-        studentsids = JSON.parse(studentsRaw);
+        JSON.parse(studentsRaw); // רק בודק, לא משנה את הערך
     } catch (e) {
         return res.status(400).send(`<div dir="rtl">שגיאה בפורמט הנתונים</div>`);
     }
-
     try {
-        await stuInSeaService.insert(id, JSON.stringify(studentsids));
+        await stuInSeaService.insert(id, studentsids);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
     } catch (err) {
         console.error(err);

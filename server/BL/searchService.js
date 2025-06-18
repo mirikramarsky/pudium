@@ -99,7 +99,7 @@ class SearchService extends BaseService {
                 </button>
                 </form>
 
-                <a href="#" onclick="alert('🔕 החיפוש הושהה'); return false;"
+                <a href="#" onclick="alert('🔕 החיפוש הושהה');"
                 style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 ⏸️ השהה חיפוש
                 </a>

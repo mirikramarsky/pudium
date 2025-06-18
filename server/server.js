@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors());
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/api/podium/schools', schoolRoute);
 app.use('/api/podium/searches', searchRoute);
