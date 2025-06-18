@@ -1,6 +1,7 @@
 const express = require("express");
 const studentService = require("../BL/studentsServise");
 const idError = require("../BL/errors/idError");
+const DuplicateIdError = require("../BL/errors/DuplicateIdError");
 const router = express.Router();
 
 router.get('/', async (req, res,next)=>{
@@ -93,12 +94,10 @@ try{
         res.status(204).send();
 }
 catch(err){
-    if (err instanceof idError)
-        res.status(400).send(err.message);
-    console.log(err);
-    
+    if (err instanceof DuplicateIdError) {
+          res.status(err.statusCode).send(err.message);
     next(err);
-}});
+}}});
 router.put('/:id', async(req, res,next)=>{
     try{
         let result = await studentService.update(req.params.id, req.body);

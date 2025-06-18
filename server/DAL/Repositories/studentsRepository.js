@@ -1,3 +1,4 @@
+const DuplicateIdError = require('../../BL/errors/DuplicateIdError');
 const pool = require('../db');
 class StudentsRepository {
     async get() {
@@ -90,8 +91,16 @@ class StudentsRepository {
             params.schoolid
         ];
 
-        const student = await pool.query(query, values);
-        return student;
+        try {
+            const student = await pool.query(query, values);
+            return student;
+        } catch (err) {
+            if (err.code === '23505') {
+                throw new DuplicateIdError();
+            } else {
+                throw err;
+            }
+        }
     }
     async update(id, updatedFields) {
         const sets = [];
@@ -115,7 +124,7 @@ class StudentsRepository {
     async decreaseSeveralPriority(id) {
         let result;
         const resultp = await pool.query(`SELECT severalpriority FROM students WHERE id = $1`, [id]);
-        
+
         const lastseveralPriority = resultp.rows[0].severalpriority;
         if (lastseveralPriority > 1)
             result = await pool.query(`UPDATE students SET severalpriority = $1 WHERE id = $2`, [lastseveralPriority - 1, id]);

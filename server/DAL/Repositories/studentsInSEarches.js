@@ -61,6 +61,8 @@ class StuInSeaRepository {
         return studentsinsearches.rowCount;
     }
       async deleteallsearchsstu(searchid) {
+        console.log(`search id : ${searchid}`);
+        
         let studentsinsearches = await pool.query(` DELETE FROM studentsinsearches
             WHERE searchid = $1`, [searchid]);
         return studentsinsearches.rowCount;
