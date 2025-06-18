@@ -115,6 +115,8 @@ class StudentsRepository {
     async decreaseSeveralPriority(id) {
         let result;
         const resultp = await pool.query(`SELECT severalpriority FROM students WHERE id = $1`, [id]);
+        console.log(resultp);
+        
         const lastseveralPriority = resultp.rows[0].severalPriority;
         console.log(`lastseveralPriority : ${lastseveralPriority}`);
         if (lastseveralPriority > 1)

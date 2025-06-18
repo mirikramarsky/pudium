@@ -132,7 +132,8 @@ router.get('/:id/delete', async (req, res) => {
 router.get('/:id/approve', async (req, res) => {
     const { id } = req.params;
     try {
-        await stuInSeaService.insert(id, req.query.studentsid);
+        const studentsids = decodeURIComponent(req.query.studentsid);
+        await stuInSeaService.insert(id, studentsids);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
 
     } catch (err) {

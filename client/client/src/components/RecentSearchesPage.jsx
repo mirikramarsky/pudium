@@ -339,12 +339,12 @@ const RecentSearchesPage = () => {
               <th>כיתות</th>
               <th>כמות</th>
               <th>תאריך</th>
-              <th>פעולות</th>
             </tr>
           </thead>
           <tbody>
             {filteredSearches.map(search => (
-              <tr key={search.id}>
+              <tr key={search.id} onClick={() => navigate(`/search-result-not-to-edit/${search.id}`)}
+              style={{cursor: 'pointer'}}>
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>
@@ -386,15 +386,6 @@ const RecentSearchesPage = () => {
 
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
-                <td>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => navigate(`/search-result-not-to-edit/${search.id}`)}
-                  >
-                    צפייה
-                  </Button>
-                </td>
               </tr>
             ))}
           </tbody>
