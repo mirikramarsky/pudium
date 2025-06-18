@@ -87,7 +87,6 @@ const StudentsByClass = () => {
         <Table bordered hover>
           <thead>
             <tr>
-              <th>פעולות</th>
               <th>עדיפות חינוכית</th>
               <th>תחום 4</th>
               <th>תחום 3</th>
@@ -97,7 +96,6 @@ const StudentsByClass = () => {
               <th>שם משפחה</th>
               <th>מספר זהות</th>
               <th>כיתה</th>
-              <th>שכבת כיתה</th>
             </tr>
           </thead>
           <tbody>
@@ -108,14 +106,13 @@ const StudentsByClass = () => {
               });
 
               return (
-                <tr key={student.id} style={{ backgroundColor: rowColor }}>
-                  <td>
-                    <Button variant="outline-primary" size="sm" onClick={() => navigate(`/edit-student/${student.id}`)}>
-                      ערוך
-                    </Button>
-                  </td>
+                <tr
+                  key={student.id}
+                  style={{ backgroundColor: rowColor, cursor: 'pointer' }}
+                  onClick={() => navigate(`/edit-student/${student.id}`)}
+                >
                   <td style={getCellStyle(student.field4priority)}>
-                     {student.educpriority ? 'כן' : 'לא'}</td>
+                    {student.educpriority ? 'כן' : 'לא'}</td>
                   <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
                   <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
                   <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
@@ -123,8 +120,7 @@ const StudentsByClass = () => {
                   <td style={{ backgroundColor: rowColor }}>{student.firstname}</td>
                   <td style={{ backgroundColor: rowColor }}>{student.lastname}</td>
                   <td style={{ backgroundColor: rowColor }}>{student.id}</td>
-                  <td style={{ backgroundColor: rowColor }}>{student.grade}</td>
-                  <td style={{ backgroundColor: rowColor }}>{student.class}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.grade} {student.class}</td>
                 </tr>
               );
             })}
