@@ -8,7 +8,6 @@ const StaffHome = () => {
   const name = localStorage.getItem('staffName');
   const staffId = localStorage.getItem('staffId');
   const schoolId = localStorage.getItem('schoolId');
-  console.log(staffId);
 
   const [showAdminButtons, setShowAdminButtons] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,13 +19,15 @@ const StaffHome = () => {
         const response = await axios.get(
           `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
         );
-        console.log(response.data[0].confirm);
 
-        if (response.data[0].confirm == 0) {
+        const confirm = response.data[0]?.confirm;
+
+        if (confirm === 0) {
           setShowAdminButtons(true);
         }
-        if (response.data[0].confirm == 3)
-          setShowClassesButton(false)
+        if (confirm === 3) {
+          setShowClassesButton(false);
+        }
       } catch (err) {
         console.error('שגיאה בשליפת נתוני אשת צוות:', err);
       } finally {
@@ -35,7 +36,7 @@ const StaffHome = () => {
     };
 
     if (staffId) fetchStaff();
-  }, [staffId]);
+  }, [staffId, schoolId]);
 
   if (loading) return <Spinner animation="border" />;
 
@@ -43,26 +44,21 @@ const StaffHome = () => {
     <Container className="mt-5 text-center">
       <h2>שלום ל{name}</h2>
 
-      {showClassesButton &&(
-      <Button variant="primary" className="m-3" onClick={() => navigate('/classes')}>
-        מילוי פרטים - הצגת כיתות
-      </Button>)}
+      {showClassesButton && (
+        <Button variant="primary" className="m-3" onClick={() => navigate('/classes')}>
+           🗂️ מילוי פרטים ✍️ - הצגת כיתות
+        </Button>
+      )}
 
       <Button variant="secondary" className="m-3" onClick={() => navigate('/data-fetch')}>
-        שליפת נתונים
+       🔍 שליפת נתונים
       </Button>
 
       {showAdminButtons && (
         <>
           <hr />
-          <Button variant="success" className="m-2" onClick={() => navigate('/staff/add')}>
-            ➕ הוספת אשת צוות
-          </Button>
-          <Button variant="warning" className="m-2" onClick={() => navigate('/staff/edit')}>
-            📝 עדכון אשת צוות
-          </Button>
-          <Button variant="danger" className="m-2" onClick={() => navigate('/staff/delete')}>
-            ❌ מחיקת אשת צוות
+          <Button variant="warning" className="m-2" onClick={() => navigate('/staff-manage')}>
+            ⚙️ ניהול
           </Button>
         </>
       )}

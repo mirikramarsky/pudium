@@ -3,15 +3,14 @@ import { Container, Form, Row, Col, Button, Table, Alert } from 'react-bootstrap
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const fieldOptions = ['אימון מחול', 'עריכה', 'עיצוב אופנה', 'תפאורה', 'צילום', 'נגינה', 'שירה'];
-
 const RecentSearchesPage = () => {
   const navigate = useNavigate();
-
+ const [fieldOptions, setFieldOptions] = useState({});
   const [searches, setSearches] = useState([]);
   const [filteredSearches, setFilteredSearches] = useState([]);
   const [error, setError] = useState(null);
-
+  const staffId = localStorage.getItem('staffId');
+    const schoolId = localStorage.getItem('schoolId');
   const [filters, setFilters] = useState({
     searchname: '',
     searchername: '',
@@ -24,12 +23,15 @@ const RecentSearchesPage = () => {
   const [classesList, setClassesList] = useState([]);
   const [classesByLetter, setClassesByLetter] = useState({});
   const [expandedLetter, setExpandedLetter] = useState(null);
-
+ const [showAdminButtons, setShowAdminButtons] = useState(false);
   useEffect(() => {
     const fetchClasses = async () => {
-      const schoolId = localStorage.getItem('schoolId');
+    
       if (!schoolId) return;
       try {
+         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+        const schoolFields = response.data[0]?.fields || [];
+        setFieldOptions(schoolFields);
         let classList;
         const localClasses = localStorage.getItem('classes');
         if (localClasses) {
@@ -38,6 +40,7 @@ const RecentSearchesPage = () => {
           const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
           classList = res.data || [];
           localStorage.setItem('classes', JSON.stringify(classList));
+
         }
 
         const byLetter = {};
@@ -56,7 +59,7 @@ const RecentSearchesPage = () => {
     fetchClasses();
   }, []);
 
-  useEffect(() => {
+  useEffect(async() => {
     axios.get('https://pudium-production.up.railway.app/api/podium/searches/')
       .then(res => {
         const sorted = [...res.data].sort((a, b) => new Date(b.searchdate) - new Date(a.searchdate));
@@ -64,6 +67,16 @@ const RecentSearchesPage = () => {
         setFilteredSearches(sorted);
       })
       .catch(() => setError('שגיאה בטעינת החיפושים'));
+       const responseC = await axios.get(
+          `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
+        );
+
+        const confirm = responseC.data[0]?.confirm;
+
+        if (confirm === 2|| confirm === 3) {
+          const mySearches = searches.map.filter(s=>s.searcherid == staffId);//ראות אם עובד...
+          setSearches(mySearches);
+        }
   }, []);
 
   useEffect(() => {

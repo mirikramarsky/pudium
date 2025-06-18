@@ -31,7 +31,19 @@ function App() {
     //     Click on the Vite and React logos to learn more
     //   </p>
     // </>
-    <Home/>
+    <><div style={{
+      backgroundColor: '#2a3b8f',
+      color: 'white',
+      padding: '1rem',
+      textAlign: 'center',
+      borderBottom: '4px solid #d9e3f0'
+    }}>
+      <p style={{fontSize:'xxx-large', margin: 0 }}>פודיום</p>
+      <p style={{ margin: 0 }}>לתת במה לכולן</p>
+    </div>
+
+      <Home /></>
+
   )
 }
 

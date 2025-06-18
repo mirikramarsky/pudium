@@ -3,9 +3,6 @@ import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const fieldOptions = [
-  'אימון מחול', 'עריכה', 'עיצוב אופנה', 'תפאורה', 'צילום', 'נגינה', 'שירה', 'אחר'
-];
 
 const SearchFormPage = () => {
   const navigate = useNavigate();
@@ -18,7 +15,7 @@ const SearchFormPage = () => {
     staffName: localStorage.getItem('staffName') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0
   });
-
+  const [fieldOptions, setFieldOptions] = useState([]);
   const [expandedLetter, setExpandedLetter] = useState(null);
   const [classesByLetter, setClassesByLetter] = useState({});
   const [error, setError] = useState(null);
@@ -28,7 +25,9 @@ const SearchFormPage = () => {
       try {
         const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
-
+         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+        const schoolFields = response.data[0]?.fields || [];
+        setFieldOptions(schoolFields);
         const localClasses = localStorage.getItem('classes');
         let classList = [];
 
@@ -137,13 +136,14 @@ const SearchFormPage = () => {
       }
     }
   };
+console.log(fieldOptions);
 
   return (
     <Container className="mt-4">
       <Row className="justify-content-between mb-3">
         <Col><h4>טופס חיפוש תלמידות</h4></Col>
         <Col className="text-end">
-          <Button onClick={() => navigate('/recent-searches')}>חיפושים אחרונים</Button>
+          <Button onClick={() => navigate('/recent-searches')}>חיפושים אחרונים 🔎</Button>
         </Col>
       </Row>
 

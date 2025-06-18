@@ -418,8 +418,9 @@ const SearchDetailsPage = () => {
         try {
             const studentsIds = students.map(s => s.id);
             console.log(studentsIds);
+            console.log(JSON.stringify(studentsIds) );
             
-            await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: studentsIds });
+            await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
             alert('התלמידות נשמרו בהצלחה!');
         } catch (err) {
             console.error('שגיאה בשמירה הסופית:', err);

@@ -22,12 +22,14 @@ const StudentForm = () => {
 
     const [classOptions, setClassOptions] = useState([]);
 
-    const fields = ['ריקוד', 'שירה', 'אימון מחול', 'מחול', 'עריכה', 'תפאורה', 'אחר'];
-
-    useEffect(() => {
+     const [fields, setFields] = useState();
+    useEffect(async() => {
         const schoolId = localStorage.getItem('schoolId');
         if (!schoolId) return;
-
+        try{
+         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+        const schoolFields = response.data[0]?.fields || [];
+        setFieldOptions(schoolFields);
         const localClasses = localStorage.getItem('classes');
         if (localClasses) {
             setClassOptions(JSON.parse(localClasses));
@@ -41,6 +43,9 @@ const StudentForm = () => {
                 .catch(err => {
                     console.error('שגיאה בשליפת כיתות:', err);
                 });
+        }}
+        catch(err){
+            console.error(`error message: ${err}`)
         }
     }, []);
 

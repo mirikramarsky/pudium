@@ -24,7 +24,7 @@ const SchoolCode = () => {
 
   return (
     <Container className="mt-5">
-      <h2 className="text-center mb-4">הכניסי סמל מוסד</h2>
+      <h2 className="text-center mb-4">הכניסי סמל מוסד 🏫</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group>

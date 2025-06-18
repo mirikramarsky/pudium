@@ -34,7 +34,7 @@ const StaffLogin = () => {
 
   return (
     <Container className="mt-5">
-      <h2 className="text-center mb-3">שלום וברוכה הבאה לבית הספר: {schoolName}</h2>
+      <h2 className="text-center mb-3">שלום וברוכה הבאה לבית הספר {schoolName}</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group>
@@ -47,8 +47,8 @@ const StaffLogin = () => {
           />
         </Form.Group>
         <div className="text-center mt-3">
-          <Button type="submit" variant="success" className="me-2">כניסה כאשת צוות</Button>
-          <Button variant="secondary" onClick={goToStudentForm}>כניסה כתלמידה</Button>
+          <Button type="submit" variant="success" className="me-2">כניסה כאשת צוות 🧑‍🏫</Button>
+          <Button variant="secondary" onClick={goToStudentForm}>כניסה כתלמידה 👩‍🎓</Button>
         </div>
       </Form>
     </Container>
