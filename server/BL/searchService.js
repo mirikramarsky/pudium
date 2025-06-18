@@ -96,7 +96,7 @@ class SearchService extends BaseService {
                 style="padding: 10px 20px; background-color: #2ecc71; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 ✔️ אשר חיפוש
                 </a>
-                <a href="http://localhost:5173/search-results/${id}"
+                <a href="http://localhost:5173/search-results/${searchId}"
                 style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 📝 ערוך חיפוש
                 </a>
