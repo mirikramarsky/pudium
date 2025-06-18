@@ -1,6 +1,7 @@
 const express = require("express");
 const searchService = require("../BL/searchService");
 const idError = require("../BL/errors/idError");
+const stuInSeaService = require("../BL/studentsinsearchesService");
 const router = express.Router();
 
 router.get('/', async (req, res,next)=>{
@@ -119,11 +120,23 @@ router.put('/:id', async(req, res,next)=>{
 router.get('/:id/delete', async (req, res) => {
     const { id } = req.params;
     try {
-        await searchService.deleteSearch(id); // או מה שהשירות שלך עושה
+        await searchService.delete(id); 
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נמחק בהצלחה</div>`);
     } catch (err) {
         console.error(err);
         res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה במחיקה</div>`);
+    }
+});
+
+router.get('/:id/approve', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await stuInSeaService.insert(id, req.query.studentsid);
+        res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה בשמירה</div>`);
     }
 });
 

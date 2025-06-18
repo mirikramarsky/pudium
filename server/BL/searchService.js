@@ -48,7 +48,9 @@ class SearchService extends BaseService {
         const parsed = JSON.parse(search[0].classes);
         const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
         console.log(students);
-
+        const studentsIds = students.map(s=>s.id);
+        console.log(studentsIds.join(','));
+        
         let studentRows = students.map(s => `
         <tr>
             <td>${s.firstname}</td>
@@ -93,7 +95,7 @@ class SearchService extends BaseService {
 
             <h3 style="margin-top: 30px;">📩 בחרו פעולה</h3>
             <div style="margin-top: 10px;">
-                <a href="${BASE_URL}/searches/${searchId}/approve"
+                <a href="${BASE_URL}/searches/${searchId}/approve?studentsid=${studentsIds.join(',')}"
                 style="padding: 10px 20px; background-color: #2ecc71; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 ✔️ אשר חיפוש
                 </a>
