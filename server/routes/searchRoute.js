@@ -95,7 +95,7 @@ catch(err){
 }});
 router.post('/send-approval-mail/:searchId/school/:schoolid', async (req, res) => {
     try {
-        await searchService.sendApprovalMail(req.params.searchId, req.params.schoolid);
+        await searchService.sendApprovalMail(req.params.searchId, req.params.schoolid, req.body);
         res.status(200).json({ message: 'המייל נשלח בהצלחה' });
     } catch (err) {
         console.error(err);
@@ -116,6 +116,17 @@ router.put('/:id', async(req, res,next)=>{
         next(err);
     }
 });
+router.get('/:id/delete', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await searchService.deleteSearch(id); // או מה שהשירות שלך עושה
+        res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נמחק בהצלחה</div>`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה במחיקה</div>`);
+    }
+});
+
 router.delete('/:id', async(req, res,next)=>{
     try{
         let result = await searchService.delete(req.params.id);

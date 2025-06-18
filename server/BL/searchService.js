@@ -33,7 +33,7 @@ class SearchService extends BaseService {
             return result;
         throw new idError('שליפת החיפושים נכשלה');
     }
-    async sendApprovalMail(searchId, schoolid) {
+    async sendApprovalMail(searchId, schoolid,dataFromClient) {
         const search = await this.repository.getById(searchId);
         if (!search) throw new Error('חיפוש לא נמצא');
 
@@ -42,7 +42,7 @@ class SearchService extends BaseService {
         const schoolEmail = school[0].emailaddress;
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
 
-        const students = await stuInSeaRepository.getStudentsInSearch(searchId);
+        const students = JSON.parse(dataFromClient.students)
         // console.log(JSON.parse(search.classes).join(', '));
         console.log(search[0].classes);
         const parsed = JSON.parse(search[0].classes);
@@ -97,7 +97,7 @@ class SearchService extends BaseService {
                 style="padding: 10px 20px; background-color: #2ecc71; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 ✔️ אשר חיפוש
                 </a>
-                <a href="${BASE_URL}/searches/${searchId}/edit"
+                <a href="http://localhost:5173/search-results/${id}"
                 style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 📝 ערוך חיפוש
                 </a>

@@ -433,16 +433,12 @@ const SearchDetailsPage = () => {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
             const recipientEmail = emailRes.data[0].emailaddress;
-
+            const studentsIds = students.map(s => s.id);
             const emailContent = {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
-                searchId: id,
-                searchDetails: search,
+                students:JSON.stringify(studentsIds),
                 students,
-                approveUrl: `https://pudium-production.up.railway.app/api/podium/approve/${id}`,
-                deleteUrl: `https://pudium-production.up.railway.app/api/podium/searches/${id}`,
-                editUrl: `http://localhost:5173/search-results/${id}`
             };
 
             await axios.post(
