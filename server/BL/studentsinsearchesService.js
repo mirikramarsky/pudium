@@ -18,9 +18,9 @@ class StuInSeaService extends BaseService {
         throw new idError('this id is not exist');
     }
     async insert(searchid, studentsid) {
-        const studentsid = JSON.parse(studentsid);
+        const studentsids = JSON.parse(studentsid);
         await Promise.all(
-            studentsid.map(s => studentsRepository.decreaseSeveralPriority(s))
+            studentsids.map(s => studentsRepository.decreaseSeveralPriority(s))
         );
         let result = await this.repository.insert(searchid, studentsid);
         if (result && result.length != 0)
