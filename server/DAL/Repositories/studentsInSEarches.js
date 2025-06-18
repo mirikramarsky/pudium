@@ -36,6 +36,8 @@ class StuInSeaRepository {
         return studentsinsearches;
     }
     async insert(searchid, studentsid) {
+        console.log(studentsid);
+        const studentsids =JSON.parse(studentsid);
         const promises = studentsid.map(student =>
             pool.query(
                 `INSERT INTO studentsinsearches (searchid, studentid) VALUES($1, $2)`,
