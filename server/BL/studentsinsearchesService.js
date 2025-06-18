@@ -30,7 +30,7 @@ class StuInSeaService extends BaseService {
     }
        async deleteallsearchsstu(searchid) {
         let result = await this.repository.deleteallsearchsstu(searchid);
-        if (result && result.length != 0)
+        if (result && result != 0)
             return result;
         throw new idError('this search id is not exist');
     }

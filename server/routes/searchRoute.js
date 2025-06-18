@@ -4,55 +4,56 @@ const idError = require("../BL/errors/idError");
 const stuInSeaService = require("../BL/studentsinsearchesService");
 const router = express.Router();
 
-router.get('/', async (req, res,next)=>{
-    try{
-    let result = await searchService.get()
-    if(result.length != undefined)
-        res.send(result)
-    else
-        res.status(204).send();
-}
-catch{
-    next();
-}});
-router.get('/:id', async(req, res,next)=>{
-    try{
+router.get('/', async (req, res, next) => {
+    try {
+        let result = await searchService.get()
+        if (result.length != undefined)
+            res.send(result)
+        else
+            res.status(204).send();
+    }
+    catch {
+        next();
+    }
+});
+router.get('/:id', async (req, res, next) => {
+    try {
         let result = await searchService.getById(req.params.id)
-        if(result != undefined)
+        if (result != undefined)
             res.json(result || []);
         else
             res.status(204).send();
     }
-    catch(err){
-         if (err instanceof idError)
+    catch (err) {
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }
 });
-router.get('/without/students/saved/', async(req, res,next)=>{
-    try{        
+router.get('/without/students/saved/', async (req, res, next) => {
+    try {
         let result = await searchService.getSearchesWithoutStudents()
-        if(result != undefined)
+        if (result != undefined)
             res.json(result || []);
         else
             res.status(204).send();
     }
-    catch(err){
-         if (err instanceof idError)
+    catch (err) {
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }
 });
-router.get('/with/students/saved/', async(req, res,next)=>{
-    try{
+router.get('/with/students/saved/', async (req, res, next) => {
+    try {
         let result = await searchService.getSearchesWithStudents()
-        if(result != undefined)
+        if (result != undefined)
             res.json(result || []);
         else
             res.status(204).send();
     }
-    catch(err){
-         if (err instanceof idError)
+    catch (err) {
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }
@@ -62,38 +63,39 @@ router.get('/:id/students', async (req, res) => {
         const students = await getStudentsBySearchId(req.params.id);
         res.json(students);
     } catch (err) {
-         if (err instanceof idError)
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }
 });
-router.post('/params', async(req, res,next)=>{
-    try{
+router.post('/params', async (req, res, next) => {
+    try {
         let result = await searchService.getByParams(req.body)
-        if(result != undefined)
+        if (result != undefined)
             res.json(result || []);
         else
             res.status(204).send();
     }
-    catch(err){
-         if (err instanceof idError)
+    catch (err) {
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }
 });
-router.post('/', async(req, res,next)=>{
-try{
-    let result = await searchService.insert(req.body);
-    if(result != null)
-        res.status(201).json({ id: result });
-    else
-        res.status(204).send();
-}
-catch(err){
-    if (err instanceof idError)
-        res.status(400).send(err.message);    
-    next(err);
-}});
+router.post('/', async (req, res, next) => {
+    try {
+        let result = await searchService.insert(req.body);
+        if (result != null)
+            res.status(201).json({ id: result });
+        else
+            res.status(204).send();
+    }
+    catch (err) {
+        if (err instanceof idError)
+            res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.post('/send-approval-mail/:searchId/school/:schoolid', async (req, res) => {
     try {
         await searchService.sendApprovalMail(req.params.searchId, req.params.schoolid, req.body);
@@ -103,16 +105,16 @@ router.post('/send-approval-mail/:searchId/school/:schoolid', async (req, res) =
         res.status(500).json({ error: 'שגיאה בשליחת המייל' });
     }
 });
-router.put('/:id', async(req, res,next)=>{
-    try{
+router.put('/:id', async (req, res, next) => {
+    try {
         let result = await searchService.update(req.params.id, req.body);
-        if(result != undefined)
+        if (result != undefined)
             res.send(result)
         else
             res.status(204).send();
     }
-    catch(err){
-         if (err instanceof idError)
+    catch (err) {
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }
@@ -120,8 +122,8 @@ router.put('/:id', async(req, res,next)=>{
 router.get('/:id/delete', async (req, res) => {
     const { id } = req.params;
     try {
-        await searchService.delete(id); 
         await stuInSeaService.deleteallsearchsstu(id);
+        await searchService.delete(id);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נמחק בהצלחה</div>`);
     } catch (err) {
         console.error(err);
@@ -129,29 +131,37 @@ router.get('/:id/delete', async (req, res) => {
     }
 });
 
-router.get('/:id/approve', async (req, res) => {
+router.post('/:id/approve', async (req, res) => {
     const { id } = req.params;
-    try {
-        const studentsids = decodeURIComponent(req.query.studentsid);
-        await stuInSeaService.insert(id, studentsids);
-        res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
+    const studentsRaw = req.body.studentsid || '[]';
 
+    let studentsids;
+    try {
+        studentsids = JSON.parse(studentsRaw);
+    } catch (e) {
+        return res.status(400).send(`<div dir="rtl">שגיאה בפורמט הנתונים</div>`);
+    }
+
+    try {
+        await stuInSeaService.insert(id, JSON.stringify(studentsids));
+        res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
     } catch (err) {
         console.error(err);
         res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה בשמירה</div>`);
     }
 });
 
-router.delete('/:id', async(req, res,next)=>{
-    try{
+
+router.delete('/:id', async (req, res, next) => {
+    try {
         let result = await searchService.delete(req.params.id);
-        if(result != undefined)
+        if (result != undefined)
             res.send(result)
         else
             res.status(204).send();
     }
-    catch(err){
-         if (err instanceof idError)
+    catch (err) {
+        if (err instanceof idError)
             res.status(400).send(err.message);
         next(err);
     }

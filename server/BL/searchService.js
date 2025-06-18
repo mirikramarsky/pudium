@@ -33,21 +33,21 @@ class SearchService extends BaseService {
             return result;
         throw new idError('שליפת החיפושים נכשלה');
     }
-    async sendApprovalMail(searchId, schoolid,dataFromClient) {
+    async sendApprovalMail(searchId, schoolid, dataFromClient) {
         const search = await this.repository.getById(searchId);
         if (!search) throw new Error('חיפוש לא נמצא');
 
         const school = await schoolRepository.getById(schoolid);
         const schoolEmail = school[0].emailaddress;
         if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
-        
+
         const students = dataFromClient.students
         const parsed = JSON.parse(search[0].classes);
         const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
-        const studentsIds = students.map(s=>s.id);
-       console.log(studentsIds);
-       
-        
+        const studentsIds = students.map(s => s.id);
+        console.log(studentsIds);
+
+
         let studentRows = students.map(s => `
         <tr>
             <td>${s.firstname}</td>
@@ -92,10 +92,14 @@ class SearchService extends BaseService {
 
             <h3 style="margin-top: 30px;">📩 בחרו פעולה</h3>
             <div style="margin-top: 10px;">
-                <a href="${BASE_URL}/searches/${searchId}/approve?studentsid=${encodeURIComponent(JSON.stringify(studentsIds))}"
-                style="padding: 10px 20px; background-color: #2ecc71; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
-                ✔️ אשר חיפוש
-                </a>
+                <form action="https://pudium-production.up.railway.app/api/podium/searches/18/approve" method="POST">
+                <input type="hidden" name="studentsid" value='${JSON.stringify(studentsIds)}'>
+                <button type="submit"
+                    style="padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 5px;">
+                    ✔️ אשר חיפוש
+                </button>
+                </form>
+
                 <a href="#" onclick="alert('🔕 החיפוש הושהה'); return false;"
                 style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
                 ⏸️ השהה חיפוש
