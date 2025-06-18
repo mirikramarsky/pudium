@@ -121,6 +121,7 @@ router.get('/:id/delete', async (req, res) => {
     const { id } = req.params;
     try {
         await searchService.delete(id); 
+        await stuInSeaService.deleteallsearchsstu(id);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נמחק בהצלחה</div>`);
     } catch (err) {
         console.error(err);

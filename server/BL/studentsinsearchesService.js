@@ -27,6 +27,12 @@ class StuInSeaService extends BaseService {
             return result;
         throw new idError('this id is not exist');
     }
+       async deleteallsearchsstu(searchid) {
+        let result = await this.repository.deleteallsearchsstu(searchid);
+        if (result && result.length != 0)
+            return result;
+        throw new idError('this search id is not exist');
+    }
 }
 let stuInSeaService = new StuInSeaService();
 module.exports = stuInSeaService;

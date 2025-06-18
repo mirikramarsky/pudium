@@ -60,6 +60,11 @@ class StuInSeaRepository {
             WHERE id = $1`, [id]);
         return studentsinsearches.rowCount;
     }
+      async deleteallsearchsstu(searchid) {
+        let studentsinsearches = await pool.query(` DELETE FROM studentsinsearches
+            WHERE searchid = $1`, [searchid]);
+        return studentsinsearches.rowCount;
+    }
 }
 let stuInSeaRepository = new StuInSeaRepository();
 

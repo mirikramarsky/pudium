@@ -79,7 +79,7 @@ const StudentsByClass = () => {
 
   return (
     <Container className="mt-4">
-      <h3>תלמידות בכיתה {grade} שכבה {className}</h3>
+      <h3>תלמידות בכיתה {grade} {className}</h3>
       {renderLegend()}
       {students.length === 0 ? (
         <p>אין תלמידות בכיתה זו.</p>
@@ -88,6 +88,7 @@ const StudentsByClass = () => {
           <thead>
             <tr>
               <th>פעולות</th>
+              <th>עדיפות חינוכית</th>
               <th>תחום 4</th>
               <th>תחום 3</th>
               <th>תחום 2</th>
@@ -113,6 +114,8 @@ const StudentsByClass = () => {
                       ערוך
                     </Button>
                   </td>
+                  <td style={getCellStyle(student.field4priority)}>
+                     {student.educpriority ? 'כן' : 'לא'}</td>
                   <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
                   <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
                   <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
