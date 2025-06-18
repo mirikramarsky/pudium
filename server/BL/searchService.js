@@ -45,9 +45,11 @@ class SearchService extends BaseService {
         const students = await stuInSeaRepository.getStudentsInSearch(searchId);
         // console.log(JSON.parse(search.classes).join(', '));
         console.log(search[0].classes);
-        const classes = search[0].classes ? JSON.parse(search[0].classes) : [];
-
-        let studentRows = students[0].map(s => `
+            const parsed = JSON.parse(search.classes);
+            classes =  Array.isArray(parsed) ? parsed.join(', ') : '';
+            console.log(students);
+            
+        let studentRows = students.map(s => `
         <tr>
             <td>${s.firstname}</td>
             <td>${s.lastname}</td>
