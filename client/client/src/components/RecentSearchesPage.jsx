@@ -35,7 +35,7 @@ const RecentSearchesPage = () => {
         );
         const confirm = confirmRes.data[0]?.confirm;
 
-        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/with/`);
+        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/with/students/saved/`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;
@@ -390,7 +390,7 @@ const RecentSearchesPage = () => {
                   <Button
                     variant="outline-primary"
                     size="sm"
-                    onClick={() => navigate(`/serch-result-not-to-edit/${search.id}`)}
+                    onClick={() => navigate(`/search-result-not-to-edit/${search.id}`)}
                   >
                     צפייה
                   </Button>

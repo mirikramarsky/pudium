@@ -35,7 +35,7 @@ const WaitingSearches = () => {
         );
         const confirm = confirmRes.data[0]?.confirm;
 
-        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/without/`);
+        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/without/students/saved/`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;

@@ -38,7 +38,7 @@ function Home() {
                 <Route path="/staff-manage" element={<StaffManage />} />
                 <Route path="/manage-fields" element={<FieldsManagementPage />} />
                 <Route path="/wait-searches" element={<WaitingSearches />} />
-                <Route path="/serch-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
+                <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
                 {/* <Route path="/search-results/:id" element={<SearchResults />} /> */}
                 <Route path="/search-results/:id" element={<SearchDetailsPage />} />
             </Routes>

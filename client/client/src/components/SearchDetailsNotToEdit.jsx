@@ -134,8 +134,8 @@ const SearchDetailsNotToEdit = () => {
             alert('התלמידות נשמרו בהצלחה!');
             navigate('../../data-fetch')
         } catch (err) {
-            console.error('שגיאה בשמירה הסופית:', err.response?.data ||err.message);
-            alert(err.response?.data ||err.message);
+            console.error('שגיאה בשמירה הסופית:', err.response?.data || err.message);
+            alert(err.response?.data || err.message);
         }
     };
 
@@ -253,10 +253,11 @@ const SearchDetailsNotToEdit = () => {
                                 </tr>
                             ))}
                         </tbody>
-                        <div>
-                            <Button variant='info' onClick={navigate('../data-fetch')}>חזור👈</Button>
-                        </div>
+
                     </Table>
+                    <div className="mt-3">
+                        <Button variant='info' onClick={() => navigate('../data-fetch')}>חזור👈</Button>
+                    </div>
                 </>
             )}
         </Container>
