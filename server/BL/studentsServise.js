@@ -46,9 +46,10 @@ class SudentsService extends BaseService{
         console.log(result);
         if(result == [])
             throw new Error("לא נמצאו תלמידות התואמות את החיפוש");
-        if (result && result.length != 0)
+        else if (result && result.length != 0)
             return result;
-       throw new idError('this id is not exist');
+        else
+            throw new idError('this id is not exist');
     }
 }
 let sudentsService = new SudentsService();

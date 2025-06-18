@@ -409,7 +409,7 @@ const SearchDetailsPage = () => {
 
         } catch (err) {
             console.error('שגיאה בהבאת תלמידה חלופית:', err);
-            alert('שגיאה בשליפת תלמידה חלופית');
+            alert( err.response?.data || err.message);
         }
     };
 
