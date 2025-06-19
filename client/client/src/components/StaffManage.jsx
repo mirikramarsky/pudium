@@ -4,12 +4,13 @@ import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
 
 const StaffManage = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const schoolId = localStorage.getItem('schoolId');
 
   const handleGoUpGrade = async () => {
     try {
-      const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/goUpGrade/${schoolId}`);
+      const response = await axios.get(`${BASE_URL}students/goUpGrade/${schoolId}`);
       alert('כל התלמידות עלו כיתה בהצלחה!');
     } catch (err) {
       console.error('שגיאה בעליית שנה:', err);

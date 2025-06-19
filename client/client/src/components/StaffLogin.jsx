@@ -10,6 +10,7 @@ const StaffLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const name = localStorage.getItem('schoolName');
     if (name) setSchoolName(name);
   }, []);
@@ -18,7 +19,7 @@ const StaffLogin = () => {
     e.preventDefault();
     const schoolId = localStorage.getItem('schoolId');
     try {
-      const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffCode}`);
+      const res = await axios.get(`${BASE_URL}staff/schoolId/${schoolId}/id/${staffCode}`);
       const staff = res.data[0];
       localStorage.setItem('staffName', staff.name);
       localStorage.setItem('staffId', staff.id);

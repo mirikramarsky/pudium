@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const WaitingSearches = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [searches, setSearches] = useState([]);
@@ -33,11 +34,11 @@ const WaitingSearches = () => {
         if (!schoolId || !staffId) return;
 
         const confirmRes = await axios.get(
-          `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
+          `${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`
         );
         const confirm = confirmRes.data[0]?.confirm;
 
-        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/without/students/saved/`);
+        const response = await axios.get(`${BASE_URL}searches/without/students/saved/`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;
@@ -67,7 +68,7 @@ const WaitingSearches = () => {
       try {
         const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
-        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+        const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
         const schoolFields = JSON.parse(response.data[0]?.fields || []);
 
         setFieldOptions(schoolFields);
@@ -77,7 +78,7 @@ const WaitingSearches = () => {
         if (localClasses) {
           classList = JSON.parse(localClasses);
         } else {
-          const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
+          const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
           const classes = res.data || [];
           localStorage.setItem('classes', JSON.stringify(classes));
           classList = classes;

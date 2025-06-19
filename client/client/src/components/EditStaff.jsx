@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const EditStaff = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1 = הזנת קוד, 2 = טופס עדכון
   const [id, setId] = useState('');
@@ -21,7 +22,7 @@ const EditStaff = () => {
 
     const fetchStaff = async () => {
       try {
-        const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${id}`);
+        const res = await axios.get(`${BASE_URL}schoolId/${schoolId}/id/${id}`);
         const staff = res.data[0];
         
         setName(staff.name || '');
@@ -50,7 +51,7 @@ const EditStaff = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://pudium-production.up.railway.app/api/podium/staff/${id}`, {
+      await axios.put(`${BASE_URL}staff/${id}`, {
         name,
         class: classT,
         confirm: Number(confirm),

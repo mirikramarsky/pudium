@@ -3,6 +3,7 @@ import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
 const FieldsManagementPage = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const schoolId = localStorage.getItem('schoolId');
     const [fields, setFields] = useState([]);
     const [newField, setNewField] = useState('');
@@ -11,7 +12,7 @@ const FieldsManagementPage = () => {
     useEffect(() => {
         const fetchFields = async () => {
             try {
-                const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+                const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
                 const schoolFields = JSON.parse(response.data[0]?.fields) || [];
                 setFields(schoolFields);
             } catch (error) {
@@ -50,7 +51,7 @@ const FieldsManagementPage = () => {
 
     const handleSave = async () => {
         try {
-            await axios.put(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`, {
+            await axios.put(`${BASE_URL}schools/${schoolId}`, {
                 fields: JSON.stringify(fields.filter(f => f.trim() !== '')),
             });
             setMessage('✅ התחומים נשמרו בהצלחה!');

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 
 const SchoolCode = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const SchoolCode = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${code}`);
+      const res = await axios.get(`${BASE_URL}schools/${code}`);
       const school = res.data[0];
       localStorage.setItem('schoolId', code);
       localStorage.setItem('schoolName', school.schoolname);

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AddStaff = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ id: '', name: '', confirm: 3, class: "all" });
     const [message, setMessage] = useState(null);
@@ -18,7 +19,7 @@ const AddStaff = () => {
         const schoolId = localStorage.getItem('schoolId');
 
         try {
-            await axios.post('https://pudium-production.up.railway.app/api/podium/staff', {
+            await axios.post(`${BASE_URL}staff`, {
                 ...formData,
                 schoolId: Number(schoolId)
             });

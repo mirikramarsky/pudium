@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const SearchFormPage = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ const SearchFormPage = () => {
       try {
         const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
-         const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+         const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
         const schoolFields = JSON.parse(response.data[0]?.fields || []);
         setFieldOptions(schoolFields);
         const localClasses = localStorage.getItem('classes');
@@ -35,7 +36,7 @@ const SearchFormPage = () => {
         if (localClasses) {
           classList = JSON.parse(localClasses);
         } else {
-          const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
+          const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
           const classes = res.data || [];
           localStorage.setItem('classes', JSON.stringify(classes));
           classList = classes;
@@ -100,7 +101,7 @@ const SearchFormPage = () => {
 
     try {
       // const resStudents = await axios.post(
-      //   'https://pudium-production.up.railway.app/api/podium/students/params',
+      //   '${BASE_URL}students/params',
       //   searchParams
       // );
       // const foundStudents = resStudents.data;
@@ -117,12 +118,12 @@ const SearchFormPage = () => {
       // const studentsIds = foundStudents.map(student => student.id);
 
       const resSave = await axios.post(
-        'https://pudium-production.up.railway.app/api/podium/searches/',
+        `${BASE_URL}searches/`,
         searchData
       );
 
       // await axios.post(
-      //   `https://pudium-production.up.railway.app/api/podium/stuInSea/${resSave.data.id}`,
+      //   `${BASE_URL}stuInSea/${resSave.data.id}`,
       //   { studentsid: studentsIds }
       // );
       // sessionStorage.setItem(`students-${resSave.data.id}`, JSON.stringify(studentsIds));

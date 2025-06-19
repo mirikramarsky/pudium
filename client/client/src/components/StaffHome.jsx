@@ -4,6 +4,7 @@ import { Container, Button, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 
 const StaffHome = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const name = localStorage.getItem('staffName');
   const staffId = localStorage.getItem('staffId');
@@ -17,7 +18,7 @@ const StaffHome = () => {
     const fetchStaff = async () => {
       try {
         const response = await axios.get(
-          `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
+          `${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`
         );
 
         const confirm = response.data[0]?.confirm;

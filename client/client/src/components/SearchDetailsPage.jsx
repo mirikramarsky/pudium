@@ -19,6 +19,7 @@ const getPriorityColor = (priority) => {
 };
 
 const SearchDetailsPage = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate();
     const { id } = useParams();
     const [search, setSearch] = useState(null);
@@ -40,7 +41,7 @@ const SearchDetailsPage = () => {
                 }
 
                 try {
-                    const resSearch = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
+                    const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
                     const searchData = resSearch.data?.[0];
 
                     if (!searchData) {
@@ -67,7 +68,7 @@ const SearchDetailsPage = () => {
                 const savedActive = JSON.parse(localStorage.getItem(activeKey) || '[]');
 
                 if (savedAllShown.length > 0 && savedActive.length > 0) {
-                    const resAllStudents = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/`);
+                    const resAllStudents = await axios.get(`${BASE_URL}students/`);
                     const allStudents = resAllStudents.data;
                     const filteredActive = allStudents.filter(s => savedActive.includes(s.id));
                     const filteredAll = allStudents.filter(s => savedAllShown.includes(s.id));
@@ -84,7 +85,7 @@ const SearchDetailsPage = () => {
                     };
 
                     const resStudents = await axios.post(
-                        'https://pudium-production.up.railway.app/api/podium/students/params',
+                        `${BASE_URL}students/params`,
                         searchParams
                     );
                     const foundStudents = resStudents.data;
@@ -119,7 +120,7 @@ const SearchDetailsPage = () => {
             };
 
             const res = await axios.post(
-                'https://pudium-production.up.railway.app/api/podium/students/params',
+                `${BASE_URL}students/params`,
                 searchParams
             );
 
@@ -147,7 +148,7 @@ const SearchDetailsPage = () => {
     const handleFinalSave = async () => {
         try {
             const studentsIds = students.map(s => s.id);
-            await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
+            await axios.post(`${BASE_URL}stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
             alert('התלמידות נשמרו בהצלחה!');
             navigate('../../data-fetch')
         } catch (err) {
@@ -159,7 +160,7 @@ const SearchDetailsPage = () => {
     const handleSendApprovalEmail = async () => {
         try {
             const schoolId = localStorage.getItem('schoolId');
-            const emailRes = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+            const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
             const recipientEmail = emailRes.data[0].emailaddress;
             const studentsIds = students.map(s => s.id);
             const emailContent = {
@@ -170,7 +171,7 @@ const SearchDetailsPage = () => {
             };
 
             await axios.post(
-                `https://pudium-production.up.railway.app/api/podium/searches/send-approval-mail/${id}/school/${schoolId}`,
+                `${BASE_URL}searches/send-approval-mail/${id}/school/${schoolId}`,
                 emailContent
             );
             setMailSent(true);
@@ -192,7 +193,7 @@ const SearchDetailsPage = () => {
             };
 
             const resStudents = await axios.post(
-                'https://pudium-production.up.railway.app/api/podium/students/params',
+                `${BASE_URL}students/params`,
                 searchParams
             );
             const newStudents = resStudents.data;

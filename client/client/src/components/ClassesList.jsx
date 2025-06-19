@@ -4,6 +4,7 @@ import { Container, ListGroup, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const ClassesList = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [classes, setClasses] = useState({});
   const [error, setError] = useState(null);
   const [staff, setStaff] = useState(null);
@@ -25,7 +26,7 @@ const ClassesList = () => {
       try {
         // שליפת פרטי הצוות
         const staffRes = await axios.get(
-          `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
+          `${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`
         );
         const staffData = staffRes.data[0];
         setStaff(staffData);
@@ -37,7 +38,7 @@ const ClassesList = () => {
           groupAndSetClasses(flatClassList);
         } else {
           const res = await axios.get(
-            `https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`
+            `${BASE_URL}students/classes/${schoolId}`
           );
           const classes = res.data || [];
           localStorage.setItem('classes', JSON.stringify(classes));

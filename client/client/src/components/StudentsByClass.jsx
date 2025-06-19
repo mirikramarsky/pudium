@@ -16,6 +16,7 @@ const priorityColors = {
 };
 
 const StudentsByClass = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { grade, class: className } = useParams();
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
@@ -30,7 +31,7 @@ const StudentsByClass = () => {
       }
 
       try {
-        const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/`);
+        const response = await axios.get(`${BASE_URL}students/`);
         // סינון לפי schoolId, grade ומחלקה (className)
         const filtered = response.data.filter(s =>
           s.schoolid === Number(schoolId) &&

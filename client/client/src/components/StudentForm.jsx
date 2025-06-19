@@ -4,6 +4,7 @@ import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const StudentForm = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate();
     const [message, setMessage] = useState({ text: '', variant: '' });
 
@@ -33,7 +34,7 @@ const StudentForm = () => {
             if (!schoolId) return;
 
             try {
-                const response = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${schoolId}`);
+                const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
                 const schoolFields = JSON.parse(response.data[0]?.fields);
 
                 if (!schoolFields || schoolFields.length === 0) {
@@ -46,7 +47,7 @@ const StudentForm = () => {
                 if (localClasses) {
                     setClassOptions(JSON.parse(localClasses));
                 } else {
-                    const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/students/classes/${schoolId}`);
+                    const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
                     const classes = res.data || [];
                     localStorage.setItem('classes', JSON.stringify(classes));
                     setClassOptions(classes);
@@ -98,7 +99,7 @@ const StudentForm = () => {
         }
 
         try {
-            await axios.post('https://pudium-production.up.railway.app/api/podium/students/', {
+            await axios.post(`${BASE_URL}students/`, {
                 ...submissionData,
                 schoolId
             });

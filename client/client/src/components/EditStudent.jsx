@@ -4,6 +4,7 @@ import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const EditStudent = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const { id } = useParams();
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState(null);
@@ -19,7 +20,7 @@ const EditStudent = () => {
 
             try {
                 const response = await axios.post(
-                    `https://pudium-production.up.railway.app/api/podium/students/schoolid/${id}`,
+                    `${BASE_URL}students/schoolid/${id}`,
                     { schoolId: Number(schoolid) }
                 );
                 const student = response.data;
@@ -46,7 +47,7 @@ const EditStudent = () => {
         e.preventDefault();
         try {
             await axios.put(
-                `https://pudium-production.up.railway.app/api/podium/students/${id}`,
+                `${BASE_URL}students/${id}`,
                 formData
             );
             alert('עודכן בהצלחה');

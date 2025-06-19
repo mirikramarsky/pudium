@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const DeleteStaff = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [id, setId] = useState('');
   const [success, setSuccess] = useState(false);
@@ -12,7 +13,7 @@ const DeleteStaff = () => {
   const handleDelete = async () => {
     try {
       const schoolId = localStorage.getItem('schoolId')
-      await axios.delete(`https://pudium-production.up.railway.app/api/podium/staff/${id}`, {
+      await axios.delete(`${BASE_URL}staff/${id}`, {
         data: { schoolId }
       });
       setSuccess(true);
