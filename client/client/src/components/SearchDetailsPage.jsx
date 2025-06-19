@@ -129,7 +129,6 @@ const SearchDetailsPage = () => {
     const handleFinalSave = async () => {
         try {
             const studentsIds = students.map(s => s.id);
-            console.log(studentsIds);
             await axios.post(`https://pudium-production.up.railway.app/api/podium/stuInSea/${id}`, { studentsid: JSON.stringify(studentsIds) });
             alert('התלמידות נשמרו בהצלחה!');
             navigate('../../data-fetch')

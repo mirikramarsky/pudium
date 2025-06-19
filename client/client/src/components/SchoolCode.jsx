@@ -12,7 +12,6 @@ const SchoolCode = () => {
     e.preventDefault();
     try {
       const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/schools/${code}`);
-      console.log(res.data[0]);
       const school = res.data[0];
       localStorage.setItem('schoolId', code);
       localStorage.setItem('schoolName', school.schoolname);

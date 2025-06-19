@@ -12,7 +12,6 @@ const DeleteStaff = () => {
   const handleDelete = async () => {
     try {
       const schoolId = localStorage.getItem('schoolId')
-      console.log(schoolId);
       await axios.delete(`https://pudium-production.up.railway.app/api/podium/staff/${id}`, {
         data: { schoolId }
       });

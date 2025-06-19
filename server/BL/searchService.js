@@ -33,21 +33,20 @@ class SearchService extends BaseService {
             return result;
         throw new idError('שליפת החיפושים נכשלה');
     }
-    async sendApprovalMail(searchId, schoolid, dataFromClient) {
-        const search = await this.repository.getById(searchId);
-        if (!search) throw new Error('חיפוש לא נמצא');
+   async sendApprovalMail(searchId, schoolid, dataFromClient) {
+    const search = await this.repository.getById(searchId);
+    if (!search) throw new Error('חיפוש לא נמצא');
 
-        const school = await schoolRepository.getById(schoolid);
-        const schoolEmail = school[0].emailaddress;
-        if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
+    const school = await schoolRepository.getById(schoolid);
+    const schoolEmail = school[0].emailaddress;
+    if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
 
-        const students = dataFromClient.students
-        const parsed = JSON.parse(search[0].classes);
-        const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
-        const studentsIds = students.map(s => s.id);
+    const students = dataFromClient.students;
+    const parsed = JSON.parse(search[0].classes);
+    const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
+    const studentsIds = students.map(s => s.id);
 
-
-        let studentRows = students.map(s => `
+    let studentRows = students.map(s => `
         <tr>
             <td>${s.firstname}</td>
             <td>${s.lastname}</td>
@@ -59,20 +58,24 @@ class SearchService extends BaseService {
             <td>${s.severalpriority}</td>
         </tr>`).join('');
 
-        const html = `
-            <div dir="rtl" style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; color: #333;">
-            <h2 style="color: #2c3e50;">📝 פרטי החיפוש שלך</h2>
-            
-            <ul style="list-style: none; padding: 0;">
-                <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
-                <li><strong>תחום:</strong> ${search[0].field}</li>
-                <li><strong>כיתות:</strong> ${classes}</li>
-                <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
-            </ul>
+    const html = `
+    <div dir="rtl" style="font-family: Assistant, Heebo, sans-serif; background-color: #cfe3f3; padding: 20px; color: #333;">
+        <div style="background-color: #2a3b8f; color: white; padding: 1rem; text-align: center; border-bottom: 4px solid #d9e3f0;">
+            <p style="font-size: xxx-large; margin: 0;">פודיום</p>
+            <p style="margin: 0;">לתת במה לכולן</p>
+        </div>
 
-            <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
-            <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; background-color: #fff; text-align: right;">
-                <thead style="background-color: #dfe6e9;">
+        <h2 style="color: #2c3e50; margin-top: 30px;">📝 פרטי החיפוש שלך</h2>
+        <ul style="list-style: none; padding: 0;">
+            <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
+            <li><strong>תחום:</strong> ${search[0].field}</li>
+            <li><strong>כיתות:</strong> ${classes}</li>
+            <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
+        </ul>
+
+        <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
+        <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; background-color: #fff; text-align: right;">
+            <thead style="background-color: #dfe6e9;">
                 <tr>
                     <th>שם פרטי</th>
                     <th>שם משפחה</th>
@@ -83,41 +86,41 @@ class SearchService extends BaseService {
                     <th>תחום 4</th>
                     <th>עדיפות כללית</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 ${studentRows}
-                </tbody>
-            </table>
+            </tbody>
+        </table>
 
-            <h3 style="margin-top: 30px;">📩 בחרו פעולה</h3>
-            <div style="margin-top: 10px;">
-                <form action="https://pudium-production.up.railway.app/api/podium/searches/18/approve" method="POST">
+        <h3 style="margin-top: 30px;">📩 בחרי פעולה</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+            <form action="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/approve" method="POST" style="display: inline;">
                 <input type="hidden" name="studentsid" value='${JSON.stringify(studentsIds)}'>
-                <button type="submit"
-                    style="padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 5px;">
+                <button type="submit" style="padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
                     ✔️ אשר חיפוש
                 </button>
-                </form>
+            </form>
 
-                <a href="#" onclick="alert('🔕 החיפוש הושהה');"
-                style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
+            <a href="#" onclick="alert('🔕 החיפוש הושהה');"
+                style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
                 ⏸️ השהה חיפוש
-                </a>
-                <a href="http://localhost:5173/search-results/${searchId}"
-                style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
+            </a>
+
+            <a href="http://localhost:5173/search-results/${searchId}"
+                style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
                 📝 ערוך חיפוש
-                </a>
-                <a href="${BASE_URL}/searches/${searchId}/delete"
-                style="padding: 10px 20px; background-color: #e74c3c; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
+            </a>
+
+            <a href="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/delete"
+                style="padding: 10px 20px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
                 ❌ מחק חיפוש
-                </a>
-            </div>
-            </div>
-            `;
+            </a>
+        </div>
+    </div>`;
 
+    await mailer.sendMail(schoolEmail, dataFromClient.subject, html);
+}
 
-        await mailer.sendMail(schoolEmail, dataFromClient.subject, html);
-    }
 
 }
 let searchService = new SearchService();

@@ -67,8 +67,6 @@ try{
 catch(err){
     if (err instanceof idError)
         res.status(400).send(err.message);
-    console.log(err);
-    
     next(err);
 }});
 router.put('/:id', async(req, res,next)=>{

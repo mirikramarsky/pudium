@@ -2,7 +2,6 @@ const pool = require('../db');
 class SchoolRepository {
     async get() {
         let schools = await pool.query('SELECT * FROM schools');
-        console.log(schools.rows);
         return schools.rows;
     }
     async getById(id) {

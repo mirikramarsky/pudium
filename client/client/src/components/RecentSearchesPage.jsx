@@ -115,30 +115,27 @@ const RecentSearchesPage = () => {
 
     if (filters.countstudents)
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
-    if (filters.searchdate) {
-      results = results.filter(s => {
-        if (!s.searchdate) return false;
-        const sDate = new Date(s.searchdate).toISOString().slice(0, 10);
-        return sDate === filters.searchdate;
-      });
-    }
-    if (filters.searchdate) {
+    if (filters.searchdate || filters.searchtime) {
       results = results.filter(s => {
         if (!s.searchdate) return false;
         const d = new Date(s.searchdate);
-        const dateStr = d.toISOString().slice(0, 10);
-        if (dateStr !== filters.searchdate) return false;
 
+        // השוואת תאריך אם סופק
+        if (filters.searchdate) {
+          const dateStr = d.toISOString().slice(0, 10);
+          if (dateStr !== filters.searchdate) return false;
+        }
+
+        // השוואת שעה אם סופקה
         if (filters.searchtime) {
           const hours = d.getHours().toString().padStart(2, '0');
-          const minutes = d.getMinutes().toString().padStart(2, '0');
-          const timeStr = `${hours}:${minutes}`;
-          return timeStr === filters.searchtime;
+         if (hours !== filters.searchtime.split(':')[0]) return false;
         }
 
         return true;
       });
     }
+
 
 
     if (filters.classes.length > 0) {
@@ -168,8 +165,6 @@ const RecentSearchesPage = () => {
         }
       });
     }
-
-    console.log(filters.searchdate);
 
 
     setFilteredSearches(results);
@@ -217,7 +212,6 @@ const RecentSearchesPage = () => {
       updateFilter('classes', newSelection);
     }
   };
-  console.log();
 
 
   return (

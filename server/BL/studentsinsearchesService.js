@@ -30,7 +30,6 @@ class StuInSeaService extends BaseService {
     }
        async deleteallsearchsstu(searchid) {
         let result = await this.repository.deleteallsearchsstu(searchid);
-        console.log(`ress : ${result}`);
         
         if (result && result != 0)
             return result;

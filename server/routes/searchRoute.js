@@ -132,13 +132,8 @@ router.get('/:id/delete', async (req, res) => {
 
 router.post('/:id/approve', async (req, res) => {
     const { id } = req.params;
-    console.log(`body : ${JSON.stringify(req.body)}`)
     const studentsRaw = req.body.studentsid || '[]';
-    console.log("I in approve Route");
-
-    let studentsids;
     try {
-        console.log(  JSON.parse(studentsRaw));
     } catch (e) {
         return res.status(400).send(`<div dir="rtl">שגיאה בפורמט הנתונים</div>`);
     }

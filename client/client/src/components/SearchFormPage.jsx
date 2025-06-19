@@ -138,7 +138,6 @@ const SearchFormPage = () => {
       }
     }
   };
-console.log(fieldOptions);
 
   return (
     <Container className="mt-4">

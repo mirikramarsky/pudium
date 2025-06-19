@@ -23,7 +23,6 @@ const EditStaff = () => {
       try {
         const res = await axios.get(`https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${id}`);
         const staff = res.data[0];
-        console.log(staff);
         
         setName(staff.name || '');
         setConfirm(String(staff.confirm ?? ''));

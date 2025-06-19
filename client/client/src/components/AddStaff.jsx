@@ -16,7 +16,6 @@ const AddStaff = () => {
     const handleSubmit = async e => {
         e.preventDefault();
         const schoolId = localStorage.getItem('schoolId');
-        console.log(formData);
 
         try {
             await axios.post('https://pudium-production.up.railway.app/api/podium/staff', {

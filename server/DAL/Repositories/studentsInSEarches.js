@@ -36,7 +36,6 @@ class StuInSeaRepository {
         return studentsinsearches;
     }
     async insert(searchid, studentsid) {
-        console.log(studentsid);
         const studentsids =JSON.parse(studentsid);
         const promises = studentsids.map(student =>
             pool.query(
@@ -60,9 +59,7 @@ class StuInSeaRepository {
             WHERE id = $1`, [id]);
         return studentsinsearches.rowCount;
     }
-      async deleteallsearchsstu(searchid) {
-        console.log(`search id : ${searchid}`);
-        
+      async deleteallsearchsstu(searchid) {        
         let studentsinsearches = await pool.query(` DELETE FROM studentsinsearches
             WHERE searchid = $1`, [searchid]);
         return studentsinsearches.rowCount;

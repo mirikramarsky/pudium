@@ -14,6 +14,8 @@ const WaitingSearches = () => {
   const schoolId = localStorage.getItem('schoolId');
 
   const [filters, setFilters] = useState({
+    searchtime: '',
+    searchdate: '',
     searchname: '',
     searchername: '',
     field: '',
@@ -58,38 +60,6 @@ const WaitingSearches = () => {
   }, [schoolId, staffId]);
 
 
-  // useEffect(() => {
-  //   const fetchSearches = async () => {
-  //     try {
-  //       if (!schoolId || !staffId) return;
-
-  //       // שליפת confirm של אשת הצוות
-  //       const confirmRes = await axios.get(
-  //         `https://pudium-production.up.railway.app/api/podium/staff/schoolId/${schoolId}/id/${staffId}`
-  //       );
-  //       const confirm = confirmRes.data[0]?.confirm;
-
-  //       // שליפת כל החיפושים
-  //       const response = await axios.get('https://pudium-production.up.railway.app/api/podium/searches/');
-  //       const allSearches = response.data || [];
-
-  //       // סינון לפי confirm
-  //       let filtered = allSearches;
-  //       if (confirm !== 0 && confirm !== 1) {
-  //         filtered = allSearches.filter(s => s.searcherid == staffId);
-  //       }
-
-  //       const sorted = filtered.sort((a, b) => new Date(b.searchdate) - new Date(a.searchdate));
-  //       setSearches(sorted);
-  //       setFilteredSearches(sorted);
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError('שגיאה בטעינת החיפושים');
-  //     }
-  //   };
-
-  //   fetchSearches();
-  // }, [schoolId, staffId]);
 
 
   useEffect(() => {
@@ -147,7 +117,26 @@ const WaitingSearches = () => {
 
     if (filters.countstudents)
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
+    if (filters.searchdate || filters.searchtime) {
+      results = results.filter(s => {
+        if (!s.searchdate) return false;
+        const d = new Date(s.searchdate);
 
+        // השוואת תאריך אם סופק
+        if (filters.searchdate) {
+          const dateStr = d.toISOString().slice(0, 10);
+          if (dateStr !== filters.searchdate) return false;
+        }
+
+        // השוואת שעה אם סופקה
+        if (filters.searchtime) {
+          const hours = d.getHours().toString().padStart(2, '0');
+          if (hours !== filters.searchtime.split(':')[0]) return false;
+        }
+
+        return true;
+      });
+    }
     if (filters.classes.length > 0) {
       results = results.filter(search => {
         try {
@@ -324,6 +313,22 @@ const WaitingSearches = () => {
               onChange={(e) => updateFilter('countstudents', e.target.value)}
             />
           </Col>
+          <Col md={2}>
+            <Form.Label>תאריך</Form.Label>
+            <Form.Control
+              type="date"
+              value={filters.searchdate}
+              onChange={(e) => updateFilter('searchdate', e.target.value)}
+            />
+          </Col>
+          <Col md={2}>
+            <Form.Label>שעה</Form.Label>
+            <Form.Control
+              type="time"
+              value={filters.searchtime}
+              onChange={(e) => updateFilter('searchtime', e.target.value)}
+            />
+          </Col>
         </Row>
       </Form>
 
@@ -345,7 +350,7 @@ const WaitingSearches = () => {
             {filteredSearches.map(search => (
               <tr key={search.id}
                 onClick={() => navigate(`/search-results/${search.id}`)}
-                 style={{cursor: 'pointer'}}>
+                style={{ cursor: 'pointer' }}>
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>
