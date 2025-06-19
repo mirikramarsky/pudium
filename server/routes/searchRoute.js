@@ -138,7 +138,7 @@ router.post('/:id/approve', async (req, res) => {
 
     let studentsids;
     try {
-        JSON.parse(studentsRaw); // רק בודק, לא משנה את הערך
+        console.log(  JSON.parse(studentsRaw));
     } catch (e) {
         return res.status(400).send(`<div dir="rtl">שגיאה בפורמט הנתונים</div>`);
     }

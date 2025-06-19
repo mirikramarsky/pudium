@@ -14,6 +14,7 @@ const RecentSearchesPage = () => {
   const schoolId = localStorage.getItem('schoolId');
 
   const [filters, setFilters] = useState({
+    searchdate: '',
     searchname: '',
     searchername: '',
     field: '',
@@ -147,6 +148,14 @@ const RecentSearchesPage = () => {
 
     if (filters.countstudents)
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
+    if (filters.searchdate) {
+      results = results.filter(s => {
+        if (!s.searchdate) return false;
+        const sDate = new Date(s.searchdate).toISOString().slice(0, 10);
+        return sDate === filters.searchdate;
+      });
+    }
+
 
     if (filters.classes.length > 0) {
       results = results.filter(search => {
@@ -176,6 +185,7 @@ const RecentSearchesPage = () => {
       });
     }
 
+    console.log(filters.searchdate);
 
 
     setFilteredSearches(results);
@@ -223,7 +233,7 @@ const RecentSearchesPage = () => {
       updateFilter('classes', newSelection);
     }
   };
-
+  console.log();
 
 
   return (
@@ -324,6 +334,15 @@ const RecentSearchesPage = () => {
               onChange={(e) => updateFilter('countstudents', e.target.value)}
             />
           </Col>
+
+          <Col md={2}>
+            <Form.Label>תאריך</Form.Label>
+            <Form.Control
+              type="date"
+              value={filters.searchdate}
+              onChange={(e) => updateFilter('searchdate', e.target.value)}
+            />
+          </Col>
         </Row>
       </Form>
 
@@ -344,7 +363,7 @@ const RecentSearchesPage = () => {
           <tbody>
             {filteredSearches.map(search => (
               <tr key={search.id} onClick={() => navigate(`/search-result-not-to-edit/${search.id}`)}
-              style={{cursor: 'pointer'}}>
+                style={{ cursor: 'pointer' }}>
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>

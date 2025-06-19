@@ -201,6 +201,7 @@ const SearchDetailsNotToEdit = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
+    
     return (
         <Container className="mt-4">
             <h4>פרטי חיפוש: {search.searchname}</h4>
