@@ -38,7 +38,7 @@ router.get('/schoolId/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+           return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -52,7 +52,7 @@ router.get('/schoolId/:schoolId/id/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+           return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -66,7 +66,7 @@ try{
 }
 catch(err){
     if (err instanceof idError)
-        res.status(400).send(err.message);
+       return res.status(400).send(err.message);
     next(err);
 }});
 router.put('/:id', async(req, res,next)=>{
@@ -79,7 +79,7 @@ router.put('/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+           return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -107,7 +107,7 @@ router.delete('/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+           return res.status(400).send(err.message);
         next(err);
     }
 });

@@ -26,7 +26,7 @@ router.get('/:id', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+           return  res.status(400).send(err.message);
         next(err);
     }
 });
@@ -40,7 +40,7 @@ router.get('/without/students/saved/', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+           return  res.status(400).send(err.message);
         next(err);
     }
 });
@@ -54,7 +54,7 @@ router.get('/with/students/saved/', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+          return   res.status(400).send(err.message);
         next(err);
     }
 });
@@ -64,7 +64,7 @@ router.get('/:id/students', async (req, res) => {
         res.json(students);
     } catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+          return   res.status(400).send(err.message);
         next(err);
     }
 });
@@ -78,7 +78,7 @@ router.post('/params', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+           return  res.status(400).send(err.message);
         next(err);
     }
 });
@@ -92,7 +92,7 @@ router.post('/', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+           return  res.status(400).send(err.message);
         next(err);
     }
 });
@@ -101,7 +101,6 @@ router.post('/send-approval-mail/:searchId/school/:schoolid', async (req, res) =
         await searchService.sendApprovalMail(req.params.searchId, req.params.schoolid, req.body);
         res.status(200).json({ message: 'המייל נשלח בהצלחה' });
     } catch (err) {
-        console.error(err);
         res.status(500).json({ error: 'שגיאה בשליחת המייל' });
     }
 });
@@ -115,7 +114,7 @@ router.put('/:id', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+           return  res.status(400).send(err.message);
         next(err);
     }
 });
@@ -125,7 +124,6 @@ router.get('/:id/delete', async (req, res) => {
         await searchService.delete(id);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נמחק בהצלחה</div>`);
     } catch (err) {
-        console.error(err);
         res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה במחיקה</div>`);
     }
 });
@@ -141,7 +139,6 @@ router.post('/:id/approve', async (req, res) => {
         await stuInSeaService.insert(id, studentsRaw);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
     } catch (err) {
-        console.error(err);
         res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה בשמירה</div>`);
     }
 });
@@ -157,7 +154,7 @@ router.delete('/:id', async (req, res, next) => {
     }
     catch (err) {
         if (err instanceof idError)
-            res.status(400).send(err.message);
+           return res.status(400).send(err.message);
         next(err);
     }
 });

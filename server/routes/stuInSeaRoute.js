@@ -24,7 +24,7 @@ router.get('/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+            return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -39,7 +39,7 @@ router.get('/student/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+            return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -54,7 +54,7 @@ router.get('/search/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+            return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -69,7 +69,7 @@ try{
 }
 catch(err){
     if (err instanceof idError)
-        res.status(400).send(err.message);
+        return res.status(400).send(err.message);
     
     next(err);
 }});
@@ -83,8 +83,7 @@ try{
 }
 catch(err){
     if (err instanceof idError)
-        res.status(400).send(err.message);
-    
+        return res.status(400).send(err.message);
     next(err);
 }});
 
@@ -98,7 +97,7 @@ router.put('/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+            return res.status(400).send(err.message);
         next(err);
     }
 });
@@ -112,7 +111,7 @@ router.delete('/:id', async(req, res,next)=>{
     }
     catch(err){
          if (err instanceof idError)
-            res.status(400).send(err.message);
+            return res.status(400).send(err.message);
         next(err);
     }
 });
