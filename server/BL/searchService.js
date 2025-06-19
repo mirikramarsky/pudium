@@ -59,7 +59,8 @@ class SearchService extends BaseService {
             <td>${s.severalpriority}</td>
         </tr>`).join('');
 
-        const html = `<<div style="font-family: Assistant, Heebo, sans-serif; background-color: #cfe3f3; padding: 20px; color: #333; font-size: 1.2rem;">
+     const html = `
+<div dir="rtl" style="font-family: Assistant, Heebo, sans-serif; background-color: #cfe3f3; padding: 20px; color: #333; font-size: 1.2rem;">
   <div style="background-color: #2a3b8f; color: white; padding: 1rem; text-align: center; border-bottom: 4px solid #d9e3f0;">
     <p style="font-size: xxx-large; margin: 0;">פודיום</p>
     <p style="margin: 0;">לתת במה לכולן</p>
@@ -94,7 +95,6 @@ class SearchService extends BaseService {
 
   <h3 style="margin-top: 30px;">📩 בחרי פעולה</h3>
   <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-
     <button id="approveBtn" style="padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
       ✔️ אשר חיפוש
     </button>
@@ -116,30 +116,40 @@ class SearchService extends BaseService {
 </div>
 
 <script>
-    const studentsIds = ${JSON.stringify(studentsIds)};
-    const searchId = ${searchId};
+  const studentsIds = ${JSON.stringify(studentsIds)};
+  const searchId = ${searchId};
 
-    document.getElementById('approveBtn').addEventListener('click', async () => {
+  document.getElementById('approveBtn').addEventListener('click', async () => {
+    try {
+      const res = await fetch(\`https://pudium-production.up.railway.app/api/podium/searches/\${searchId}/approve\`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentsid: studentsIds })
+      });
+      document.getElementById('messageBox').textContent = res.ok ? '✔️ החיפוש אושר בהצלחה' : '❌ שגיאה באישור החיפוש';
+    } catch {
+      document.getElementById('messageBox').textContent = '❌ שגיאה באישור החיפוש';
+    }
+  });
+
+  document.getElementById('pauseBtn').addEventListener('click', () => {
+    document.getElementById('messageBox').textContent = '🔕 החיפוש הושהה';
+  });
+
+  document.getElementById('deleteBtn').addEventListener('click', async () => {
+    if (confirm('האם את בטוחה שברצונך למחוק את החיפוש?')) {
       try {
-        const res = await fetch(\`https://pudium-production.up.railway.app/api/podium/searches/\${searchId}/approve\`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ studentsid: studentsIds })
-        });
-        if (res.ok) {
-          document.getElementById('messageBox').textContent = '✔️ החיפוש אושר בהצלחה';
-        } else {
-          document.getElementById('messageBox').textContent = '❌ שגיאה באישור החיפוש';
-        }
+        const res = await fetch(\`https://pudium-production.up.railway.app/api/podium/searches/\${searchId}/delete\`);
+        document.getElementById('messageBox').textContent = res.ok ? '❌ החיפוש נמחק' : '⚠️ לא הצלחנו למחוק את החיפוש';
       } catch {
-        document.getElementById('messageBox').textContent = '❌ שגיאה באישור החיפוש';
+        document.getElementById('messageBox').textContent = '⚠️ שגיאה במחיקה';
       }
-    });
+    }
+  });
+</script>
+`;
 
-    ...
-  </script>
 
-`
         
         /*`
             <div dir="rtl" style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; color: #333;">
