@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const DeleteStaff = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [id, setId] = useState('');
   const [success, setSuccess] = useState(false);

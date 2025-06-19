@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Button, Spinner } from 'react-bootstrap';
 import axios from 'axios';
+import BASE_URL from '../config';
 
 const StaffHome = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
   const navigate = useNavigate();
   const name = localStorage.getItem('staffName');
   const staffId = localStorage.getItem('staffId');

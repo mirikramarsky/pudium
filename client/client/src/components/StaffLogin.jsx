@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
+import BASE_URL from '../config';
 
 const StaffLogin = () => {
   const [staffCode, setStaffCode] = useState('');
@@ -10,7 +11,7 @@ const StaffLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    
     const name = localStorage.getItem('schoolName');
     if (name) setSchoolName(name);
   }, []);

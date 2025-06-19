@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Form, Button, Alert, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const AddStaff = () => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ id: '', name: '', confirm: 3, class: "all" });
     const [message, setMessage] = useState(null);

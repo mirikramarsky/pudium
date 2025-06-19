@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const EditStaff = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
     const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1 = הזנת קוד, 2 = טופס עדכון
   const [id, setId] = useState('');

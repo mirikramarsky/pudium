@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Table, Alert, Spinner, Row, Col, Card, Button } from 'react-bootstrap';
+import BASE_URL from '../config';
 
 const getPriorityColor = (priority) => {
     switch (priority) {
@@ -19,7 +20,7 @@ const getPriorityColor = (priority) => {
 };
 
 const SearchDetailsPage = () => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    
     const navigate = useNavigate();
     const { id } = useParams();
     const [search, setSearch] = useState(null);

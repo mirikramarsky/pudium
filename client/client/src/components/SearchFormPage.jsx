@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import BASE_URL from '../config';
 
 const SearchFormPage = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({

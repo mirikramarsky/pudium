@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const EditStudent = () => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    
     const { id } = useParams();
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState(null);

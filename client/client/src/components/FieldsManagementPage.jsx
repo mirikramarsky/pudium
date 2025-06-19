@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
+import BASE_URL from '../config';
 
 const FieldsManagementPage = () => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    
     const schoolId = localStorage.getItem('schoolId');
     const [fields, setFields] = useState([]);
     const [newField, setNewField] = useState('');

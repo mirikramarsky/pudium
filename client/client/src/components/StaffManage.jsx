@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
-
+import BASE_URL from '../config';
 const StaffManage = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
   const navigate = useNavigate();
   const schoolId = localStorage.getItem('schoolId');
 

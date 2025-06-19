@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Table, Button, Alert } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const priorityColors = {
   0: '#e0e0e0', // אפור
@@ -16,7 +17,7 @@ const priorityColors = {
 };
 
 const StudentsByClass = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
   const { grade, class: className } = useParams();
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
@@ -80,7 +81,7 @@ const StudentsByClass = () => {
 
   return (
     <Container className="mt-4">
-      <h3>תלמידות בכיתה {grade} {className}</h3>
+      <h3>תלמידות בכיתה {className} {grade}</h3>
       {renderLegend()}
       {students.length === 0 ? (
         <p>אין תלמידות בכיתה זו.</p>

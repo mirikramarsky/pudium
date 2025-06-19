@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Container, Form, Row, Col, Button, Table, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const WaitingSearches = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
   const navigate = useNavigate();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [searches, setSearches] = useState([]);

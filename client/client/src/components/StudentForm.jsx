@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-
+import BASE_URL from '../config';
 const StudentForm = () => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    
     const navigate = useNavigate();
     const [message, setMessage] = useState({ text: '', variant: '' });
 

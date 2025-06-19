@@ -9,7 +9,7 @@ class StudentsRepository {
         let student = await pool.query(`SELECT * FROM students WHERE id = $1 AND schoolId = $2`, [id, schoolId]);
         return student.rows;
     }
-    async getBySchoolIdId(schoolId) {
+    async getBySchoolId(schoolId) {
         let student = await pool.query(`SELECT * FROM students WHERE schoolId = $1`, [schoolId]);
         return student.rows;
     }
@@ -62,7 +62,6 @@ class StudentsRepository {
         const result = await pool.query(query, values);
         return result.rows;
     }
-
     async insert(params) {
         const query = `
         INSERT INTO students(
@@ -143,7 +142,6 @@ class StudentsRepository {
   `;
         await pool.query(query, [schoolid]);
     }
-
     async delete(id) {
         let student = await pool.query(` DELETE FROM students
             WHERE id = $1`, [id]);

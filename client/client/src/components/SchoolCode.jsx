@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
+import BASE_URL from '../config';
 
 const SchoolCode = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();

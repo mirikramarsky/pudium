@@ -8,7 +8,6 @@ import ClassesList from '../components/ClassesList';
 import StudentsByClass from '../components/StudentsByClass';
 import EditStudent from '../components/EditStudent';
 import SearchFormPage from '../components/SearchFormPage';
-import SearchResults from '../components/SearchResults';
 import SearchDetailsPage from '../components/SearchDetailsPage';
 import RecentSearchesPage from '../components/RecentSearchesPage';
 import EditStaff from '../components/EditStaff';
@@ -16,7 +15,7 @@ import AddStaff from '../components/AddStaff';
 import DeleteStaff from '../components/DeleteStaff';
 import StaffManage from '../components/StaffManage';
 import FieldsManagementPage from '../components/FieldsManagementPage';
-import WaitingSearches from '../components/waitingSearches';
+import WaitingSearches from '../components/WaitingSearches';
 import SearchDetailsNotToEdit from '../components/SearchDetailsNotToEdit';
 
 function Home() {
@@ -39,7 +38,6 @@ function Home() {
                 <Route path="/manage-fields" element={<FieldsManagementPage />} />
                 <Route path="/wait-searches" element={<WaitingSearches />} />
                 <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
-                {/* <Route path="/search-results/:id" element={<SearchResults />} /> */}
                 <Route path="/search-results/:id" element={<SearchDetailsPage />} />
             </Routes>
         </BrowserRouter>
