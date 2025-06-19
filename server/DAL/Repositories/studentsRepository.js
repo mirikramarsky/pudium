@@ -161,6 +161,7 @@ class StudentsRepository {
         return student.rowCount > 0;
     }
 }
+
 let studentsRepository = new StudentsRepository();
 
 module.exports = studentsRepository;
