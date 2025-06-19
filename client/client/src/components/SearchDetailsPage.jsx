@@ -39,9 +39,27 @@ const SearchDetailsPage = () => {
                     return;
                 }
 
-                const resSearch = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
-                const searchData = resSearch.data[0];
-                setSearch(searchData);
+                try {
+                    const resSearch = await axios.get(`https://pudium-production.up.railway.app/api/podium/searches/${id}`);
+                    const searchData = resSearch.data?.[0];
+
+                    if (!searchData) {
+                        setError('החיפוש לא קיים');
+                        setSearch(null);
+                        return;
+                    }
+
+                    setSearch(searchData);
+                } catch (err) {
+                    if (err.response?.status === 400) {
+                        setError('החיפוש לא קיים או מזהה לא תקין');
+                    } else {
+                        setError('שגיאה בטעינת החיפוש');
+                    }
+                    console.error('שגיאה בטעינה:', err);
+                    return;
+                }
+
 
                 const allShownKey = `shown_${id}`;
                 const activeKey = `active_${id}`;
@@ -133,8 +151,8 @@ const SearchDetailsPage = () => {
             alert('התלמידות נשמרו בהצלחה!');
             navigate('../../data-fetch')
         } catch (err) {
-            console.error('שגיאה בשמירה הסופית:', err.response?.data ||err.message);
-            alert(err.response?.data ||err.message);
+            console.error('שגיאה בשמירה הסופית:', err.response?.data || err.message);
+            alert(err.response?.data || err.message);
         }
     };
 
@@ -147,7 +165,7 @@ const SearchDetailsPage = () => {
             const emailContent = {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
-                students:JSON.stringify(studentsIds),
+                students: JSON.stringify(studentsIds),
                 students,
             };
 
@@ -193,12 +211,11 @@ const SearchDetailsPage = () => {
             alert('שגיאה בשליפת תלמידות נוספות');
         }
     };
-    const  waitTheSearch = async ()=>{
+    const waitTheSearch = async () => {
         navigate('../../data-fetch')
     }
     if (loading) return <Spinner animation="border" className="m-4" />;
-    if (error) return <Alert variant="danger">{error}</Alert>;
-    if (!search) return <p>החיפוש לא נמצא</p>;
+   if (error) return <Alert variant="danger">{error}</Alert>;
     return (
         <Container className="mt-4">
             <h4>פרטי חיפוש: {search.searchname}</h4>

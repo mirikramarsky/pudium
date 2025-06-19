@@ -103,7 +103,7 @@ class SearchService extends BaseService {
       </button>
     </form>
 
-<span style="padding: 10px 20px; background-color: #3498db; color: white; border-radius: 5px; display: inline-block; cursor: pointer;">
+<span style="padding: 10px 20px; background-color: #3498db; color: white; cursor: pointer; border-radius: 5px; display: inline-block; cursor: pointer;">
   ⏸️ החיפוש מושהה
 </span>
 
