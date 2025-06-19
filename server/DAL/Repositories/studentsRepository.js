@@ -13,6 +13,19 @@ class StudentsRepository {
         let student = await pool.query(`SELECT * FROM students WHERE schoolId = $1`, [schoolId]);
         return student.rows;
     }
+    async getClassesBySchoolId(schoolId) {
+        const query = `
+            SELECT DISTINCT class || grade::text AS class_full
+            FROM students
+            WHERE schoolid = $1
+            AND class IS NOT NULL
+            AND grade IS NOT NULL
+            ORDER BY class_full;
+        `;
+
+        const result = await pool.query(query, [schoolId]);
+        return result.rows.map(row => row.class_full);
+    }
     async getStudentsByParams(params) {
         const values = [];
 
