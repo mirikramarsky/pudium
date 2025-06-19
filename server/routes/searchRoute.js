@@ -143,7 +143,7 @@ router.post('/:id/approve', async (req, res) => {
         return res.status(400).send(`<div dir="rtl">שגיאה בפורמט הנתונים</div>`);
     }
     try {
-        await stuInSeaService.insert(id, studentsids);
+        await stuInSeaService.insert(id, studentsRaw);
         res.send(`<div dir="rtl" style="font-family: Arial">✔️ החיפוש נשמר ואושר בהצלחה</div>`);
     } catch (err) {
         console.error(err);
