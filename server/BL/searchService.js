@@ -98,7 +98,7 @@ class SearchService extends BaseService {
 
     <form action="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/approve" method="POST" style="display:inline;">
       <input type="hidden" name="studentsid" value='${JSON.stringify(studentsIds)}'>
-      <button type="submit" style="padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
+      <button type="submit" style="padding: 20px 30px; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
         ✔️ אשר חיפוש
       </button>
     </form>
@@ -108,7 +108,7 @@ class SearchService extends BaseService {
 </span>
 
     <a href="http://localhost:5173/search-results/${searchId}"
-      style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">
+      style="padding: 10px 20px; background-color:rgb(163, 52, 219); color: white; text-decoration: none; border-radius: 5px;">
       📝 ערוך חיפוש
     </a>
 
