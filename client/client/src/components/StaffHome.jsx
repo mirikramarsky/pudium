@@ -5,7 +5,7 @@ import axios from 'axios';
 import BASE_URL from '../config';
 
 const StaffHome = () => {
-  
+
   const navigate = useNavigate();
   const name = localStorage.getItem('staffName');
   const staffId = localStorage.getItem('staffId');
@@ -48,13 +48,17 @@ const StaffHome = () => {
 
       {showClassesButton && (
         <Button variant="primary" className="m-3" onClick={() => navigate('/classes')}>
-           🗂️ מילוי פרטים ✍️ - הצגת כיתות
+          🗂️ מילוי פרטים ✍️ - הצגת כיתות
         </Button>
       )}
 
       <Button variant="secondary" className="m-3" onClick={() => navigate('/data-fetch')}>
-       🔍 שליפת נתונים
+        🔍 שליפת נתונים
       </Button>
+      <Button variant="info" className="m-3" onClick={() => navigate('/priority')}>
+        ⭐ בחירה ידנית
+      </Button>
+
 
       {showAdminButtons && (
         <>

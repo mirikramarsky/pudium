@@ -32,7 +32,8 @@ const SearchDetailsPage = () => {
     const [mailSent, setMailSent] = useState(false);
 
     useEffect(() => {
-        const fetchSearchAndStudents = async () => {
+        const fetchSearchAndStudents = async () => { 
+            let searchData = null;
             try {
                 const schoolId = localStorage.getItem('schoolId');
                 if (!schoolId) {
@@ -40,10 +41,10 @@ const SearchDetailsPage = () => {
                     setLoading(false);
                     return;
                 }
-
+               
                 try {
                     const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
-                    const searchData = resSearch.data?.[0];
+                    searchData = resSearch.data?.[0];
 
                     if (!searchData) {
                         setError('החיפוש לא קיים');
@@ -168,7 +169,6 @@ const SearchDetailsPage = () => {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
                 students: JSON.stringify(studentsIds),
-                students,
             };
 
             await axios.post(
@@ -176,6 +176,7 @@ const SearchDetailsPage = () => {
                 emailContent
             );
             setMailSent(true);
+            navigate('../../data-fetch')
         } catch (err) {
             console.error('שגיאה בשליחת המייל:', err);
             alert('שגיאה בשליחת המייל');

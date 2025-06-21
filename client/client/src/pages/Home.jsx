@@ -17,6 +17,7 @@ import StaffManage from '../components/StaffManage';
 import FieldsManagementPage from '../components/FieldsManagementPage';
 import WaitingSearches from '../components/WaitingSearches';
 import SearchDetailsNotToEdit from '../components/SearchDetailsNotToEdit';
+import PriorityPage from '../components/PriorityPage';
 
 function Home() {
     return (
@@ -39,6 +40,7 @@ function Home() {
                 <Route path="/wait-searches" element={<WaitingSearches />} />
                 <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
                 <Route path="/search-results/:id" element={<SearchDetailsPage />} />
+                <Route path="/priority" element={<PriorityPage />} />
             </Routes>
         </BrowserRouter>
     );

@@ -10,8 +10,8 @@ class SchoolRepository {
     }
     async insert(params) {
         let school = await pool.query(
-            `INSERT INTO schools (id, schoolname) VALUES($1, $2)`,
-            [params.SchoolCode, params.SchoolName]
+            `INSERT INTO schools (schoolname, emailaddress, fields) VALUES($1, $2, $3)`,
+            [params.SchoolName,params.emailaddress ,params.fields]
         ); 
         return school;
     }
