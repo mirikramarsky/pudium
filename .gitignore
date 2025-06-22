@@ -6,3 +6,4 @@ server/package-lock.json
 Notes.txt
 .gitignore
 test-db-connection.js
+server.zip
