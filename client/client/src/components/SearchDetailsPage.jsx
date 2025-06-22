@@ -169,7 +169,7 @@ const SearchDetailsPage = () => {
             const emailContent = {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
-                students: JSON.stringify(studentsIds),
+                students: students,
             };
              console.log(emailContent);
             await axios.post(
