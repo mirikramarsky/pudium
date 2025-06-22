@@ -89,7 +89,8 @@ const SearchDetailsPage = () => {
                     const resStudents = await axios.post(
                         `${BASE_URL}students/params`,
                         searchParams
-                    );
+                    );                   
+                    
                     const foundStudents = resStudents.data;
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
@@ -164,13 +165,13 @@ const SearchDetailsPage = () => {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
             const recipientEmail = emailRes.data[0].emailaddress;
-            const studentsIds = students.map(s => s.id);
+            const studentsIds = students.map(s => s.id);            
             const emailContent = {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
                 students: JSON.stringify(studentsIds),
             };
-
+             console.log(emailContent);
             await axios.post(
                 `${BASE_URL}searches/send-approval-mail/${id}/school/${schoolId}`,
                 emailContent
@@ -178,7 +179,7 @@ const SearchDetailsPage = () => {
             setMailSent(true);
             navigate('../../data-fetch')
         } catch (err) {
-            console.error('שגיאה בשליחת המייל:', err);
+            console.error('שגיאה בשליחת המייל:', err.response?.data);
             alert('שגיאה בשליחת המייל');
         }
     };
