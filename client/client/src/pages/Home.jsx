@@ -15,7 +15,7 @@ import AddStaff from '../components/AddStaff';
 import DeleteStaff from '../components/DeleteStaff';
 import StaffManage from '../components/StaffManage';
 import FieldsManagementPage from '../components/FieldsManagementPage';
-import WaitingSearches from '../components/WaitingSearches';
+import WaitingSearches from '../components/waitingSearches';
 import SearchDetailsNotToEdit from '../components/SearchDetailsNotToEdit';
 import PriorityPage from '../components/PriorityPage';
 
