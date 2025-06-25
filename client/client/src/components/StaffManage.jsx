@@ -4,7 +4,7 @@ import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
 const StaffManage = () => {
-  
+
   const navigate = useNavigate();
   const schoolId = localStorage.getItem('schoolId');
 
@@ -20,7 +20,16 @@ const StaffManage = () => {
 
   return (
     <Container className="mt-5 text-center">
-      <h2>ניהול בית ספר</h2>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <h2>ניהול בית ספר</h2>
+        <Button
+          onClick={() => navigate('../staff-login')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
 
       <Button variant="success" className="m-2" onClick={() => navigate('/staff/add')}>
         ➕ הוספת אשת צוות

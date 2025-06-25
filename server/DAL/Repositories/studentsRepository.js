@@ -153,7 +153,8 @@ class StudentsRepository {
     END
     WHERE schoolid = $1
   `;
-        await pool.query(query, [schoolid]);
+        const res = await pool.query(query, [schoolid]);
+        return res.rowCount;
     }
     async delete(id) {
         let student = await pool.query(` DELETE FROM students

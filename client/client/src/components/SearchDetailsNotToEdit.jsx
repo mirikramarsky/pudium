@@ -20,7 +20,7 @@ const getPriorityColor = (priority) => {
 };
 
 const SearchDetailsNotToEdit = () => {
-    
+
     const navigate = useNavigate();
     const { id } = useParams();
     const [search, setSearch] = useState(null);
@@ -44,7 +44,7 @@ const SearchDetailsNotToEdit = () => {
                 const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
                 const searchData = resSearch.data[0];
                 console.log(searchData);
-                
+
                 setSearch(searchData);
 
                 const allShownKey = `shown_${id}`;
@@ -95,11 +95,19 @@ const SearchDetailsNotToEdit = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-    
+
     return (
         <Container className="mt-4">
-            <h4>פרטי חיפוש: {search.searchname}</h4>
-
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                  <h4>פרטי חיפוש: {search.searchname}</h4>
+                <Button
+                    onClick={() => navigate('../recent-searches')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div>
             <Card className="mb-4 p-3">
                 <Row>
                     <Col md={4}><strong>שם מחפשת:</strong> {search.searchername}</Col>
@@ -150,9 +158,6 @@ const SearchDetailsNotToEdit = () => {
                         </tbody>
 
                     </Table>
-                    <div className="mt-3">
-                        <Button variant='info' onClick={() => navigate('../data-fetch')}>חזור👈</Button>
-                    </div>
                 </>
             )}
         </Container>

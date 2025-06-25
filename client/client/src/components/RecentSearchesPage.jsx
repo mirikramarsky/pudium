@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const RecentSearchesPage = () => {
-  
+
   const navigate = useNavigate();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [searches, setSearches] = useState([]);
@@ -131,7 +131,7 @@ const RecentSearchesPage = () => {
         // השוואת שעה אם סופקה
         if (filters.searchtime) {
           const hours = d.getHours().toString().padStart(2, '0');
-         if (hours !== filters.searchtime.split(':')[0]) return false;
+          if (hours !== filters.searchtime.split(':')[0]) return false;
         }
 
         return true;
@@ -218,8 +218,16 @@ const RecentSearchesPage = () => {
 
   return (
     <Container className="mt-4">
-      <h4 className="mb-4">חיפושים אחרונים</h4>
-
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+          <h4 className="mb-4">חיפושים אחרונים</h4>
+        <Button
+          onClick={() => navigate('../data-fetch')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
       {error && <Alert variant="danger">{error}</Alert>}
       {fieldError && <Alert variant="warning">{fieldError}</Alert>}
 

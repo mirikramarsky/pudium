@@ -27,6 +27,11 @@ const DeleteStaff = () => {
 
   return (
     <Container className="mt-4">
+        <Button
+        onClick={() => navigate('../staff-manage')}
+        variant="outline-secondary">
+        חזרה 👉
+      </Button>
       <h3>מחיקת אשת צוות</h3>
       {success && <Alert variant="success">נמחק בהצלחה</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}

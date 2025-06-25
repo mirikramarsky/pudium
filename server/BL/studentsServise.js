@@ -36,7 +36,7 @@ class SudentsService extends BaseService{
     }
     async goUpGrade(schoolid){
         let result = await this.repository.goUpGrade(schoolid);
-        if(result)
+        if(result!= 0)
             return result
         throw new idError("this id is not exist");
         

@@ -4,7 +4,7 @@ import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 const StudentForm = () => {
-    
+
     const navigate = useNavigate();
     const [message, setMessage] = useState({ text: '', variant: '' });
 
@@ -189,6 +189,7 @@ const StudentForm = () => {
     return (
         <Container className="mt-5">
             <h2 className="mb-4 text-center">טופס הוספת תלמידה</h2>
+            <Button variant='outline-secondary' onClick={() => navigate('../staff-login')}>חזרה לדף ההתחברות 👉</Button>
             <Form onSubmit={handleSubmit}>
                 <Row>
                     <Col md={6}>
@@ -233,23 +234,21 @@ const StudentForm = () => {
 
                     <Col md={3}>
                         <Form.Group className="mb-3">
-                            <Form.Label>שכבת כיתה *</Form.Label>
-                            <Form.Control
-                                list="classOptions"
+                            <Form.Label> כיתה *</Form.Label>
+                            <Form.Select
                                 name="class"
                                 value={formData.class}
                                 onChange={handleChange}
                                 required
-                                placeholder="לדוגמה: י'"
-                            />
-                            <datalist id="classOptions">
-                                {Array.from(new Set(classOptions.map(c => c[0]))).map((cl, idx) => (
-                                    <option key={idx} value={cl} />
-                                ))}
-                            </datalist>
+                            >
+                                <option value="" disabled hidden>בחרי כיתה</option>
+                                <option value="ט">ט</option>
+                                <option value="י">י</option>
+                                <option value="יא">י"א</option>
+                                <option value="יב">י"ב</option>
+                            </Form.Select>
                         </Form.Group>
                     </Col>
-
                     <Col md={3}>
                         <Form.Group className="mb-3">
                             <Form.Label>מספר כיתה *</Form.Label>

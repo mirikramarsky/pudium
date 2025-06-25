@@ -44,7 +44,16 @@ const StaffHome = () => {
 
   return (
     <Container className="mt-5 text-center">
-      <h2>שלום ל{name}</h2>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <h2 style={{ margin: 0 }}>שלום ל{name}</h2>
+        <Button
+          onClick={() => navigate('../staff-login')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה לדף ההתחברות 👉
+        </Button>
+      </div>
 
       {showClassesButton && (
         <Button variant="primary" className="m-3" onClick={() => navigate('/classes')}>

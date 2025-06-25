@@ -2,7 +2,7 @@ const express = require("express");
 const schoolService = require("../BL/schoolService");
 const idError = require("../BL/errors/idError");
 const router = express.Router();
-
+const createDB = require('../DAL/createDB')
 router.get('/', async (req, res,next)=>{
     try{
     let result = await schoolService.get()
@@ -69,4 +69,14 @@ router.delete('/:id', async(req, res,next)=>{
         next(err);
     }
 });
+router.get('/createDB/',async(req,res,next)=>{
+    try{
+        let result = await createDB.createTables();
+        if(result)
+            res.send(result)
+    }
+    catch(err){
+        next(err);
+    }
+})
 module.exports = router;

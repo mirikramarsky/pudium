@@ -38,7 +38,6 @@ function Home() {
                 <Route path="/staff/delete" element={<DeleteStaff />} />
                 <Route path="/staff-manage" element={<StaffManage />} />
                 <Route path="/manage-fields" element={<FieldsManagementPage />} />
-                {/* <Route path="/wait-searches" element={<WaitingSearches />} /> */}
                 <Route path="/wait-searches" element={<WaitingSearches />} />
                 <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
                 <Route path="/search-results/:id" element={<SearchDetailsPage />} />

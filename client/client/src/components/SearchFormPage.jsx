@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const SearchFormPage = () => {
-  
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ const SearchFormPage = () => {
     field: '',
     classes: [],
     staffName: localStorage.getItem('staffName') || '',
-    searcherId:localStorage.getItem('staffId') || '',
+    searcherId: localStorage.getItem('staffId') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0
   });
   const [fieldOptions, setFieldOptions] = useState([]);
@@ -27,7 +27,7 @@ const SearchFormPage = () => {
       try {
         const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
-         const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
+        const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
         const schoolFields = JSON.parse(response.data[0]?.fields || []);
         setFieldOptions(schoolFields);
         const localClasses = localStorage.getItem('classes');
@@ -108,7 +108,7 @@ const SearchFormPage = () => {
 
       const searchData = {
         searchname: formData.name,
-        countstudents:  Number(formData.amount),
+        countstudents: Number(formData.amount),
         field: formData.field,
         classes: formData.classes,
         searcherId: formData.searcherId,
@@ -145,10 +145,32 @@ const SearchFormPage = () => {
       <Row className="justify-content-between mb-3">
         <Col><h4>טופס חיפוש תלמידות</h4></Col>
         <Col className="text-end">
-          <Button onClick={() => navigate('/recent-searches')}>חיפושים אחרונים 🔎</Button>
-           <Button variant='secondary' onClick={() => navigate('/wait-searches')}>חיפושים מושהים 🔎</Button>
+          <div style={{ width: '160px' }} className="d-flex flex-column align-items-end">
+            <Button
+              variant="outline-secondary"
+              onClick={() => navigate('../staff-home')}
+              className="mb-2 w-100"
+            >
+              חזרה 👉
+            </Button>
+            <Button
+              variant="outline-primary"
+              onClick={() => navigate('/recent-searches')}
+              className="mb-2 w-100"
+            >
+              חיפושים אחרונים 🔎
+            </Button>
+            <Button
+              variant="outline-warning"
+              onClick={() => navigate('/wait-searches')}
+              className="w-100"
+            >
+              חיפושים מושהים 🔎
+            </Button>
+          </div>
         </Col>
       </Row>
+
 
       {error && <Alert variant="danger">{error}</Alert>}
 

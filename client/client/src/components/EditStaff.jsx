@@ -23,16 +23,15 @@ const EditStaff = () => {
 
     const fetchStaff = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}schoolId/${schoolId}/id/${id}`);
+        const res = await axios.get(`${BASE_URL}staff/schoolId/${schoolId}/id/${id}`);
         const staff = res.data[0];
-        
         setName(staff.name || '');
         setConfirm(String(staff.confirm ?? ''));
         setClassT(staff.class || '');
         setError(null);
       } catch (err) {
         setError('שגיאה בטעינת פרטי אשת צוות');
-        console.error(err);
+        console.error(err.response?.data);
       }
     };
 
@@ -71,6 +70,11 @@ const EditStaff = () => {
     <Container className="mt-4" style={{ maxWidth: '600px' }}>
       {step === 1 && (
         <>
+          <Button
+                onClick={() => navigate('../staff-manage')}
+                variant="outline-secondary">
+                חזרה 👉
+              </Button>
           <h3>הכנס קוד אשת צוות</h3>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleIdSubmit}>
@@ -90,7 +94,16 @@ const EditStaff = () => {
 
       {step === 2 && (
         <>
-          <h3>עדכון אשת צוות</h3>
+           <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h3>עדכון אשת צוות</h3>
+                <Button
+                  onClick={() => navigate('../staff-manage')}
+                  variant="outline-secondary"
+                  style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                  חזרה 👉
+                </Button>
+              </div>
           {success && <Alert variant="success">עודכן בהצלחה</Alert>}
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
@@ -116,10 +129,10 @@ const EditStaff = () => {
                 required
               >
                 <option value="">בחר הרשאה</option>
-                <option value="0">0 - מנהלת מערכת</option>
-                <option value="1">1 - גישה לכל התלמידות</option>
-                <option value="2">2 - למחנכת (יש להזין כיתת חינוך)</option>
-                <option value="3">3 - עובדת כללית (אין גישה לפרטי התלמידות ועריכתן)</option>
+                <option value="0">מנהלת מערכת</option>
+                <option value="1">גישה לכל התלמידות</option>
+                <option value="2">מחנכת (יש להזין כיתת חינוך)</option>
+                <option value="3">עובדת כללית (אין גישה לפרטי התלמידות ועריכתן)</option>
               </Form.Select>
             </Form.Group>
 

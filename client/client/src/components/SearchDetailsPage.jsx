@@ -20,7 +20,7 @@ const getPriorityColor = (priority) => {
 };
 
 const SearchDetailsPage = () => {
-    
+
     const navigate = useNavigate();
     const { id } = useParams();
     const [search, setSearch] = useState(null);
@@ -32,7 +32,7 @@ const SearchDetailsPage = () => {
     const [mailSent, setMailSent] = useState(false);
 
     useEffect(() => {
-        const fetchSearchAndStudents = async () => { 
+        const fetchSearchAndStudents = async () => {
             let searchData = null;
             try {
                 const schoolId = localStorage.getItem('schoolId');
@@ -41,7 +41,7 @@ const SearchDetailsPage = () => {
                     setLoading(false);
                     return;
                 }
-               
+
                 try {
                     const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
                     searchData = resSearch.data?.[0];
@@ -89,8 +89,8 @@ const SearchDetailsPage = () => {
                     const resStudents = await axios.post(
                         `${BASE_URL}students/params`,
                         searchParams
-                    );                   
-                    
+                    );
+
                     const foundStudents = resStudents.data;
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
@@ -165,13 +165,13 @@ const SearchDetailsPage = () => {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
             const recipientEmail = emailRes.data[0].emailaddress;
-            const studentsIds = students.map(s => s.id);            
+            const studentsIds = students.map(s => s.id);
             const emailContent = {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
                 students: students,
             };
-             console.log(emailContent);
+            console.log(emailContent);
             await axios.post(
                 `${BASE_URL}searches/send-approval-mail/${id}/school/${schoolId}`,
                 emailContent
@@ -219,10 +219,19 @@ const SearchDetailsPage = () => {
         navigate('../../data-fetch')
     }
     if (loading) return <Spinner animation="border" className="m-4" />;
-   if (error) return <Alert variant="danger">{error}</Alert>;
+    if (error) return <Alert variant="danger">{error}</Alert>;
     return (
         <Container className="mt-4">
-            <h4>פרטי חיפוש: {search.searchname}</h4>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h4>פרטי חיפוש: {search.searchname}</h4>
+                <Button
+                    onClick={() => navigate('../data-fetch')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div>
 
             <Card className="mb-4 p-3">
                 <Row>

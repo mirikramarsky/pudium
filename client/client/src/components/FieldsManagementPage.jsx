@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
+import { useNavigate } from 'react-router-dom';
 
 const FieldsManagementPage = () => {
-    
+      const navigate = useNavigate();
     const schoolId = localStorage.getItem('schoolId');
     const [fields, setFields] = useState([]);
     const [newField, setNewField] = useState('');
@@ -69,12 +70,20 @@ const FieldsManagementPage = () => {
         };
     return (
         <Container className="mt-5">
-            <h3 className="mb-4 text-center">ניהול תחומים בבית הספר</h3>
-
+             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+               <h3 className="mb-4 text-center">ניהול תחומים בבית הספר</h3>
+                <Button
+                  onClick={() => navigate('../staff-manage')}
+                  variant="outline-secondary"
+                  style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' , width:'15%'}}
+                >
+                  חזרה 👉
+                </Button>
+              </div>
             {message && <Alert variant={message.startsWith('✅') ? 'success' : 'danger'}>{message}</Alert>}
 
             {fields.map((field, index) => (
-                <Form.Group as={Row} className="mb-2" key={index}>
+                <Form.Group dir='rtl' as={Row} className="mb-2" key={index}>
                     <Form.Label column sm="2">תחום {index + 1}</Form.Label>
                     <Col sm="8">
                         <Form.Control
@@ -84,7 +93,7 @@ const FieldsManagementPage = () => {
                         />
                     </Col>
                     <Col sm="2">
-                        <Button variant="danger" onClick={() => handleDeleteField(index)}>🗑 מחק</Button>
+                        <Button variant="danger" onClick={() => handleDeleteField(index)}>מחק</Button>
                     </Col>
                 </Form.Group>
             ))}
@@ -94,7 +103,7 @@ const FieldsManagementPage = () => {
                 <Col sm="8">
                     <Form.Control
                         type="text"
-                        placeholder="הוספת תחום חדש..."
+                        placeholder="הוספת תחום חדש"
                         value={newField}
                         onChange={(e) => setNewField(e.target.value)}
                     />

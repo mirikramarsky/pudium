@@ -6,7 +6,7 @@ import BASE_URL from '../config';
 
 const AddStaff = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ id: '', name: '', confirm: 3, class: "all" });
+    const [formData, setFormData] = useState({ id: '', name: '', confirm: '', class: "all" });
     const [message, setMessage] = useState(null);
 
     const handleChange = e => {
@@ -32,7 +32,17 @@ const AddStaff = () => {
 
     return (
         <Container className="mt-4">
-            <h3>הוספת אשת צוות</h3>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h3>הוספת אשת צוות</h3>
+                <Button
+                    onClick={() => navigate('../staff-manage')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div>
+
             {message && <Alert>{message}</Alert>}
             <Form onSubmit={handleSubmit}>
                 <Form.Group>
@@ -51,13 +61,14 @@ const AddStaff = () => {
                         onChange={handleChange}
                         required
                     >
-                        <option value="">בחר הרשאה</option>
-                        <option value="0">0 - מנהלת מערכת</option>
-                        <option value="1">1 - גישה לכל התלמידות</option>
-                        <option value="2">2 - למחנכת (יש להזין כיתת חינוך)</option>
-                        <option value="3">3 - עובדת כללית (אין גישה לפרטי התלמידות ועריכתן)</option>
+                        <option value="" disabled hidden>בחר הרשאה</option>
+                        <option value="0">מנהלת מערכת</option>
+                        <option value="1">גישה לכל התלמידות</option>
+                        <option value="2">מחנכת (יש להזין כיתת חינוך)</option>
+                        <option value="3">עובדת כללית (אין גישה לפרטי התלמידות ועריכתן)</option>
                     </Form.Select>
                 </Form.Group>
+
 
                 {formData.confirm === '2' && (
                     <Form.Group className="mb-3">

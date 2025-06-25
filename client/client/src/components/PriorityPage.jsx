@@ -75,6 +75,11 @@ const PriorityPage = () => {
 
   return (
     <Container className="mt-4">
+      <div style={{ textAlign: 'right' }}>
+        <Button variant="outline-secondary" onClick={() => navigate('../staff-home')}>
+          חזרה 👉
+        </Button>
+      </div>
       <h3>בחירת תלמידות ידנית</h3>
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
