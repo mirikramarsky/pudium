@@ -89,7 +89,7 @@ class SearchRepository {
     async insert(params) {
         const now = new Date();
         let search = await pool.query(`INSERT INTO searches (searchname, searchdate, field, countstudents, searchername, classes, searcherid)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)  RETURNING id`, [params.searchname, now, params.field, params.countstudents, params.searchername,
+            VALUES ($1, $2, $3, $4, $5, $6, $7)  RETURNING id`, [params.searchname, now, params.field, params.countstudents, params.searchername,
         JSON.stringify(params.classes), params.searcherId]);
 
         return search.rows[0].id;
