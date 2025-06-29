@@ -153,6 +153,13 @@ const ClassesList = () => {
 
   return (
     <Container className="mt-4">
+      <Button
+        onClick={() => navigate('../classes')}
+        variant="outline-secondary"
+        style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+      >
+        חזרה 👉
+      </Button>
       <h3>בחרי כיתה</h3>
       {Object.keys(classes).length === 0 ? (
         <Alert variant="info">אין כיתות להצגה</Alert>

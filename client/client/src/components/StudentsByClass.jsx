@@ -17,7 +17,7 @@ const priorityColors = {
 };
 
 const StudentsByClass = () => {
-  
+
   const { grade, class: className } = useParams();
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
@@ -81,6 +81,13 @@ const StudentsByClass = () => {
 
   return (
     <Container className="mt-4">
+      <Button
+        onClick={() => navigate('../staff-home')}
+        variant="outline-secondary"
+        style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+      >
+        חזרה 👉
+      </Button>
       <h3>תלמידות בכיתה {className} {grade}</h3>
       {renderLegend()}
       {students.length === 0 ? (
