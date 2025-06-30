@@ -62,17 +62,52 @@ const StudentForm = () => {
     }, []);
 
 
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+
+    //     // בדיקה אם מדובר בשדה תחום
+    //     if (name.startsWith("field")) {
+    //         const selectedValues = Object.entries(formData)
+    //             .filter(([key]) => key.startsWith("field") && key !== name)
+    //             .map(([_, val]) => val);
+
+    //         if (selectedValues.includes(value)) {
+    //             alert("אין אפשרות לבחור את אותו תחום פעמיים");
+    //             return;
+    //         }
+    //     }
+
+    //     setFormData(prev => ({ ...prev, [name]: value }));
+    // };
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // בדיקה אם מדובר בשדה תחום
-        if (name.startsWith("field")) {
-            const selectedValues = Object.entries(formData)
-                .filter(([key]) => key.startsWith("field") && key !== name)
-                .map(([_, val]) => val);
+        // נבנה מערך של כל הערכים שנבחרו בפועל, כולל ערכי 'אחר' אם מולאו
+        const selectedValues = [];
 
-            if (selectedValues.includes(value)) {
+        for (let i = 1; i <= 4; i++) {
+            const fieldVal = (name === `field${i}`) ? value : formData[`field${i}`];
+            const otherVal = (name === `otherField${i}`) ? value : formData[`otherField${i}`];
+
+            if (fieldVal === 'אחר' && otherVal) {
+                selectedValues.push(otherVal.trim());
+            } else if (fieldVal && fieldVal !== 'אחר') {
+                selectedValues.push(fieldVal);
+            }
+        }
+
+        // בודקים אם הערך החדש כבר נבחר (רק אם זה לא שדה טקסט רגיל)
+        if (name.startsWith('field') && !name.startsWith('other')) {
+            if (value !== 'אחר' && selectedValues.includes(value)) {
                 alert("אין אפשרות לבחור את אותו תחום פעמיים");
+                return;
+            }
+        }
+
+        // אם מדובר בשדה טקסט של 'אחר', נבדוק גם שם שאין כפילות
+        if (name.startsWith('otherField')) {
+            if (value.trim() && selectedValues.includes(value.trim())) {
+                alert("התחום הזה כבר נבחר באחד השדות");
                 return;
             }
         }
