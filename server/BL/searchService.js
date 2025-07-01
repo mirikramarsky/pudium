@@ -74,7 +74,7 @@ class SearchService extends BaseService {
   <div style="padding: 20px;">
     </div>
 
-    <div style="background-color: white; margin-bottom: 5%; margin-right: 10vw; width: 75vw; padding: 20px; border-radius: 0 0 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 10px;">
+    <div style="color: white; margin-bottom: 5%;margin-left: 10vh; margin-right: 10vw; width: 75vw; padding: 20px; border-radius: 0 0 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 10px;">
       
       <h2 style="color: #2a3b8f;">📝 פרטי החיפוש שלך</h2>
       <ul style="list-style: none; padding: 0;">
@@ -130,6 +130,7 @@ class SearchService extends BaseService {
     </div>
   </div>
 </div>
+
 `;
 
 
