@@ -28,6 +28,19 @@ router.get('/:schoolId', async(req, res,next)=>{
            return res.status(400).send(err.message);
         next(err);
     }
+});router.post('/students/:schoolId', async(req, res,next)=>{
+    try{
+        let result = await studentService.getStudentsByIds(req.params.schoolId, req.body.studentIds)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+           return res.status(400).send(err.message);
+        next(err);
+    }
 });
 router.get('/goUpGrade/:schoolId', async(req, res,next)=>{
     try{
