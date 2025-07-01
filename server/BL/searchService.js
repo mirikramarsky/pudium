@@ -60,7 +60,16 @@ class SearchService extends BaseService {
         </tr>`).join('');
 
     const html = `
- <div dir="rtl" style="height: 100vh;font-family: Assistant, sans-serif; padding: 0; margin: 0; color: #333; font-size: 1.1rem; background-image: url('up.png'), url('down.png'); background-position: top center, bottom center; background-repeat: no-repeat, no-repeat; background-size: 100% 71%, 100% 29%;">
+<div dir="rtl" style="
+    height: 100vh;
+    font-family: Assistant, sans-serif;
+    padding: 0;
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+    background:
+      linear-gradient(to bottom, rgba(74,155,158) 71%, rgba(212,227,233) 29% );
+">
 
   <div style="padding: 20px;">
     </div>
