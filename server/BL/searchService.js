@@ -4,7 +4,7 @@ const stuInSeaRepository = require('../DAL/Repositories/studentsInSEarches');
 const schoolRepository = require('../DAL/Repositories/schoolRepository');
 const mailer = require('../utils/mailer');
 
-const BASE_URL = 'https://pudium-production.up.railway.app/api/podium'; // שנה לכתובת שלך
+const BASE_URL = 'https://pudium-production.up.railway.app/api/podium';
 class SearchService extends BaseService {
   constructor() {
     super(searchRepository);
@@ -21,14 +21,14 @@ class SearchService extends BaseService {
       return result;
     throw new idError('this id is not exist');
   }
-  async getSearchesWithStudents() {
-    let result = await this.repository.getSearchesWithStudents();
+  async getSearchesWithStudents(id) {
+    let result = await this.repository.getSearchesWithStudents(id);
     if (result && result.length != 0)
       return result;
     throw new idError('שליפת החיפושים נכשלה');
   }
-  async getSearchesWithoutStudents() {
-    let result = await this.repository.getSearchesWithoutStudents();
+  async getSearchesWithoutStudents(id) {
+    let result = await this.repository.getSearchesWithoutStudents(id);
     if (result && result.length != 0)
       return result;
     throw new idError('שליפת החיפושים נכשלה');

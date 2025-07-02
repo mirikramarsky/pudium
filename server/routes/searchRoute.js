@@ -30,9 +30,9 @@ router.get('/:id', async (req, res, next) => {
         next(err);
     }
 });
-router.get('/without/students/saved/', async (req, res, next) => {
+router.get('/without/students/saved/:id', async (req, res, next) => {
     try {
-        let result = await searchService.getSearchesWithoutStudents()
+        let result = await searchService.getSearchesWithoutStudents(req.params.id)
         if (result != undefined)
             res.json(result || []);
         else
@@ -44,9 +44,9 @@ router.get('/without/students/saved/', async (req, res, next) => {
         next(err);
     }
 });
-router.get('/with/students/saved/', async (req, res, next) => {
+router.get('/with/students/saved/:id', async (req, res, next) => {
     try {
-        let result = await searchService.getSearchesWithStudents()
+        let result = await searchService.getSearchesWithStudents(req.params.id)
         if (result != undefined)
             res.json(result || []);
         else
