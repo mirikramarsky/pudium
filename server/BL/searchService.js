@@ -69,7 +69,7 @@ class SearchService extends BaseService {
 
   <div style="background-color: white; border-radius: 12px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
 
-    <h2 style="color: #2a3b8f;">📝 פרטי החיפוש שלך</h2>
+    <h2 style="color:rgb(12, 102, 109);">📝 פרטי החיפוש שלך</h2>
     <ul style="list-style: none; padding: 0;">
       <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
       <li><strong>תחום:</strong> ${search[0].field}</li>
@@ -77,7 +77,7 @@ class SearchService extends BaseService {
       <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
     </ul>
 
-    <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
+    <h3 style="margin-top: 30px;"> רשימת תלמידות</h3>
     <div style="overflow-x: auto;">
       <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; text-align: center; font-size: 1rem;">
         <thead style="background-color: #dfe6e9;">
