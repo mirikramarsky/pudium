@@ -46,7 +46,7 @@ class SearchService extends BaseService {
     const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
     const studentsIds = students.map(s => s.id);
 console.log(students);
-    let studentRows = students.map(s => `
+    let studentRows =await students.map(s => `
         <tr>
             <td>${s.firstname}</td>
             <td>${s.lastname}</td>
