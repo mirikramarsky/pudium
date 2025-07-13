@@ -36,7 +36,7 @@ class SearchService extends BaseService {
   async sendApprovalMail(searchId, schoolid, dataFromClient) {
     const search = await this.repository.getById(searchId);
     if (!search) throw new Error('חיפוש לא נמצא');
-
+    
     const school = await schoolRepository.getById(schoolid);
     const schoolEmail = school[0].emailaddress;
     if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
@@ -45,7 +45,7 @@ class SearchService extends BaseService {
     const parsed = JSON.parse(search[0].classes);
     const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
     const studentsIds = students.map(s => s.id);
-    console.log(students);
+console.log(students);
     let studentRows = students.map(s => `
         <tr>
             <td>${s.firstname}</td>
@@ -57,10 +57,10 @@ class SearchService extends BaseService {
             <td>${s.field4}</td>
             <td>${s.severalpriority}</td>
         </tr>`).join('');
-    console.log(studentRows);
+console.log(studentRows);
     const html = `
 <div dir="rtl" style="
-      width: 80vw
+    width: 80vw;
     height: 100vh;
     font-family: Assistant, sans-serif;
     padding: 0;
