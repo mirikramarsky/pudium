@@ -58,33 +58,28 @@ class SearchService extends BaseService {
         </tr>`).join('');
     const html = `
 <div dir="rtl" style="
-  width: 100%;
-  max-width: 1000px;
-  box-sizing: border-box;
+  max-width: 800px;
   margin: 0 auto;
-  font-family: Assistant, sans-serif;
+  font-family: 'Assistant', sans-serif;
   color: #333;
-  font-size: 1.1rem;
   background: linear-gradient(to bottom, rgba(74,155,158) 71%, rgba(212,227,233) 29%);
   padding: 20px;
-  overflow-x: hidden;
+  box-sizing: border-box;
 ">
 
-  <div style="padding: 20px;">
-    </div>
+  <div style="background-color: white; border-radius: 12px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
 
-    <div style="color: white; margin-bottom: 5%;margin-left: 10vh; margin-right: 10vw; width: 75vw; padding: 20px; border-radius: 0 0 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 10px;">
-      
-      <h2 style="color: #2a3b8f;">📝 פרטי החיפוש שלך</h2>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
-        <li><strong>תחום:</strong> ${search[0].field}</li>
-        <li><strong>כיתות:</strong> ${classes}</li>
-        <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
-      </ul>
+    <h2 style="color: #2a3b8f;">📝 פרטי החיפוש שלך</h2>
+    <ul style="list-style: none; padding: 0;">
+      <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
+      <li><strong>תחום:</strong> ${search[0].field}</li>
+      <li><strong>כיתות:</strong> ${classes}</li>
+      <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
+    </ul>
 
-      <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
-      <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; background-color: #fff; text-align: center; font-size: 1rem;">
+    <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
+    <div style="overflow-x: auto;">
+      <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; text-align: center; font-size: 1rem;">
         <thead style="background-color: #dfe6e9;">
           <tr>
             <th>שם פרטי</th>
@@ -101,33 +96,35 @@ class SearchService extends BaseService {
           ${studentRows}
         </tbody>
       </table>
-
-      <h3 style="margin-top: 30px;">📩 בחרי פעולה</h3>
-      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-        
-        <form action="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/approve" method="POST" style="display:inline;">
-          <input type="hidden" name="studentsid" value='${JSON.stringify(studentsIds)}'>
-          <button type="submit" style="padding: 15px 25px; background-color: #66bb6a; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-            ✔️ אשר חיפוש
-          </button>
-        </form>
-
-        <span style="padding: 15px 25px; background-color: #3498db; color: white; border-radius: 8px; display: inline-block;">
-          ⏸️ החיפוש מושהה
-        </span>
-
-        <a href="http://localhost:5173/search-results/${searchId}" style="padding: 15px 25px; background-color: #a334db; color: white; text-decoration: none; border-radius: 8px;">
-          📝 ערוך חיפוש
-        </a>
-
-        <a href="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/delete"
-          style="padding: 15px 25px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 8px;">
-          ❌ מחק חיפוש
-        </a>
-      </div>
     </div>
+
+    <h3 style="margin-top: 30px;">📩 בחרי פעולה</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+
+      <form action="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/approve" method="POST" style="display:inline;">
+        <input type="hidden" name="studentsid" value='${JSON.stringify(studentsIds)}'>
+        <button type="submit" style="padding: 15px 25px; background-color: #66bb6a; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+          ✔️ אשר חיפוש
+        </button>
+      </form>
+
+      <span style="padding: 15px 25px; background-color: #3498db; color: white; border-radius: 8px; display: inline-block;">
+        ⏸️ החיפוש מושהה
+      </span>
+
+      <a href="http://localhost:5173/search-results/${searchId}" style="padding: 15px 25px; background-color: #a334db; color: white; text-decoration: none; border-radius: 8px;">
+        📝 ערוך חיפוש
+      </a>
+
+      <a href="https://pudium-production.up.railway.app/api/podium/searches/${searchId}/delete"
+        style="padding: 15px 25px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 8px;">
+        ❌ מחק חיפוש
+      </a>
+    </div>
+
   </div>
 </div>
+
 
 `;
 
