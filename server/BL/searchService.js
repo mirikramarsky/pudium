@@ -129,66 +129,6 @@ class SearchService extends BaseService {
 `;
 
 console.log(html);
-
-
-    /*`
-        <div dir="rtl" style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; color: #333;">
-        <h2 style="color: #2c3e50;">📝 פרטי החיפוש שלך</h2>
-        
-        <ul style="list-style: none; padding: 0;">
-            <li><strong>שם מחפשת:</strong> ${search[0].searchername}</li>
-            <li><strong>תחום:</strong> ${search[0].field}</li>
-            <li><strong>כיתות:</strong> ${classes}</li>
-            <li><strong>כמות תלמידות:</strong> ${search[0].countstudents}</li>
-        </ul>
-
-        <h3 style="margin-top: 30px;">👩‍🎓 רשימת תלמידות</h3>
-        <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; background-color: #fff; text-align: right;">
-            <thead style="background-color: #dfe6e9;">
-            <tr>
-                <th>שם פרטי</th>
-                <th>שם משפחה</th>
-                <th>כיתה</th>
-                <th>תחום 1</th>
-                <th>תחום 2</th>
-                <th>תחום 3</th>
-                <th>תחום 4</th>
-                <th>עדיפות כללית</th>
-            </tr>
-            </thead>
-            <tbody>
-            ${studentRows}
-            </tbody>
-        </table>
-
-        <h3 style="margin-top: 30px;">📩 בחרו פעולה</h3>
-        <div style="margin-top: 10px;">
-            // <form action="https://pudium-production.up.railway.app/api/podium/searches/18/approve" method="POST">
-            // <input type="hidden" name="studentsid" value='${JSON.stringify(studentsIds)}'>
-            // <button type="submit"
-            //     style="padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 5px;">
-            //     ✔️ אשר חיפוש
-            // </button>
-            // </form>
-
-            // <a href="#" onclick="alert('🔕 החיפוש הושהה');"
-            // style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
-            // ⏸️ השהה חיפוש
-            // </a>
-            // <a href="http://localhost:5173/search-results/${searchId}"
-            // style="padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
-            // 📝 ערוך חיפוש
-            // </a>
-            // <a href="${BASE_URL}/searches/${searchId}/delete"
-            // style="padding: 10px 20px; background-color: #e74c3c; color: white; text-decoration: none; margin-left: 10px; border-radius: 5px;">
-            // ❌ מחק חיפוש
-            // </a>
-            
-        </div>
-        </div>
-        `;*/
-
-
     await mailer.sendMail(schoolEmail, dataFromClient.subject, html);
   }
 
