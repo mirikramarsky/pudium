@@ -60,7 +60,7 @@ console.log(students);
 console.log(studentRows);
     const html = `
 <div dir="rtl" style="
-    width: 80vw;
+    width: 55vw;
     height: 100vh;
     font-family: Assistant, sans-serif;
     padding: 0;
@@ -133,7 +133,7 @@ console.log(studentRows);
 
 `;
 
-
+console.log(html);
 
 
     /*`
