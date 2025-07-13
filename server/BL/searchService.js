@@ -58,8 +58,8 @@ class SearchService extends BaseService {
         </tr>`).join('');
     const html = `
 <div dir="rtl" style="
-    width: 100vw;
-    height: 100vh;
+    width: 680px;
+    height: 400px;
     font-family: Assistant, sans-serif;
     padding: 0;
     margin: 0;
