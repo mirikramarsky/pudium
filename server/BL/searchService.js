@@ -58,15 +58,16 @@ class SearchService extends BaseService {
         </tr>`).join('');
     const html = `
 <div dir="rtl" style="
-    width: 680px;
-    height: 400px;
-    font-family: Assistant, sans-serif;
-    padding: 0;
-    margin: 0;
-    color: #333;
-    font-size: 1.1rem;
-    background:
-      linear-gradient(to bottom, rgba(74,155,158) 71%, rgba(212,227,233) 29% );
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  font-family: Assistant, sans-serif;
+  color: #333;
+  font-size: 1.1rem;
+  background: linear-gradient(to bottom, rgba(74,155,158) 71%, rgba(212,227,233) 29%);
+  padding: 20px;
+  overflow-x: hidden;
 ">
 
   <div style="padding: 20px;">
@@ -115,8 +116,7 @@ class SearchService extends BaseService {
           ⏸️ החיפוש מושהה
         </span>
 
-        <a href="http://localhost:5173/search-results/${searchId}"
-          style="padding: 15px 25px; background-color: #a334db; color: white; text-decoration: none; border-radius: 8px;">
+        <a href="http://localhost:5173/search-results/${searchId}" style="padding: 15px 25px; background-color: #a334db; color: white; text-decoration: none; border-radius: 8px;">
           📝 ערוך חיפוש
         </a>
 
