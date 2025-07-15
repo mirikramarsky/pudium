@@ -38,7 +38,7 @@ class SearchService extends BaseService {
     if (!search) throw new Error('חיפוש לא נמצא');
     
     const school = await schoolRepository.getById(schoolid);
-    const schoolEmail = school[0].emailaddress;
+    const schoolEmail = dataFromClient.to;
     if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
 
     const students = dataFromClient.students
