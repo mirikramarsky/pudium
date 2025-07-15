@@ -130,7 +130,6 @@ class SearchService extends BaseService {
 
 `;
 
-console.log(html);
     await mailer.sendMail(schoolEmail, dataFromClient.subject, html);
   }
 
