@@ -215,16 +215,20 @@ const SearchDetailsPage = () => {
         try {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
-            const emailData = JSON.stringify(emailRes.data[0].emailaddress);
-            console.log("emailData ",emailData);
-            console.log("typeof", typeof emailData);
-            
-            if (!emailData) {
+            const rawEmailString = emailRes.data[0].emailaddress;
+            const parsedArray = JSON.parse(rawEmailString); // מערך של אובייקטים [{ ... }, { ... }]
+
+            // ממזגת את כל האובייקטים לאובייקט אחד
+            const merged = Object.assign({}, ...parsedArray);
+            console.log("emailData ", merged);
+            console.log("typeof", typeof merged);
+
+            if (!merged) {
                 alert('לא נמצאו כתובות מייל');
                 return;
             }
 
-            if (typeof emailData === 'object') {
+            if (typeof merged === 'object') {
                 // יש יותר ממנהל אחד
                 setManagerEmails(emailData);
             } else {
