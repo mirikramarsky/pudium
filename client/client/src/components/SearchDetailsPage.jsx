@@ -237,6 +237,8 @@ const SearchDetailsPage = () => {
 
     const sendMailToRecipient = async (email) => {
         try {
+            console.log(email);
+            
             const emailContent = {
                 to: email,
                 subject: `אישור חיפוש - ${search.searchname}`,
