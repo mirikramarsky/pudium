@@ -215,7 +215,6 @@ const SearchDetailsPage = () => {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
             const recipientEmail = emailRes.data[0].emailaddress;
-            const studentsIds = students.map(s => s.id);
             const emailContent = {
                 to: recipientEmail,
                 subject: `אישור חיפוש - ${search.searchname}`,
@@ -351,7 +350,7 @@ const SearchDetailsPage = () => {
                                 disabled={mailSent}
                                 className="ms-2"
                             >
-                                {mailSent ? 'המייל נשלח' : 'שלח מייל לאישור ושמירת החיפוש'}
+                                {mailSent ? 'המייל נשלח' : 'שלח מייל למנהל לאישור ושמירת החיפוש'}
                             </Button>
                             <Button variant="primary" onClick={handleFinalSave}>
                                 שמירה סופית של החיפוש
