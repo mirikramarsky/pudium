@@ -23,6 +23,7 @@ const SearchDetailsPage = () => {
 
     const navigate = useNavigate();
     const { id } = useParams();
+    const [managerEmails, setManagerEmails] = useState({});
     const [search, setSearch] = useState(null);
     const [students, setStudents] = useState([]);
     const [shownStudentIds, setShownStudentIds] = useState([]);
@@ -214,19 +215,40 @@ const SearchDetailsPage = () => {
         try {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
-            const recipientEmail = emailRes.data[0].emailaddress;
+            const emailData = emailRes.data[0].emailaddress;
+
+            if (!emailData) {
+                alert('לא נמצאו כתובות מייל');
+                return;
+            }
+
+            if (typeof emailData === 'object') {
+                // יש יותר ממנהל אחד
+                setManagerEmails(emailData);
+            } else {
+                // רק מנהל אחד - שליחה אוטומטית
+                await sendMailToRecipient(emailData);
+            }
+        } catch (err) {
+            console.error('שגיאה בשליחת המייל:', err.response?.data);
+            alert('שגיאה בשליחת המייל');
+        }
+    };
+
+    const sendMailToRecipient = async (email) => {
+        try {
             const emailContent = {
-                to: recipientEmail,
+                to: email,
                 subject: `אישור חיפוש - ${search.searchname}`,
                 students: students,
             };
-            console.log(emailContent);
             await axios.post(
-                `${BASE_URL}searches/send-approval-mail/${id}/school/${schoolId}`,
+                `${BASE_URL}searches/send-approval-mail/${id}/school/${localStorage.getItem('schoolId')}`,
                 emailContent
             );
             setMailSent(true);
-            navigate('../../data-fetch')
+            setManagerEmails({}); // נקה את הרשימה אחרי השליחה
+            navigate('../../data-fetch');
         } catch (err) {
             console.error('שגיאה בשליחת המייל:', err.response?.data);
             alert('שגיאה בשליחת המייל');
@@ -352,6 +374,22 @@ const SearchDetailsPage = () => {
                             >
                                 {mailSent ? 'המייל נשלח' : 'שלח מייל למנהל לאישור ושמירת החיפוש'}
                             </Button>
+                            {Object.keys(managerEmails).length > 0 && (
+                                <div className="mt-3">
+                                    <p>בחרי למי לשלוח את המייל:</p>
+                                    {Object.entries(managerEmails).map(([name, email]) => (
+                                        <Button
+                                            key={name}
+                                            className="me-2"
+                                            variant="outline-primary"
+                                            onClick={() => sendMailToRecipient(email)}
+                                        >
+                                            {name}
+                                        </Button>
+                                    ))}
+                                </div>
+                            )}
+
                             <Button variant="primary" onClick={handleFinalSave}>
                                 שמירה סופית של החיפוש
                             </Button>
