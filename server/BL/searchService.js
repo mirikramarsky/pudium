@@ -112,7 +112,7 @@ class SearchService extends BaseService {
         ⏸️ החיפוש מושהה
       </span>
 
-      <a href="http://localhost:5173/search-results/${searchId}" style="padding: 15px 25px; background-color: #a334db; color: white; text-decoration: none; border-radius: 8px;">
+      <a href="https://fearless-warmth-production.up.railway.app/search-results/${searchId}?schoolId=${schoolid}" style="padding: 15px 25px; background-color: #a334db; color: white; text-decoration: none; border-radius: 8px;">
         📝 ערוך חיפוש
       </a>
 

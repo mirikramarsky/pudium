@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const WaitingSearches = () => {
-
   const navigate = useNavigate();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [searches, setSearches] = useState([]);
@@ -24,27 +23,30 @@ const WaitingSearches = () => {
     otherField: '',
     countstudents: '',
     classes: [],
+    schoolid: ''
   });
 
-  const [classesByLetter, setClassesByLetter] = useState({});
-  const [expandedLetter, setExpandedLetter] = useState(null);
+  const [classesByGrade, setClassesByGrade] = useState({});
+  const [expandedGrade, setExpandedGrade] = useState(null);
+
+  const getGradePrefix = (cls) => {
+    if (cls.startsWith('יא') || cls.startsWith('יב')) return cls.slice(0, 2);
+    return cls.slice(0, 1);
+  };
 
   useEffect(() => {
     const fetchSearches = async () => {
       try {
         if (!schoolId || !staffId) return;
 
-        const confirmRes = await axios.get(
-          `${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`
-        );
+        const confirmRes = await axios.get(`${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`);
         const confirm = confirmRes.data[0]?.confirm;
 
-        const response = await axios.get(`${BASE_URL}searches/without/students/saved/`);
+        const response = await axios.get(`${BASE_URL}searches/without/students/saved/${schoolId}`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;
 
-        // סינון לפי confirm
         if (confirm === 2 || confirm === 3) {
           filtered = allSearches.filter(s => s.searcherid == staffId);
         }
@@ -61,18 +63,14 @@ const WaitingSearches = () => {
     fetchSearches();
   }, [schoolId, staffId]);
 
-
-
-
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
         const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
         const schoolFields = JSON.parse(response.data[0]?.fields || []);
-
         setFieldOptions(schoolFields);
+
         const localClasses = localStorage.getItem('classes');
         let classList = [];
 
@@ -80,19 +78,18 @@ const WaitingSearches = () => {
           classList = JSON.parse(localClasses);
         } else {
           const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
-          const classes = res.data || [];
-          localStorage.setItem('classes', JSON.stringify(classes));
-          classList = classes;
+          classList = res.data || [];
+          localStorage.setItem('classes', JSON.stringify(classList));
         }
 
-        const byLetter = {};
+        const byGrade = {};
         classList.forEach(cls => {
-          const letter = cls.charAt(0);
-          if (!byLetter[letter]) byLetter[letter] = new Set();
-          byLetter[letter].add(cls);
+          const grade = getGradePrefix(cls);
+          if (!byGrade[grade]) byGrade[grade] = new Set();
+          byGrade[grade].add(cls);
         });
 
-        setClassesByLetter(byLetter);
+        setClassesByGrade(byGrade);
       } catch (err) {
         console.error(err);
         setError('שגיאה בטעינת כיתות');
@@ -119,55 +116,40 @@ const WaitingSearches = () => {
 
     if (filters.countstudents)
       results = results.filter(s => Number(s.countstudents) === Number(filters.countstudents));
+
     if (filters.searchdate || filters.searchtime) {
       results = results.filter(s => {
         if (!s.searchdate) return false;
         const d = new Date(s.searchdate);
-
-        // השוואת תאריך אם סופק
-        if (filters.searchdate) {
-          const dateStr = d.toISOString().slice(0, 10);
-          if (dateStr !== filters.searchdate) return false;
-        }
-
-        // השוואת שעה אם סופקה
-        if (filters.searchtime) {
-          const hours = d.getHours().toString().padStart(2, '0');
-          if (hours !== filters.searchtime.split(':')[0]) return false;
-        }
-
+        if (filters.searchdate && d.toISOString().slice(0, 10) !== filters.searchdate) return false;
+        if (filters.searchtime && d.getHours().toString().padStart(2, '0') !== filters.searchtime.split(':')[0]) return false;
         return true;
       });
     }
+
     if (filters.classes.length > 0) {
       results = results.filter(search => {
         try {
           const parsedClasses = JSON.parse(search.classes);
           if (!Array.isArray(parsedClasses)) return false;
 
-          // יוצרים מיפוי לפי אות
-          const filtersByLetter = {};
+          const filtersByGrade = {};
           filters.classes.forEach(cls => {
-            const letter = cls[0];
-            if (!filtersByLetter[letter]) filtersByLetter[letter] = [];
-            filtersByLetter[letter].push(cls);
+            const grade = getGradePrefix(cls);
+            if (!filtersByGrade[grade]) filtersByGrade[grade] = [];
+            filtersByGrade[grade].push(cls);
           });
 
-          // עבור כל אות - נבדוק האם כל הכיתות שלה מופיעות ב-search
-          for (const letter in filtersByLetter) {
-            const requiredClasses = filtersByLetter[letter];
-            const allRequiredInSearch = requiredClasses.every(cls => parsedClasses.includes(cls));
-            if (!allRequiredInSearch) return false;
+          for (const grade in filtersByGrade) {
+            const required = filtersByGrade[grade];
+            if (!required.every(cls => parsedClasses.includes(cls))) return false;
           }
-
           return true;
-        } catch (e) {
+        } catch {
           return false;
         }
       });
     }
-
-
 
     setFilteredSearches(results);
   }, [filters, searches]);
@@ -189,8 +171,8 @@ const WaitingSearches = () => {
     );
   };
 
-  const toggleExpanded = (letter) => {
-    setExpandedLetter(expandedLetter === letter ? null : letter);
+  const toggleExpanded = (grade) => {
+    setExpandedGrade(expandedGrade === grade ? null : grade);
   };
 
   const toggleClassSelection = (cls) => {
@@ -201,8 +183,8 @@ const WaitingSearches = () => {
     }
   };
 
-  const selectAllInLetter = (letter) => {
-    const allClasses = Array.from(classesByLetter[letter] || []);
+  const selectAllInGrade = (grade) => {
+    const allClasses = Array.from(classesByGrade[grade] || []);
     const allSelected = allClasses.every(c => filters.classes.includes(c));
     if (allSelected) {
       updateFilter('classes', filters.classes.filter(c => !allClasses.includes(c)));
@@ -214,8 +196,6 @@ const WaitingSearches = () => {
       updateFilter('classes', newSelection);
     }
   };
-
-
 
   return (
     <Container className="mt-4">
@@ -279,30 +259,29 @@ const WaitingSearches = () => {
           <Col md={2}>
             <Form.Label>כיתה</Form.Label>
             <div>
-              {Object.keys(classesByLetter).sort().map(letter => (
-                <div key={letter} style={{ marginBottom: '5px' }}>
+              {Object.keys(classesByGrade).sort().map(grade => (
+                <div key={grade} style={{ marginBottom: '5px' }}>
                   <Button
-                    variant={filters.classes.some(c => c.startsWith(letter)) ? 'primary' : 'outline-primary'}
+                    variant={filters.classes.some(c => getGradePrefix(c) === grade) ? 'primary' : 'outline-primary'}
                     size="sm"
-                    onClick={() => selectAllInLetter(letter)}
+                    onClick={() => selectAllInGrade(grade)}
                   >
-                    {letter}
+                    {grade}
                   </Button>
                   <Button
                     variant="outline-secondary"
                     size="sm"
                     style={{ marginLeft: '5px' }}
-                    onClick={() => toggleExpanded(letter)}
+                    onClick={() => toggleExpanded(grade)}
                   >
-                    {expandedLetter === letter ? '▲' : '▼'}
+                    {expandedGrade === grade ? '▲' : '▼'}
                   </Button>
-                  {expandedLetter === letter && (
+                  {expandedGrade === grade && (
                     <div style={{ marginTop: '5px', marginLeft: '10px' }}>
-                      {Array.from(classesByLetter[letter]).sort().map(cls => (
+                      {Array.from(classesByGrade[grade]).sort().map(cls => (
                         <Form.Check
                           key={cls}
                           type="checkbox"
-                          id={`chk-${cls}`}
                           label={cls}
                           checked={filters.classes.includes(cls)}
                           onChange={() => toggleClassSelection(cls)}
@@ -324,7 +303,8 @@ const WaitingSearches = () => {
               onChange={(e) => updateFilter('countstudents', e.target.value)}
             />
           </Col>
-          <Col md={2}>
+
+          <Col md={3}>
             <Form.Label>תאריך</Form.Label>
             <Form.Control
               type="date"
@@ -332,6 +312,7 @@ const WaitingSearches = () => {
               onChange={(e) => updateFilter('searchdate', e.target.value)}
             />
           </Col>
+
           <Col md={2}>
             <Form.Label>שעה</Form.Label>
             <Form.Control
@@ -359,9 +340,7 @@ const WaitingSearches = () => {
           </thead>
           <tbody>
             {filteredSearches.map(search => (
-              <tr key={search.id}
-                onClick={() => navigate(`/search-results/${search.id}`)}
-                style={{ cursor: 'pointer' }}>
+              <tr key={search.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/search-results/${search.id}`)}>
                 <td>{search.searchname}</td>
                 <td>{search.searchername}</td>
                 <td>{search.field}</td>
@@ -372,35 +351,30 @@ const WaitingSearches = () => {
                       if (!Array.isArray(parsed)) return '';
 
                       const allClasses = JSON.parse(localStorage.getItem('classes') || '[]');
-                      const classesByLetter = {};
+                      const byGrade = {};
 
-                      // מחלקים את כל הכיתות לפי אות
                       allClasses.forEach(cls => {
-                        const letter = cls[0];
-                        if (!classesByLetter[letter]) classesByLetter[letter] = [];
-                        classesByLetter[letter].push(cls);
+                        const grade = getGradePrefix(cls);
+                        if (!byGrade[grade]) byGrade[grade] = [];
+                        byGrade[grade].push(cls);
                       });
 
-                      const resultLetters = [];
-                      const remainingClasses = [];
-
-                      Object.entries(classesByLetter).forEach(([letter, classList]) => {
-                        const allInSearch = classList.every(cls => parsed.includes(cls));
-                        if (allInSearch) {
-                          resultLetters.push(letter);
+                      const result = [];
+                      Object.entries(byGrade).forEach(([grade, classList]) => {
+                        const selected = classList.filter(cls => parsed.includes(cls));
+                        if (selected.length === classList.length) {
+                          result.push(grade);
                         } else {
-                          const partial = classList.filter(cls => parsed.includes(cls));
-                          remainingClasses.push(...partial);
+                          result.push(...selected);
                         }
                       });
 
-                      return [...resultLetters, ...remainingClasses].join(', ');
-                    } catch (e) {
+                      return result.join(', ');
+                    } catch {
                       return '';
                     }
                   })()}
                 </td>
-
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
               </tr>

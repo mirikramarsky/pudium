@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const EditStaff = () => {
-  
-    const navigate = useNavigate();
+
+  const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1 = הזנת קוד, 2 = טופס עדכון
   const [id, setId] = useState('');
   const [name, setName] = useState('');
@@ -70,12 +70,16 @@ const EditStaff = () => {
     <Container className="mt-4" style={{ maxWidth: '600px' }}>
       {step === 1 && (
         <>
-          <Button
-                onClick={() => navigate('../staff-manage')}
-                variant="outline-secondary">
-                חזרה 👉
-              </Button>
-          <h3>הכנס קוד אשת צוות</h3>
+          <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+            <h3>הכנס קוד אשת צוות</h3>
+            <Button
+              onClick={() => navigate('../staff-manage')}
+              variant="outline-secondary"
+              style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+            >
+              חזרה 👉
+            </Button>
+          </div>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleIdSubmit}>
             <Form.Group className="mb-3">
@@ -94,16 +98,16 @@ const EditStaff = () => {
 
       {step === 2 && (
         <>
-           <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
-                <h3>עדכון אשת צוות</h3>
-                <Button
-                  onClick={() => navigate('../staff-manage')}
-                  variant="outline-secondary"
-                  style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
-                >
-                  חזרה 👉
-                </Button>
-              </div>
+          <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+            <h3>עדכון אשת צוות</h3>
+            <Button
+              onClick={() => navigate('../staff-manage')}
+              variant="outline-secondary"
+              style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+            >
+              חזרה 👉
+            </Button>
+          </div>
           {success && <Alert variant="success">עודכן בהצלחה</Alert>}
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
@@ -114,7 +118,7 @@ const EditStaff = () => {
             <Form.Group className="mb-3">
               <Form.Label>שם</Form.Label>
               <Form.Control
-              placeholder={name}
+                placeholder={name}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required

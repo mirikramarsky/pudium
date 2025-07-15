@@ -31,75 +31,70 @@ const SearchDetailsNotToEdit = () => {
     const [loading, setLoading] = useState(true);
     const [mailSent, setMailSent] = useState(false);
 
-    useEffect(() => {
-        const fetchSearchAndStudents = async () => {
-            try {
-                const schoolId = localStorage.getItem('schoolId');
-                if (!schoolId) {
-                    setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
-                    setLoading(false);
-                    return;
-                }
-
-                const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
-                const searchData = resSearch.data[0];
-                console.log(searchData);
-
-                setSearch(searchData);
-
-                const allShownKey = `shown_${id}`;
-                const activeKey = `active_${id}`;
-                const savedAllShown = JSON.parse(localStorage.getItem(allShownKey) || '[]');
-                const savedActive = JSON.parse(localStorage.getItem(activeKey) || '[]');
-
-                if (savedAllShown.length > 0 && savedActive.length > 0) {
-                    const resAllStudents = await axios.get(`${BASE_URL}students/`);
-                    const allStudents = resAllStudents.data;
-                    const filteredActive = allStudents.filter(s => savedActive.includes(s.id));
-                    const filteredAll = allStudents.filter(s => savedAllShown.includes(s.id));
-                    setStudents(filteredActive);
-                    setAllShownStudents(filteredAll);
-                    setShownStudentIds(savedAllShown);
-                } else {
-                    const searchParams = {
-                        myField: searchData.field,
-                        schoolId,
-                        count: searchData.countstudents,
-                        classes: searchData.classes ? JSON.parse(searchData.classes) : [],
-                        excludeIds: []
-                    };
-
-                    const resStudents = await axios.post(
-                        '${BASE_URL}students/params',
-                        searchParams
-                    );
-                    const foundStudents = resStudents.data;
-                    const newIds = foundStudents.map(s => s.id);
-                    setStudents(foundStudents);
-                    setAllShownStudents(foundStudents);
-                    setShownStudentIds(newIds);
-                    localStorage.setItem(allShownKey, JSON.stringify(newIds));
-                    localStorage.setItem(activeKey, JSON.stringify(newIds));
-                }
-
-            } catch (err) {
-                console.error('שגיאה בטעינה:', err);
-                setError('שגיאה בטעינת החיפוש או התלמידות');
-            } finally {
+   useEffect(() => {
+    const fetchSearchAndStudents = async () => {
+        try {
+            const schoolId = localStorage.getItem('schoolId');
+            if (!schoolId) {
+                setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
                 setLoading(false);
+                return;
             }
-        };
 
-        fetchSearchAndStudents();
-    }, [id]);
+            const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
+            const searchData = resSearch.data[0];
+            
+            setSearch(searchData);
+
+            const allShownKey = `shown_${id}`;
+            const activeKey = `active_${id}`;
+            let savedAllShown = JSON.parse(localStorage.getItem(allShownKey) || '[]');
+            let savedActive = JSON.parse(localStorage.getItem(activeKey) || '[]');
+
+            // אם אין ב-LOCALSTORAGE מזהים, תביא אותם מהשרת
+            if (savedAllShown.length === 0) {
+                const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}`);
+                savedAllShown = resIds.data.map(s => s.id);
+                savedActive = [...savedAllShown];
+                
+                localStorage.setItem(allShownKey, JSON.stringify(savedAllShown));
+                localStorage.setItem(activeKey, JSON.stringify(savedActive));
+            }
+
+            if (savedAllShown.length > 0 && savedActive.length > 0) {
+                const resAllStudents = await axios.get(`${BASE_URL}students/`);
+                const allStudents = resAllStudents.data;
+                const filteredActive = allStudents.filter(s => savedActive.includes(s.id));
+                const filteredAll = allStudents.filter(s => savedAllShown.includes(s.id));
+                setStudents(filteredActive);
+                setAllShownStudents(filteredAll);
+                setShownStudentIds(savedAllShown);
+            } else {
+                setStudents([]);
+                setAllShownStudents([]);
+                setShownStudentIds([]);
+            }
+
+        } catch (err) {
+            console.error('שגיאה בטעינה:', err);
+            setError('שגיאה בטעינת החיפוש או התלמידות');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchSearchAndStudents();
+}, [id]);
+
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-
+    console.log(students);
+    
     return (
         <Container className="mt-4">
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
-                  <h4>פרטי חיפוש: {search.searchname}</h4>
+                <h4>פרטי חיפוש: {search.searchname}</h4>
                 <Button
                     onClick={() => navigate('../recent-searches')}
                     variant="outline-secondary"
@@ -123,36 +118,36 @@ const SearchDetailsNotToEdit = () => {
 
             <h5>תלמידות:</h5>
 
-            {students.length === 0 ? (
+            {students.length == 0 ? (
                 <p>לא נמצאו תלמידות בחיפוש זה</p>
             ) : (
                 <>
                     <Table bordered hover>
                         <thead>
                             <tr>
-                                <th>עדיפות כללית</th>
-                                <th>תחום 4</th>
-                                <th>תחום 3</th>
-                                <th>תחום 2</th>
-                                <th>תחום 1</th>
-                                <th>כיתה</th>
-                                <th>שם משפחה</th>
-                                <th>שם פרטי</th>
                                 <th>קוד תלמידה</th>
+                                <th>שם פרטי</th>
+                                <th>שם משפחה</th>
+                                <th>כיתה</th>
+                                <th>תחום 1</th>
+                                <th>תחום 2</th>
+                                <th>תחום 3</th>
+                                <th>תחום 4</th>
+                                <th>עדיפות כללית</th>
                             </tr>
                         </thead>
                         <tbody>
                             {students.map(student => (
                                 <tr key={student.id} style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.severalpriority}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.field4priority) }}>{student.field4}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.field3priority) }}>{student.field3}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.field2priority) }}>{student.field2}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.field1priority) }}>{student.field1}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.class} {student.grade}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.lastname}</td>
-                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.firstname}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.id}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.firstname}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.lastname}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.class} {student.grade}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.field1priority) }}>{student.field1}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.field2priority) }}>{student.field2}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.field3priority) }}>{student.field3}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.field4priority) }}>{student.field4}</td>
+                                    <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.severalpriority}</td>
                                 </tr>
                             ))}
                         </tbody>

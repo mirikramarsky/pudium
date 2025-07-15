@@ -18,32 +18,60 @@ import FieldsManagementPage from '../components/FieldsManagementPage';
 import WaitingSearches from '../components/waitingSearches';
 import SearchDetailsNotToEdit from '../components/SearchDetailsNotToEdit';
 import PriorityPage from '../components/PriorityPage';
+import WelcomePage from '../components/WelcomePage';
+import { useLocation } from 'react-use';
+// import BottomBanner from '../components/BottomBanner';
+function Layout({ children }) {
+    const location = useLocation();
 
+    // אם זה דף הפתיחה - לא עוטפים בכרטיס
+    const isWelcomePage = location.pathname === '/';
+
+    return (
+        <div className="page-wrapper">
+            <div className="side-image"></div>
+
+            {isWelcomePage ? (
+                children
+            ) : (
+                <div className="content-card">
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+}
 
 function Home() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<SchoolCode />} />
-                <Route path="/staff-login" element={<StaffLogin />} />
-                <Route path="/student-form" element={<StudentForm />} />
-                <Route path="/staff-home" element={<StaffHome />} />
-                <Route path="/classes" element={<ClassesList />} />
-                <Route path="/class/:class/:grade" element={<StudentsByClass />} />
-                <Route path="/edit-student/:id" element={<EditStudent />} />
-                <Route path="/data-fetch" element={<SearchFormPage />} />
-                <Route path="/recent-searches" element={<RecentSearchesPage />} />
-                <Route path="/staff/edit" element={<EditStaff />} />
-                <Route path="/staff/add" element={<AddStaff />} />
-                <Route path="/staff/delete" element={<DeleteStaff />} />
-                <Route path="/staff-manage" element={<StaffManage />} />
-                <Route path="/manage-fields" element={<FieldsManagementPage />} />
-                <Route path="/wait-searches" element={<WaitingSearches />} />
-                <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
-                <Route path="/search-results/:id" element={<SearchDetailsPage />} />
-                <Route path="/priority" element={<PriorityPage />} />
-            </Routes>
-        </BrowserRouter>
+        <>
+            <BrowserRouter>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<WelcomePage />} />
+                        <Route path="/school-id" element={<SchoolCode />} />
+                        <Route path="/staff-login" element={<StaffLogin />} />
+                        <Route path="/student-form" element={<StudentForm />} />
+                        <Route path="/staff-home" element={<StaffHome />} />
+                        <Route path="/classes" element={<ClassesList />} />
+                        <Route path="/class/:class/:grade" element={<StudentsByClass />} />
+                        <Route path="/edit-student/:id" element={<EditStudent />} />
+                        <Route path="/data-fetch" element={<SearchFormPage />} />
+                        <Route path="/recent-searches" element={<RecentSearchesPage />} />
+                        <Route path="/staff/edit" element={<EditStaff />} />
+                        <Route path="/staff/add" element={<AddStaff />} />
+                        <Route path="/staff/delete" element={<DeleteStaff />} />
+                        <Route path="/staff-manage" element={<StaffManage />} />
+                        <Route path="/manage-fields" element={<FieldsManagementPage />} />
+                        <Route path="/wait-searches" element={<WaitingSearches />} />
+                        <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
+                        <Route path="/search-results/:id" element={<SearchDetailsPage />} />
+                        <Route path="/priority" element={<PriorityPage />} />
+                    </Routes>
+                </Layout>
+            </BrowserRouter>
+            {/* <BottomBanner></BottomBanner> */}
+        </>
     );
 }
 

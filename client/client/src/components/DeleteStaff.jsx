@@ -27,12 +27,16 @@ const DeleteStaff = () => {
 
   return (
     <Container className="mt-4">
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <h3>מחיקת אשת צוות</h3>
         <Button
-        onClick={() => navigate('../staff-manage')}
-        variant="outline-secondary">
-        חזרה 👉
-      </Button>
-      <h3>מחיקת אשת צוות</h3>
+          onClick={() => navigate('../staff-manage')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
       {success && <Alert variant="success">נמחק בהצלחה</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={(e) => { e.preventDefault(); handleDelete(); }}>

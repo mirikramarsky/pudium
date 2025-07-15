@@ -39,12 +39,11 @@ const RecentSearchesPage = () => {
         );
         const confirm = confirmRes.data[0]?.confirm;
 
-        const response = await axios.get(`${BASE_URL}searches/with/students/saved/`);
+        const response = await axios.get(`${BASE_URL}searches/with/students/saved/${schoolId}`);
         const allSearches = response.data || [];
 
         let filtered = allSearches;
 
-        // סינון לפי confirm
         if (confirm === 2 || confirm === 3) {
           filtered = allSearches.filter(s => s.searcherid == staffId);
         }
@@ -85,9 +84,10 @@ const RecentSearchesPage = () => {
 
         const byLetter = {};
         classList.forEach(cls => {
-          const letter = cls.charAt(0);
-          if (!byLetter[letter]) byLetter[letter] = new Set();
-          byLetter[letter].add(cls);
+          const match = cls.match(/^([א-ת]{1,2})/);
+          const group = match ? match[1] : cls;
+          if (!byLetter[group]) byLetter[group] = new Set();
+          byLetter[group].add(cls);
         });
 
         setClassesByLetter(byLetter);
@@ -122,13 +122,11 @@ const RecentSearchesPage = () => {
         if (!s.searchdate) return false;
         const d = new Date(s.searchdate);
 
-        // השוואת תאריך אם סופק
         if (filters.searchdate) {
           const dateStr = d.toISOString().slice(0, 10);
           if (dateStr !== filters.searchdate) return false;
         }
 
-        // השוואת שעה אם סופקה
         if (filters.searchtime) {
           const hours = d.getHours().toString().padStart(2, '0');
           if (hours !== filters.searchtime.split(':')[0]) return false;
@@ -138,25 +136,22 @@ const RecentSearchesPage = () => {
       });
     }
 
-
-
     if (filters.classes.length > 0) {
       results = results.filter(search => {
         try {
           const parsedClasses = JSON.parse(search.classes);
           if (!Array.isArray(parsedClasses)) return false;
 
-          // יוצרים מיפוי לפי אות
-          const filtersByLetter = {};
+          const filtersByGroup = {};
           filters.classes.forEach(cls => {
-            const letter = cls[0];
-            if (!filtersByLetter[letter]) filtersByLetter[letter] = [];
-            filtersByLetter[letter].push(cls);
+            const match = cls.match(/^([א-ת]{1,2})/);
+            const group = match ? match[1] : cls;
+            if (!filtersByGroup[group]) filtersByGroup[group] = [];
+            filtersByGroup[group].push(cls);
           });
 
-          // עבור כל אות - נבדוק האם כל הכיתות שלה מופיעות ב-search
-          for (const letter in filtersByLetter) {
-            const requiredClasses = filtersByLetter[letter];
+          for (const group in filtersByGroup) {
+            const requiredClasses = filtersByGroup[group];
             const allRequiredInSearch = requiredClasses.every(cls => parsedClasses.includes(cls));
             if (!allRequiredInSearch) return false;
           }
@@ -167,7 +162,6 @@ const RecentSearchesPage = () => {
         }
       });
     }
-
 
     setFilteredSearches(results);
   }, [filters, searches]);
@@ -215,11 +209,10 @@ const RecentSearchesPage = () => {
     }
   };
 
-
   return (
     <Container className="mt-4">
       <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
-          <h4 className="mb-4">חיפושים אחרונים</h4>
+        <h4 className="mb-4">חיפושים אחרונים</h4>
         <Button
           onClick={() => navigate('../data-fetch')}
           variant="outline-secondary"
@@ -371,35 +364,34 @@ const RecentSearchesPage = () => {
                       if (!Array.isArray(parsed)) return '';
 
                       const allClasses = JSON.parse(localStorage.getItem('classes') || '[]');
-                      const classesByLetter = {};
+                      const classesByGroup = {};
 
-                      // מחלקים את כל הכיתות לפי אות
                       allClasses.forEach(cls => {
-                        const letter = cls[0];
-                        if (!classesByLetter[letter]) classesByLetter[letter] = [];
-                        classesByLetter[letter].push(cls);
+                        const match = cls.match(/^([א-ת]{1,2})/);
+                        const group = match ? match[1] : cls;
+                        if (!classesByGroup[group]) classesByGroup[group] = [];
+                        classesByGroup[group].push(cls);
                       });
 
-                      const resultLetters = [];
+                      const resultGroups = [];
                       const remainingClasses = [];
 
-                      Object.entries(classesByLetter).forEach(([letter, classList]) => {
+                      Object.entries(classesByGroup).forEach(([group, classList]) => {
                         const allInSearch = classList.every(cls => parsed.includes(cls));
                         if (allInSearch) {
-                          resultLetters.push(letter);
+                          resultGroups.push(group);
                         } else {
                           const partial = classList.filter(cls => parsed.includes(cls));
                           remainingClasses.push(...partial);
                         }
                       });
 
-                      return [...resultLetters, ...remainingClasses].join(', ');
+                      return [...resultGroups, ...remainingClasses].join(', ');
                     } catch (e) {
                       return '';
                     }
                   })()}
                 </td>
-
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
               </tr>

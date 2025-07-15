@@ -128,21 +128,31 @@ const ClassesList = () => {
     const groupAndSetClasses = (flatClassList) => {
       const grouped = {};
       flatClassList.forEach((classStr) => {
-        const letter = classStr[0];
-        if (!grouped[letter]) grouped[letter] = [];
-        grouped[letter].push(classStr);
+        let groupKey = '';
+
+        if (classStr.startsWith('יא')) {
+          groupKey = 'יא';
+        } else if (classStr.startsWith('יב')) {
+          groupKey = 'יב';
+        } else {
+          groupKey = classStr[0];
+        }
+
+        if (!grouped[groupKey]) grouped[groupKey] = [];
+        grouped[groupKey].push(classStr);
       });
 
       for (const key in grouped) {
         grouped[key].sort((a, b) => {
-          const numA = parseInt(a.slice(1));
-          const numB = parseInt(b.slice(1));
+          const numA = parseInt(a.replace(/\D/g, ''));
+          const numB = parseInt(b.replace(/\D/g, ''));
           return numA - numB;
         });
       }
 
       setClasses(grouped);
     };
+
 
     fetchClasses();
   }, []);
@@ -153,14 +163,16 @@ const ClassesList = () => {
 
   return (
     <Container className="mt-4">
-      <Button
-        onClick={() => navigate('../classes')}
-        variant="outline-secondary"
-        style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
-      >
-        חזרה 👉
-      </Button>
-      <h3>בחרי כיתה</h3>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <h3>בחרי כיתה</h3>
+        <Button
+          onClick={() => navigate('../staff-home')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
       {Object.keys(classes).length === 0 ? (
         <Alert variant="info">אין כיתות להצגה</Alert>
       ) : (
@@ -180,8 +192,20 @@ const ClassesList = () => {
                     key={cls}
                     onClick={() => {
                       if (isAllowed) {
-                        const letter = cls.charAt(0);
-                        const number = cls.slice(1);
+                        let letter = '';
+                        let number = '';
+                        console.log(letter);
+                        if (cls.startsWith('יא')) {
+                          letter = 'יא';
+                          number = cls.slice(2);
+                        } else if (cls.startsWith('יב')) {
+                          letter = 'יב';
+                          number = cls.slice(2);
+                        } else {
+                          letter = cls.charAt(0);
+                          number = cls.slice(1);
+                        }
+
                         navigate(`/class/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
                       } else {
                         alert('על פי הרשאת הגישה שלך, אין באפשרותך להכנס לכיתה זו. תודה רבה.');
@@ -196,7 +220,7 @@ const ClassesList = () => {
           </div>
         ))
       )}
-    </Container>
+    </Container >
   );
 };
 

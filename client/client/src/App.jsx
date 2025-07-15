@@ -1,50 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import React from 'react';
-import './App.css'
-import Home from './pages/Home'
+// // import Home from './pages/Home';
+// // import './App.css';
+
+// // function App() {
+// //   return (
+// //     <>
+// //       <div style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}>
+// //         {/* תמונה בצד ימין */}
+// //         <img
+// //           src={"../logo.png"}
+// //           alt="קישוט צד ימין"
+// //           style={{
+// //             position: 'fixed',
+// //             top: 0,
+// //             right: 0,
+// //             height: '100%',
+// //             zIndex: 0,
+// //             opacity: 0.9
+// //           }}
+// //         />
+
+// //         {/* כל התוכן של האתר מעל התמונה */}
+// //         <div style={{ position: 'relative', zIndex: 1 }}>
+// //           <Home />
+          
+// //         </div>
+// //       </div>
+// //       <Home></Home>
+// //     </>
+// //   );
+// // }
+
+// // export default App;
+// // import Home from './pages/Home';
+// // import './App.css';
+
+// // function App() {
+// //   return (
+// //     <div className="main-wrapper">
+// //       <Home />
+// //     </div>
+// //   );
+// // }
+
+// // export default App;
+// import Home from './pages/Home';
+// import './App.css';
+
+// function App() {
+//   return (
+//     <div className="page-wrapper">
+      
+//       {/* תמונת צד ימין */}
+//       <div className="side-image"></div>
+
+//       {/* תוכן בתוך כרטיס */}
+//       <div className="content-card">
+//         <Home />
+//       </div>
+
+//     </div>
+//   );
+// }
+
+import Home from './pages/Home';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    // <>
-    //   <div>
-    //     <a href="https://vite.dev" target="_blank">
-    //       <img src={viteLogo} className="logo" alt="Vite logo" />
-    //     </a>
-    //     <a href="https://react.dev" target="_blank">
-    //       <img src={reactLogo} className="logo react" alt="React logo" />
-    //     </a>
-    //   </div>
-    //   <h1>Vite + React</h1>
-    //   <div className="card">
-    //     <button onClick={() => setCount((count) => count + 1)}>
-    //       count is {count}
-    //     </button>
-    //     <p>
-    //       Edit <code>src/App.jsx</code> and save to test HMR
-    //     </p>
-    //   </div>
-    //   <p className="read-the-docs">
-    //     Click on the Vite and React logos to learn more
-    //   </p>
-    // </>
-    <><div style={{
-      backgroundColor: '#2a3b8f',
-      color: 'white',
-      padding: '1rem',
-      textAlign: 'center',
-      borderBottom: '4px solid #d9e3f0'
-    }}>
-      <p style={{fontSize:'xxx-large', margin: 0 }}>פודיום</p>
-      <p style={{ margin: 0 }}>לתת במה לכולן</p>
-    </div>
-
-      <Home /></>
-
-  )
+       <Home></Home>
+  );
 }
 
-export default App
+export default App;

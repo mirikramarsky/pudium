@@ -79,41 +79,46 @@ const StudentForm = () => {
 
     //     setFormData(prev => ({ ...prev, [name]: value }));
     // };
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+   const handleChange = (e) => {
+    const { name, value } = e.target;
 
-        // נבנה מערך של כל הערכים שנבחרו בפועל, כולל ערכי 'אחר' אם מולאו
-        const selectedValues = [];
+    // מערך התחומים שכבר נבחרו בפועל (בלי השדה שאת משנה עכשיו)
+    const selectedValues = [];
 
-        for (let i = 1; i <= 4; i++) {
-            const fieldVal = (name === `field${i}`) ? value : formData[`field${i}`];
-            const otherVal = (name === `otherField${i}`) ? value : formData[`otherField${i}`];
+    for (let i = 1; i <= 4; i++) {
+        const fieldKey = `field${i}`;
+        const otherKey = `otherField${i}`;
 
-            if (fieldVal === 'אחר' && otherVal) {
-                selectedValues.push(otherVal.trim());
-            } else if (fieldVal && fieldVal !== 'אחר') {
-                selectedValues.push(fieldVal);
-            }
+        // מדלגים על השדה שאת בדיוק משנה עכשיו
+        if (name === fieldKey || name === otherKey) continue;
+
+        const fieldVal = formData[fieldKey];
+        const otherVal = formData[otherKey];
+
+        if (fieldVal === 'אחר' && otherVal) {
+            selectedValues.push(otherVal.trim());
+        } else if (fieldVal && fieldVal !== 'אחר') {
+            selectedValues.push(fieldVal);
         }
+    }
 
-        // בודקים אם הערך החדש כבר נבחר (רק אם זה לא שדה טקסט רגיל)
-        if (name.startsWith('field') && !name.startsWith('other')) {
-            if (value !== 'אחר' && selectedValues.includes(value)) {
-                alert("אין אפשרות לבחור את אותו תחום פעמיים");
-                return;
-            }
+    // בודקים אם יש כפילות
+    if (name.startsWith('field') && !name.startsWith('other')) {
+        if (value && value !== 'אחר' && selectedValues.includes(value)) {
+            alert("אין אפשרות לבחור את אותו תחום פעמיים");
+            return;
         }
-
-        // אם מדובר בשדה טקסט של 'אחר', נבדוק גם שם שאין כפילות
-        if (name.startsWith('otherField')) {
-            if (value.trim() && selectedValues.includes(value.trim())) {
-                alert("התחום הזה כבר נבחר באחד השדות");
-                return;
-            }
+    }
+    if (name.startsWith('otherField')) {
+        if (value.trim() && selectedValues.includes(value.trim())) {
+            alert("התחום הזה כבר נבחר באחד השדות");
+            return;
         }
+    }
 
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    setFormData(prev => ({ ...prev, [name]: value }));
+};
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -223,8 +228,18 @@ const StudentForm = () => {
 
     return (
         <Container className="mt-5">
-            <h2 className="mb-4 text-center">טופס הוספת תלמידה</h2>
-            <Button variant='outline-secondary' onClick={() => navigate('../staff-login')}>חזרה לדף ההתחברות 👉</Button>
+            <div className="position-relative text-center mb-4">
+                <Button
+                    variant="outline-secondary"
+                    className="position-absolute"
+                    style={{ right: 0 }}
+                    onClick={() => navigate('../staff-login')}
+                >
+                    חזרה לדף ההתחברות 👉
+                </Button>
+                <h2 className="mb-0">טופס הוספת תלמידה</h2>
+            </div>
+
             <Form onSubmit={handleSubmit}>
                 <Row>
                     <Col md={6}>

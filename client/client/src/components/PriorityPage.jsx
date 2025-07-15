@@ -39,7 +39,9 @@ const PriorityPage = () => {
       // שליפת תלמידות לפי ID
       const uniqueClasses = new Set();
       for (const id of studentIds) {
-        const res = await axios.get(`${BASE_URL}students/${id}`);
+        const res = await axios.post(`${BASE_URL}students/schoolid/${id}`,
+          {schoolId}
+        );
         const s = res.data;
         if (s && s.class && s.grade !== undefined) {
           uniqueClasses.add(`${s.class}${s.grade}`);
@@ -66,7 +68,7 @@ const PriorityPage = () => {
         studentsid: JSON.stringify(studentIds),
       });
 
-      setSuccess('העדיפות נשמרה בהצלחה!');
+      setSuccess('הבחירה נשמרה בהצלחה!');
       setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError('שגיאה בשמירה: ' + (err.response?.data || err.message));

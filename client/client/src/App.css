@@ -1,81 +1,89 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-
-
-
-
+/*
 body {
-  font-family: 'Assistant', 'Heebo', sans-serif;
-  background-color: #cfe3f3;
-  color: #333;
+   font-family: 'Assistant', 'Heebo', sans-serif;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-h1, h2, h3 {
-  color: #2a3b8f;
+.main-wrapper {
+  position: relative;
+  min-height: 100vh;
+  background: url('../logo.png') no-repeat right center;
+  background-size: contain;
+  background-color: #fff;
+  overflow-x: hidden;
+}
+
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  background-image: 
+    url("../public/up.png"),
+    url("../public/down.png");
+  background-repeat: no-repeat, no-repeat;
+  background-position: top, bottom;
+  background-size: 100% 72%, 100% 28%;
+}
+
+.content {
+  height: 100vh;
+  overflow: auto;
+}
+
+
+h1,
+h2,
+h3 {
+  color: #00bcd4;
 }
 
 button {
-  background-color: #2a3b8f;
+  background-color: #00bcd4;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.varela-round-regular {
+  font-family: "Varela Round", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 button:hover {
-  background-color: #3e4cb8;
+  background-color: #f50057;
+  transform: scale(1.05);
 }
 
-input, textarea {
-  border: 1px solid #ccc;
+input,
+textarea {
+  border: 2px solid #ccc;
   border-radius: 6px;
   padding: 0.5rem;
   width: 100%;
   box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #00bcd4;
+  outline: none;
 }
 
 .container {
@@ -84,5 +92,93 @@ input, textarea {
   padding: 1rem;
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: fade-in 1s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  transition: transform 0.3s;
+}
+
+.logo:hover {
+  transform: rotate(10deg) scale(1.1);
+} */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  direction: rtl;
+  font-family: 'Assistant', sans-serif;
+}
+
+.page-wrapper {
+  min-width: 100vw; 
+  position: relative;
+  min-height: 100vh;
+  background:
+    linear-gradient(to bottom, transparent 72%, transparent 72%),
+    url('../public/up.png') top center no-repeat,
+    url('../public/down.png') bottom center no-repeat;
+  background-size: 100% 29%, 100% 71%;
+  background-repeat: no-repeat;
+  overflow-x: hidden;
+}
+
+/* תמונת צד ימין */
+.side-image {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30vw;
+  /* או מה שמתאים לך */
+  height: 100%;
+  background: url('../public/logo.png') center center no-repeat;
+  background-size: cover;
+  z-index: 0;
+  pointer-events: none;
+  min-width: 180px;
+  max-width: 1000px;
+}
+
+/* כרטיס התוכן */
+.content-card {
+  margin-right: calc(29vw + 20px);;
+  /* משאיר מקום לתמונת הצד */
+  margin-left: 12%;
+  margin-top: 5%;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-height: calc(90vh - 40px);
+  overflow-y: auto;
+  border-radius: 10px;
+  z-index: 1;
+  position: relative;
+}
+/* רספונסיביות למסכים קטנים יותר */
+@media (max-width: 768px) {
+  .side-image {
+    display: none;
+  }
+
+  .content-card {
+    margin: 5% 5%;
+    max-height: calc(90vh - 40px);
+  }
 }

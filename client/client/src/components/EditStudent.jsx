@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const EditStudent = () => {
-    
+
     const { id } = useParams();
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState(null);
@@ -65,7 +65,15 @@ const EditStudent = () => {
 
     return (
         <Container className="mt-4">
-            <h3>עריכת תלמידה - {formData.firstname} {formData.lastname}</h3>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h3>עריכת תלמידה - {formData.firstname} {formData.lastname}</h3>
+                <Button
+                    onClick={() => navigate(`../class/${formData.class}/${formData.grade}`)}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button></div>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>שם פרטי</Form.Label>
@@ -106,10 +114,10 @@ const EditStudent = () => {
                     >
                         <option value="">בחר אות כיתה</option>
                         {/* שישלוף מהאותיות הקיימות באותו בית הספר? */}
-                        <option value="א">א'</option>
-                        <option value="ב">ב'</option>
-                        <option value="ג">ג'</option>
-                        <option value="ד">ד'</option>
+                        <option value="ט">ט'</option>
+                        <option value="י">י'</option>
+                        <option value="יא">יא'</option>
+                        <option value="יב">יב'</option>
                     </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-3">

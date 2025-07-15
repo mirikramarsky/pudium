@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Row, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
@@ -17,39 +17,51 @@ const SearchFormPage = () => {
     searcherId: localStorage.getItem('staffId') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0
   });
+
   const [fieldOptions, setFieldOptions] = useState([]);
-  const [expandedLetter, setExpandedLetter] = useState(null);
-  const [classesByLetter, setClassesByLetter] = useState({});
+  const [expandedGroup, setExpandedGroup] = useState(null);
+  const [classesByGroup, setClassesByGroup] = useState({});
   const [error, setError] = useState(null);
+
+  const getGroupKey = (cls) => {
+    if (cls.startsWith('יא') || cls.startsWith('יב')) return cls.slice(0, 2);
+    return cls.slice(0, 1);
+  };
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         const schoolId = localStorage.getItem("schoolId");
         if (!schoolId) return;
-        const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
-        const schoolFields = JSON.parse(response.data[0]?.fields || []);
-        setFieldOptions(schoolFields);
-        const localClasses = localStorage.getItem('classes');
-        let classList = [];
 
-        if (localClasses) {
+        const lastFetched = Number(localStorage.getItem('classesTimestamp'));
+        const now = Date.now();
+
+        let classList = [];
+        const localClasses = localStorage.getItem('classes');
+
+        if (localClasses && lastFetched && (now - lastFetched) < 5 * 60 * 1000) {
           classList = JSON.parse(localClasses);
         } else {
           const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
-          const classes = res.data || [];
-          localStorage.setItem('classes', JSON.stringify(classes));
-          classList = classes;
+          classList = res.data || [];
+          localStorage.setItem('classes', JSON.stringify(classList));
+          localStorage.setItem('classesTimestamp', now.toString());
         }
 
-        const byLetter = {};
+        const byGroup = {};
         classList.forEach(cls => {
-          const letter = cls.charAt(0);
-          if (!byLetter[letter]) byLetter[letter] = new Set();
-          byLetter[letter].add(cls);
+          const group = getGroupKey(cls);
+          if (!byGroup[group]) byGroup[group] = new Set();
+          byGroup[group].add(cls);
         });
 
-        setClassesByLetter(byLetter);
+        setClassesByGroup(byGroup);
+
+        const response = await axios.get(`${BASE_URL}schools/${schoolId}`);
+        const schoolFields = JSON.parse(response.data[0]?.fields || []);
+        setFieldOptions(schoolFields);
+
       } catch (err) {
         console.error(err);
         setError('שגיאה בטעינת כיתות');
@@ -69,8 +81,8 @@ const SearchFormPage = () => {
     });
   };
 
-  const selectAllInLetter = (letter) => {
-    const allClasses = Array.from(classesByLetter[letter] || []);
+  const selectAllInGroup = (group) => {
+    const allClasses = Array.from(classesByGroup[group] || []);
     const allSelected = allClasses.every(c => formData.classes.includes(c));
     if (allSelected) {
       setFormData(prev => ({
@@ -85,48 +97,23 @@ const SearchFormPage = () => {
     }
   };
 
-  const toggleExpanded = (letter) => {
-    setExpandedLetter(expandedLetter === letter ? null : letter);
+  const toggleExpanded = (group) => {
+    setExpandedGroup(expandedGroup === group ? null : group);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // const searchParams = {
-    //   myField: formData.field,
-    //   schoolId: formData.schoolId,
-    //   classes: formData.classes,
-    //   count: Number(formData.amount)
-    // };
-
     try {
-      // const resStudents = await axios.post(
-      //   '${BASE_URL}students/params',
-      //   searchParams
-      // );
-      // const foundStudents = resStudents.data;
-
       const searchData = {
         searchname: formData.name,
         countstudents: Number(formData.amount),
         field: formData.field,
         classes: formData.classes,
         searcherId: formData.searcherId,
-        searchername: formData.staffName
+        searchername: formData.staffName,
+        schoolid: formData.schoolId
       };
-
-      // const studentsIds = foundStudents.map(student => student.id);
-
-      const resSave = await axios.post(
-        `${BASE_URL}searches/`,
-        searchData
-      );
-
-      // await axios.post(
-      //   `${BASE_URL}stuInSea/${resSave.data.id}`,
-      //   { studentsid: studentsIds }
-      // );
-      // sessionStorage.setItem(`students-${resSave.data.id}`, JSON.stringify(studentsIds));
+      const resSave = await axios.post(`${BASE_URL}searches/`, searchData);
       sessionStorage.setItem(`search-${resSave.data.id}`, JSON.stringify(searchData));
       await new Promise(resolve => setTimeout(resolve, 200));
       navigate(`/search-results/${resSave.data.id}`);
@@ -142,39 +129,26 @@ const SearchFormPage = () => {
 
   return (
     <Container className="mt-4">
-      <Row className="justify-content-between mb-3">
-        <Col><h4>טופס חיפוש תלמידות</h4></Col>
-        <Col className="text-end">
+      <Row className="position-relative mb-5 justify-content-center text-center">
+        <h4 className="mb-0">טופס חיפוש תלמידות</h4>
+        <div className="position-absolute" style={{ right: 0, top: 0 }}>
           <div style={{ width: '160px' }} className="d-flex flex-column align-items-end">
-            <Button
-              variant="outline-secondary"
-              onClick={() => navigate('../staff-home')}
-              className="mb-2 w-100"
-            >
+            <Button variant="outline-secondary" onClick={() => navigate('../staff-home')} className="mb-2 w-100">
               חזרה 👉
             </Button>
-            <Button
-              variant="outline-primary"
-              onClick={() => navigate('/recent-searches')}
-              className="mb-2 w-100"
-            >
+            <Button variant="outline-primary" onClick={() => navigate('/recent-searches')} className="mb-2 w-100">
               חיפושים אחרונים 🔎
             </Button>
-            <Button
-              variant="outline-warning"
-              onClick={() => navigate('/wait-searches')}
-              className="w-100"
-            >
+            <Button variant="outline-warning" onClick={() => navigate('/wait-searches')} className="w-100">
               חיפושים מושהים 🔎
             </Button>
           </div>
-        </Col>
+        </div>
       </Row>
-
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className='pt-5'>
         <Form.Group className="mb-3">
           <Form.Label>שם החיפוש</Form.Label>
           <Form.Control
@@ -213,15 +187,15 @@ const SearchFormPage = () => {
         <Form.Group className="mb-3">
           <Form.Label>כיתה (בחר אות או כיתה מדויקת)</Form.Label>
           <div>
-            {Object.keys(classesByLetter).sort().map(letter => (
-              <div key={letter} style={{ marginBottom: '5px' }}>
+            {Object.keys(classesByGroup).sort().map(group => (
+              <div key={group} style={{ marginBottom: '5px' }}>
                 <Button
-                  variant={formData.classes.some(c => c.startsWith(letter)) ? 'primary' : 'outline-primary'}
+                  variant={formData.classes.some(c => getGroupKey(c) === group) ? 'primary' : 'outline-primary'}
                   size="sm"
-                  onClick={() => selectAllInLetter(letter)}
+                  onClick={() => selectAllInGroup(group)}
                 >
-                  {letter} {(() => {
-                    const allClasses = Array.from(classesByLetter[letter]);
+                  {group} {(() => {
+                    const allClasses = Array.from(classesByGroup[group]);
                     const allSelected = allClasses.every(c => formData.classes.includes(c));
                     return allSelected ? '✓' : '';
                   })()}
@@ -230,13 +204,13 @@ const SearchFormPage = () => {
                   variant="outline-secondary"
                   size="sm"
                   style={{ marginLeft: '5px' }}
-                  onClick={() => toggleExpanded(letter)}
+                  onClick={() => toggleExpanded(group)}
                 >
-                  {expandedLetter === letter ? '▲' : '▼'}
+                  {expandedGroup === group ? '▲' : '▼'}
                 </Button>
-                {expandedLetter === letter && (
+                {expandedGroup === group && (
                   <div style={{ marginTop: '5px', marginLeft: '10px' }}>
-                    {Array.from(classesByLetter[letter]).sort().map(cls => (
+                    {Array.from(classesByGroup[group]).sort().map(cls => (
                       <Form.Check
                         key={cls}
                         type="checkbox"
