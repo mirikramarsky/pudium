@@ -216,7 +216,7 @@ const SearchDetailsPage = () => {
             const schoolId = localStorage.getItem('schoolId');
             const emailRes = await axios.get(`${BASE_URL}schools/${schoolId}`);
             const emailData = emailRes.data[0].emailaddress;
-
+            console.log(emailData);
             if (!emailData) {
                 alert('לא נמצאו כתובות מייל');
                 return;
@@ -238,7 +238,6 @@ const SearchDetailsPage = () => {
     const sendMailToRecipient = async (email) => {
         try {
             console.log(email);
-            
             const emailContent = {
                 to: email,
                 subject: `אישור חיפוש - ${search.searchname}`,
