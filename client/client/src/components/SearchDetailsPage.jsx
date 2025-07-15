@@ -230,10 +230,10 @@ const SearchDetailsPage = () => {
 
             if (typeof merged === 'object') {
                 // יש יותר ממנהל אחד
-                setManagerEmails(emailData);
+                setManagerEmails(merged);
             } else {
                 // רק מנהל אחד - שליחה אוטומטית
-                await sendMailToRecipient(emailData);
+                await sendMailToRecipient(merged);
             }
         } catch (err) {
             console.error('שגיאה בשליחת המייל:', err.response?.data);
