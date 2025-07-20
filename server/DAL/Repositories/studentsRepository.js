@@ -10,7 +10,11 @@ class StudentsRepository {
         return student.rows;
     }
     async getByLastName(lastName, schoolId) {
+        console.log("this lastname is not exist");
+        console.log("last name", lastName);
+        console.log("schoolId", schoolId);
         let student = await pool.query(`SELECT * FROM students WHERE lastname ILIKE $1 AND schoolId = $2`, [`%${lastName}%`, schoolId]);
+        console.log("students",student);
         return student.rows;
     }
     async getBySchoolId(schoolId) {
