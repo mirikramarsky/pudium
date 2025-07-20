@@ -73,7 +73,7 @@ router.get('/classes/:schoolId', async (req, res) => {
 });
 router.post('/lastname/:schoolId', async (req, res) => {
     try{
-        let result = await studentService.getByLastName(req.body.lastname, req.query.schoolId)
+        let result = await studentService.getByLastName(req.body.lastname, req.params.schoolId)
         if(result != undefined)
             res.json(result || []);
         else
