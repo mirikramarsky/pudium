@@ -80,7 +80,9 @@ router.post('/lastname/:schoolId', async (req, res) => {
             res.status(204).send();
     }
     catch(err){
-        next(err.message);
+        if (err instanceof idError)
+           return res.status(400).send(err.message);
+        next(err);
     }
 });
 router.post('/schoolid/:id', async(req, res,next)=>{
