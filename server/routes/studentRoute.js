@@ -71,6 +71,20 @@ router.get('/classes/:schoolId', async (req, res) => {
         next(err);
     }
 });
+router.get('/lastname/:lastname', async (req, res) => {
+    try{
+        let result = await studentService.getByLastName(req.params.lastname)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+            res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.post('/schoolid/:id', async(req, res,next)=>{
     try{
         let result = await studentService.getById(req.params.id,req.body.schoolId)

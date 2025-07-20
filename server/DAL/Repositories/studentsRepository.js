@@ -9,6 +9,10 @@ class StudentsRepository {
         let student = await pool.query(`SELECT * FROM students WHERE id = $1 AND schoolId = $2`, [id, schoolId]);
         return student.rows;
     }
+    async getByLastName(lastName) {
+        let student = await pool.query(`SELECT * FROM students WHERE lastname = $1 `, [lastName]);
+        return student.rows;
+    }
     async getBySchoolId(schoolId) {
         let student = await pool.query(`SELECT * FROM students WHERE schoolId = $1`, [schoolId]);
         return student.rows;
