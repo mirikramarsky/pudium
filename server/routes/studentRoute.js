@@ -71,9 +71,9 @@ router.get('/classes/:schoolId', async (req, res) => {
         next(err);
     }
 });
-router.post('/lastname/', async (req, res) => {
+router.post('/lastname/:schoolId', async (req, res) => {
     try{
-        let result = await studentService.getByLastName(req.body.lastname)
+        let result = await studentService.getByLastName(req.body.lastname, req.query.schoolId)
         if(result != undefined)
             res.json(result || []);
         else
