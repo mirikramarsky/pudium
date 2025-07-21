@@ -40,40 +40,69 @@ const PriorityPage = () => {
     fetchClasses();
   }, []);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (lastName.trim()) {
-        handleSearch();
-      }
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [lastName, firstName, studentClass, grade]);
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    if (firstName.trim() || lastName.trim() || studentClass.trim() || grade.trim()) {
+      handleSearch();
+    }
+  }, 300);
+  return () => clearTimeout(timeout);
+}, [lastName, firstName, studentClass, grade]);
+
 
   const handleSearch = async () => {
-    setError('');
-    try {
-      const query = `${BASE_URL}students/lastname/${schoolId}`;
-      const res = await axios.post(query, { lastname: lastName.trim() });
-      let students = res.data;
+  setError('');
+  try {
+    let baseStudents = [];
+    let endpoint = '';
+    let postData = {};
 
-      if (firstName.trim()) {
-        students = students.filter(s => s.firstname && s.firstname.includes(firstName.trim()));
-      }
-      if (studentClass.trim()) {
-        students = students.filter(s => s.class && s.class === studentClass.trim());
-      }
-      if (grade.trim()) {
-        students = students.filter(s => s.grade && s.grade === grade.trim());
-      }
-
-      const filtered = students.filter(s => !selectedStudents.some(sel => sel.id === s.id));
-      setFoundStudents(filtered);
-    } catch (err) {
-      if (err.status == 404)
-        setError('שם המשפחה אינו קיים')
-      setError('שגיאה בשליפת תלמידות: ' + (err.response?.data || err.message));
+    if (lastName.trim()) {
+      endpoint = `${BASE_URL}students/lastname/${schoolId}`;
+      postData = { lastname: lastName.trim() };
+    } else if (firstName.trim()) {
+      endpoint = `${BASE_URL}students/firstname/${schoolId}`;
+      postData = { firstname: firstName.trim() };
+    } else if (studentClass.trim()) {
+      endpoint = `${BASE_URL}students/class/${schoolId}`;
+      postData = { class: studentClass.trim() };
+    } else {
+      setError('יש למלא לפחות שדה אחד לחיפוש');
+      return;
     }
-  };
+
+    const res = await axios.post(endpoint, postData);
+    baseStudents = res.data || [];
+
+    // סינון על תוצאה קיימת לפי שאר פרמטרים
+    let filtered = [...baseStudents];
+
+    if (firstName.trim() && endpoint.indexOf('firstname') === -1) {
+      filtered = filtered.filter(s => s.firstname?.includes(firstName.trim()));
+    }
+
+    if (lastName.trim() && endpoint.indexOf('lastname') === -1) {
+      filtered = filtered.filter(s => s.lastname?.includes(lastName.trim()));
+    }
+
+    if (studentClass.trim() && endpoint.indexOf('class') === -1) {
+      filtered = filtered.filter(s => s.class === studentClass.trim());
+    }
+
+    if (grade.trim()) {
+      filtered = filtered.filter(s => s.grade === grade.trim());
+    }
+
+    const withoutSelected = filtered.filter(
+      s => !selectedStudents.some(sel => sel.id === s.id)
+    );
+
+    setFoundStudents(withoutSelected);
+  } catch (err) {
+    setError('שגיאה בשליפת תלמידות: ' + (err.response?.data || err.message));
+  }
+};
+
 
   const addStudent = (student) => {
     setSelectedStudents(prev => [...prev, student]);
@@ -189,7 +218,7 @@ const PriorityPage = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>כיתה</Form.Label>
+          <Form.Label>כיתה (ט'-י"ב)</Form.Label>
           <Form.Control
             type="text"
             value={studentClass}
@@ -198,7 +227,7 @@ const PriorityPage = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>שכבה (ט'-י"ב)</Form.Label>
+          <Form.Label>מספר כיתה </Form.Label>
           <Form.Control
             type="text"
             value={grade}
