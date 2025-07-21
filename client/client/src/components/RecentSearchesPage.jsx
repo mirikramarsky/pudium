@@ -215,7 +215,7 @@ const RecentSearchesPage = () => {
 
   return (
     <Container className="mt-4">
-      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '65px' }}>
         <h4 className="mb-4">חיפושים אחרונים</h4>
         <Button
           onClick={() => navigate('../data-fetch')}
@@ -223,6 +223,13 @@ const RecentSearchesPage = () => {
           style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
         >
           חזרה 👉
+        </Button>
+          <Button
+          onClick={() => navigate('../search-by-student')}
+          variant="outline-info"
+          style={{ position: 'absolute', right: 0, top: '200%', transform: 'translateY(-50%)' }}
+        >
+          חיפוש לפי תלמידה 👉
         </Button>
       </div>
       {error && <Alert variant="danger">{error}</Alert>}

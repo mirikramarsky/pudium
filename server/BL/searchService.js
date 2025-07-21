@@ -15,6 +15,12 @@ class SearchService extends BaseService {
       return result;
     throw new idError('this id is not exist');
   }
+   async getByStudentId(studentId){
+     let result = await this.repository.getByStudentId(studentId);
+    if (result && result.length != 0)
+      return result;
+    throw new idError('this id is not exist');
+   }
   async getStudentsBySearchId(searchId) {
     let result = await this.repository.getStudentsBySearchId(searchId);
     if (result && result.length != 0)

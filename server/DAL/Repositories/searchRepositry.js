@@ -8,6 +8,15 @@ class SearchRepository {
         let search = await pool.query(`SELECT * FROM searches where id = $1`, [id]);
         return search.rows;
     }
+    async getByStudentId(studentId) {
+        let search = await pool.query(`
+        SELECT s.*
+        FROM searches s
+        INNER JOIN studentsinsearches sis ON sis.searchId = s.id
+        WHERE sis.studentId = $1
+    `, [studentId]);
+        return search.rows;
+    }
     async getByParams(params) {
         const conditions = [];
         const values = [];
