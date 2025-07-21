@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,11 @@ const EditStaff = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const schoolId = localStorage.getItem('schoolId');
+  const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
+  useEffect(() => {
+    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+  }, []);
   // טען את הנתונים כשהגענו לשלב 2 (טופס עדכון)
   useEffect(() => {
     if (step !== 2) return;
@@ -58,7 +62,7 @@ const EditStaff = () => {
       });
       setSuccess(true);
       setError(null);
-      navigate('/staff-home')
+      navigate("/staff-manage");
     } catch (err) {
       setError('שגיאה בעדכון אשת צוות');
       setSuccess(false);
@@ -88,6 +92,7 @@ const EditStaff = () => {
                 value={id}
                 onChange={(e) => setId(e.target.value)}
                 placeholder="הכנס קוד אשת צוות"
+                ref={inputRef}
                 required
               />
             </Form.Group>
@@ -121,6 +126,7 @@ const EditStaff = () => {
                 placeholder={name}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                ref={inputRef}
                 required
               />
             </Form.Group>

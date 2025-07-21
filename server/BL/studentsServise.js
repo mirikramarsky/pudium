@@ -35,8 +35,20 @@ class SudentsService extends BaseService {
             return result;
         throw new idError('this id is not exist');
     }
+    async getByFirstName(firstname, schoolId){
+         let result = await this.repository.getByFirstName(firstname, schoolId);
+        if (result && result.length != 0)
+            return result;
+        throw new idError('this lastname is not exist');
+    }
     async getByLastName(lastName, schoolId){
          let result = await this.repository.getByLastName(lastName, schoolId);
+        if (result && result.length != 0)
+            return result;
+        throw new idError('this lastname is not exist');
+    }
+    async getByClass(classes, schoolId){
+         let result = await this.repository.getByClass(classes, schoolId);
         if (result && result.length != 0)
             return result;
         throw new idError('this lastname is not exist');

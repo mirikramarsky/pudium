@@ -17,7 +17,7 @@ const priorityColors = {
 };
 
 const StudentsByClass = () => {
-
+  const [loading, setLoading] = useState(true);
   const { grade, class: className } = useParams();
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
@@ -25,15 +25,16 @@ const StudentsByClass = () => {
 
   useEffect(() => {
     const fetchStudents = async () => {
+      setLoading(true); // התחל טעינה
       const schoolId = localStorage.getItem('schoolId');
       if (!schoolId) {
         setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
+        setLoading(false); // סיים טעינה גם במקרה של שגיאה
         return;
       }
 
       try {
         const response = await axios.get(`${BASE_URL}students/`);
-        // סינון לפי schoolId, grade ומחלקה (className)
         const filtered = response.data.filter(s =>
           s.schoolid === Number(schoolId) &&
           s.grade === Number(grade) &&
@@ -43,11 +44,14 @@ const StudentsByClass = () => {
       } catch (err) {
         setError('שגיאה בשליפת תלמידות');
         console.error(err);
+      } finally {
+        setLoading(false); // תמיד סיים טעינה
       }
     };
 
     fetchStudents();
   }, [grade, className]);
+
 
   const renderLegend = () => (
     <Table bordered size="sm" className="mb-4" style={{ maxWidth: '100%' }}>
@@ -92,51 +96,53 @@ const StudentsByClass = () => {
         </Button>
       </div>
       {renderLegend()}
-      {students.length === 0 ? (
-        <p>אין תלמידות בכיתה זו.</p>
+      {loading ? (
+      <p>טוען תלמידות...</p>
+      ) : students.length === 0 ? (
+      <p>אין תלמידות בכיתה זו.</p>
       ) : (
-        <Table bordered hover>
-          <thead>
-            <tr>
-              <th>מספר זהות</th>
-              <th>שם פרטי</th>
-              <th>שם משפחה</th>
-              <th>כיתה</th>
-              <th>תחום 1</th>
-              <th>תחום 2</th>
-              <th>תחום 3</th>
-              <th>תחום 4</th>
-              <th>עדיפות חינוכית</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(student => {
-              const rowColor = priorityColors[Number(student.severalpriority)] || '#ffffff';
-              const getCellStyle = (priority) => ({
-                backgroundColor: priorityColors[priority] || '#ffffff',
-              });
+      <Table bordered hover>
+        <thead>
+          <tr>
+            <th>מספר זהות</th>
+            <th>שם פרטי</th>
+            <th>שם משפחה</th>
+            <th>כיתה</th>
+            <th>תחום 1</th>
+            <th>תחום 2</th>
+            <th>תחום 3</th>
+            <th>תחום 4</th>
+            <th>עדיפות חינוכית</th>
+          </tr>
+        </thead>
+        <tbody>
+          {students.map(student => {
+            const rowColor = priorityColors[Number(student.severalpriority)] || '#ffffff';
+            const getCellStyle = (priority) => ({
+              backgroundColor: priorityColors[priority] || '#ffffff',
+            });
 
-              return (
-                <tr
-                  key={student.id}
-                  style={{ backgroundColor: rowColor, cursor: 'pointer' }}
-                  onClick={() => navigate(`/edit-student/${student.id}`)}
-                >
-                  <td style={{ backgroundColor: rowColor }}>{student.id}</td>
-                  <td style={{ backgroundColor: rowColor }}>{student.firstname}</td>
-                  <td style={{ backgroundColor: rowColor }}>{student.lastname}</td>
-                  <td style={{ backgroundColor: rowColor }}>{student.class} {student.grade}</td>
-                  <td style={getCellStyle(student.field1priority)}>{student.field1}</td>
-                  <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
-                  <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
-                  <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
-                  <td style={getCellStyle(student.field4priority)}>
-                    {student.educpriority ? 'כן' : 'לא'}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+            return (
+              <tr
+                key={student.id}
+                style={{ backgroundColor: rowColor, cursor: 'pointer' }}
+                onClick={() => navigate(`/edit-student/${student.id}`)}
+              >
+                <td style={{ backgroundColor: rowColor }}>{student.id}</td>
+                <td style={{ backgroundColor: rowColor }}>{student.firstname}</td>
+                <td style={{ backgroundColor: rowColor }}>{student.lastname}</td>
+                <td style={{ backgroundColor: rowColor }}>{student.class} {student.grade}</td>
+                <td style={getCellStyle(student.field1priority)}>{student.field1}</td>
+                <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
+                <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
+                <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
+                <td style={getCellStyle(student.field4priority)}>
+                  {student.educpriority ? 'כן' : 'לא'}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
       )}
     </Container>
   );

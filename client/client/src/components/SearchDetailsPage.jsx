@@ -38,6 +38,18 @@ const SearchDetailsPage = () => {
         localStorage.setItem('schoolId', schoolIdFromUrl);
     }
     useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleFinalSave();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [students]); // יופעל כל עוד רשימת התלמידות מעודכנת
+
+    useEffect(() => {
         const fetchSearchAndStudents = async () => {
             let searchData = null;
             try {

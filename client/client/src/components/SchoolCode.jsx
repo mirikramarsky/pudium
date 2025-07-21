@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import BASE_URL from '../config';
 
 const SchoolCode = () => {
-  
+
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
+  useEffect(() => {
+    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -34,6 +38,7 @@ const SchoolCode = () => {
             placeholder="הכניסי סמל מוסד"
             value={code}
             onChange={(e) => setCode(e.target.value)}
+            ref={inputRef} // חיבור ה־ref לשדה
             required
           />
         </Form.Group>

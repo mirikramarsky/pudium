@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form, Button, Alert, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,11 @@ const AddStaff = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ id: '', name: '', confirm: '', class: "all" });
     const [message, setMessage] = useState(null);
+     const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
+  useEffect(() => {
+    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+  }, []);
     const handleChange = e => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -24,7 +28,7 @@ const AddStaff = () => {
                 schoolId: Number(schoolId)
             });
             setMessage('נוספה בהצלחה');
-            navigate('/staff-home')
+            navigate("/staff-manage")
         } catch (err) {
             setMessage('שגיאה בהוספה');
         }
@@ -47,7 +51,7 @@ const AddStaff = () => {
             <Form onSubmit={handleSubmit}>
                 <Form.Group>
                     <Form.Label>שם</Form.Label>
-                    <Form.Control name="name" value={formData.name} onChange={handleChange} />
+                    <Form.Control name="name" value={formData.name} onChange={handleChange} ref={inputRef}  />
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>קוד</Form.Label>

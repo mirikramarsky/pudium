@@ -13,6 +13,7 @@ const WaitingSearches = () => {
   const [fieldError, setFieldError] = useState(null);
   const staffId = localStorage.getItem('staffId');
   const schoolId = localStorage.getItem('schoolId');
+  const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState({
     searchtime: '',
@@ -37,6 +38,7 @@ const WaitingSearches = () => {
   useEffect(() => {
     const fetchSearches = async () => {
       try {
+        setLoading(true);
         if (!schoolId || !staffId) return;
 
         const confirmRes = await axios.get(`${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`);
@@ -57,6 +59,9 @@ const WaitingSearches = () => {
       } catch (err) {
         console.error(err);
         setError('שגיאה בטעינת החיפושים');
+      }
+      finally {
+        setLoading(false); // 👈 סיום טעינה בכל מקרה
       }
     };
 
@@ -324,7 +329,9 @@ const WaitingSearches = () => {
         </Row>
       </Form>
 
-      {filteredSearches.length === 0 ? (
+      {loading ? (
+        <p>טוען חיפושים...</p>
+      ) : filteredSearches.length === 0 ? (
         <p>לא נמצאו חיפושים תואמים</p>
       ) : (
         <Table striped bordered hover>

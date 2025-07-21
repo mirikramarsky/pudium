@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,11 @@ const StudentForm = () => {
     const [classOptions, setClassOptions] = useState([]);
 
     const [fields, setFields] = useState([]);
+    const inputRef = useRef(null); // יצירת ref לשדה הקלט
+
+    useEffect(() => {
+        inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+    }, []);
     useEffect(() => {
         const fetchFieldsAndClasses = async () => {
             const schoolId = localStorage.getItem('schoolId');
@@ -79,45 +84,45 @@ const StudentForm = () => {
 
     //     setFormData(prev => ({ ...prev, [name]: value }));
     // };
-   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
 
-    // מערך התחומים שכבר נבחרו בפועל (בלי השדה שאת משנה עכשיו)
-    const selectedValues = [];
+        // מערך התחומים שכבר נבחרו בפועל (בלי השדה שאת משנה עכשיו)
+        const selectedValues = [];
 
-    for (let i = 1; i <= 4; i++) {
-        const fieldKey = `field${i}`;
-        const otherKey = `otherField${i}`;
+        for (let i = 1; i <= 4; i++) {
+            const fieldKey = `field${i}`;
+            const otherKey = `otherField${i}`;
 
-        // מדלגים על השדה שאת בדיוק משנה עכשיו
-        if (name === fieldKey || name === otherKey) continue;
+            // מדלגים על השדה שאת בדיוק משנה עכשיו
+            if (name === fieldKey || name === otherKey) continue;
 
-        const fieldVal = formData[fieldKey];
-        const otherVal = formData[otherKey];
+            const fieldVal = formData[fieldKey];
+            const otherVal = formData[otherKey];
 
-        if (fieldVal === 'אחר' && otherVal) {
-            selectedValues.push(otherVal.trim());
-        } else if (fieldVal && fieldVal !== 'אחר') {
-            selectedValues.push(fieldVal);
+            if (fieldVal === 'אחר' && otherVal) {
+                selectedValues.push(otherVal.trim());
+            } else if (fieldVal && fieldVal !== 'אחר') {
+                selectedValues.push(fieldVal);
+            }
         }
-    }
 
-    // בודקים אם יש כפילות
-    if (name.startsWith('field') && !name.startsWith('other')) {
-        if (value && value !== 'אחר' && selectedValues.includes(value)) {
-            alert("אין אפשרות לבחור את אותו תחום פעמיים");
-            return;
+        // בודקים אם יש כפילות
+        if (name.startsWith('field') && !name.startsWith('other')) {
+            if (value && value !== 'אחר' && selectedValues.includes(value)) {
+                alert("אין אפשרות לבחור את אותו תחום פעמיים");
+                return;
+            }
         }
-    }
-    if (name.startsWith('otherField')) {
-        if (value.trim() && selectedValues.includes(value.trim())) {
-            alert("התחום הזה כבר נבחר באחד השדות");
-            return;
+        if (name.startsWith('otherField')) {
+            if (value.trim() && selectedValues.includes(value.trim())) {
+                alert("התחום הזה כבר נבחר באחד השדות");
+                return;
+            }
         }
-    }
 
-    setFormData(prev => ({ ...prev, [name]: value }));
-};
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
 
     const handleSubmit = async (e) => {
@@ -175,6 +180,19 @@ const StudentForm = () => {
         }
 
     };
+    useEffect(() => {
+        const handleEnterKey = (e) => {
+            // אם המשתמש לא בשדה select או textarea
+            const tag = document.activeElement.tagName;
+            if (e.key === 'Enter' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+                e.preventDefault();
+                handleSubmit(e);
+            }
+        };
+
+        window.addEventListener('keydown', handleEnterKey);
+        return () => window.removeEventListener('keydown', handleEnterKey);
+    }, [formData]); // מאזין לשינויים בטופס
 
     const renderFieldSelect = (fieldName, otherFieldName) => {
         const selectedFields = Object.entries(formData)
@@ -250,6 +268,7 @@ const StudentForm = () => {
                                 name="firstname"
                                 value={formData.firstname}
                                 onChange={handleChange}
+                                ref={inputRef}
                                 required
                             />
                         </Form.Group>

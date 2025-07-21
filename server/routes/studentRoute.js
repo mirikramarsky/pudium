@@ -71,9 +71,37 @@ router.get('/classes/:schoolId', async (req, res) => {
         next(err);
     }
 });
+router.post('/firstname/:schoolId', async (req, res) => {
+    try{
+        let result = await studentService.getByFirstName(req.body.firstname, req.params.schoolId)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+        if (err instanceof idError)
+           return res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.post('/lastname/:schoolId', async (req, res) => {
     try{
         let result = await studentService.getByLastName(req.body.lastname, req.params.schoolId)
+        if(result != undefined)
+            res.json(result || []);
+        else
+            res.status(204).send();
+    }
+    catch(err){
+        if (err instanceof idError)
+           return res.status(400).send(err.message);
+        next(err);
+    }
+});
+router.post('/class/:schoolId', async (req, res) => {
+    try{
+        let result = await studentService.getByClass(req.body.class, req.params.schoolId)
         if(result != undefined)
             res.json(result || []);
         else

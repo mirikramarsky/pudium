@@ -23,7 +23,7 @@ const StaffManage = () => {
       <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
         <h2>ניהול בית ספר</h2>
         <Button
-          onClick={() => navigate('../staff-login')}
+          onClick={() => navigate('../staff-home')}
           variant="outline-secondary"
           style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
         >

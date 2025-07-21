@@ -9,72 +9,11 @@ const ClassesList = () => {
   const [error, setError] = useState(null);
   const [staff, setStaff] = useState(null);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const fetchClasses = async () => {
-  //     const schoolId = localStorage.getItem('schoolId');
-  //     const staffId = localStorage.getItem('staffId');
-  //     if (!schoolId) {
-  //       setError('קוד מוסד לא נמצא. אנא התחברי מחדש.');
-  //       return;
-  //     }
-  //     if (!staffId) {
-  //       setError('קוד אשת צוות לא נמצא. אנא התחברי מחדש.');
-  //       return;
-  //     }
-
-  //     try {
-  //       // שליפת פרטי הצוות
-  //       const staffRes = await axios.get(
-  //         `${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`
-  //       );
-  //       const staffData = staffRes.data[0];
-  //       setStaff(staffData);
-
-  //       let flatClassList = [];
-  //       const localClasses = localStorage.getItem('classes');
-  //       if (localClasses) {
-  //         flatClassList = JSON.parse(localClasses);
-  //         groupAndSetClasses(flatClassList);
-  //       } else {
-  //         const res = await axios.get(
-  //           `${BASE_URL}students/classes/${schoolId}`
-  //         );
-  //         const classes = res.data || [];
-  //         localStorage.setItem('classes', JSON.stringify(classes));
-  //         flatClassList = classes;
-  //         groupAndSetClasses(flatClassList);
-  //       }
-  //     } catch (err) {
-  //       setError('שגיאה בשליפת נתונים');
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   const groupAndSetClasses = (flatClassList) => {
-  //     const grouped = {};
-  //     flatClassList.forEach((classStr) => {
-  //       const letter = classStr[0];
-  //       if (!grouped[letter]) grouped[letter] = [];
-  //       grouped[letter].push(classStr);
-  //     });
-
-  //     for (const key in grouped) {
-  //       grouped[key].sort((a, b) => {
-  //         const numA = parseInt(a.slice(1));
-  //         const numB = parseInt(b.slice(1));
-  //         return numA - numB;
-  //       });
-  //     }
-
-  //     setClasses(grouped);
-  //   };
-
-  //   fetchClasses();
-  // }, []);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchClasses = async () => {
+      setLoading(true);
       const schoolId = localStorage.getItem('schoolId');
       const staffId = localStorage.getItem('staffId');
       if (!schoolId) {
@@ -120,6 +59,7 @@ const ClassesList = () => {
         groupAndSetClasses(flatClassList);
 
       } catch (err) {
+        setLoading(false);
         setError('שגיאה בשליפת נתונים');
         console.error(err);
       }
@@ -151,15 +91,18 @@ const ClassesList = () => {
       }
 
       setClasses(grouped);
+      setLoading(false);
+
     };
 
 
     fetchClasses();
   }, []);
 
-
   if (error) return <Alert variant="danger">{error}</Alert>;
+  if (loading) return <Alert variant="info">טוען כיתות...</Alert>;
   if (!staff) return null;
+
 
   return (
     <Container className="mt-4">

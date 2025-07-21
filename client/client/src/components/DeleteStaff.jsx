@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,11 @@ const DeleteStaff = () => {
   const [id, setId] = useState('');
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+   const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
+  useEffect(() => {
+    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+  }, []);
   const handleDelete = async () => {
     try {
       const schoolId = localStorage.getItem('schoolId')
@@ -18,7 +22,7 @@ const DeleteStaff = () => {
       });
       setSuccess(true);
       setError(null);
-      navigate('/staff-home')
+      navigate("/staff-manage");
     } catch (err) {
       setError('שגיאה במחיקת אשת צוות');
       console.error(err);
@@ -42,7 +46,7 @@ const DeleteStaff = () => {
       <Form onSubmit={(e) => { e.preventDefault(); handleDelete(); }}>
         <Form.Group className="mb-3">
           <Form.Label>מזהה אשת צוות למחיקה</Form.Label>
-          <Form.Control value={id} onChange={(e) => setId(e.target.value)} required />
+          <Form.Control value={id} onChange={(e) => setId(e.target.value)} ref={inputRef}  required />
         </Form.Group>
         <Button type="submit" variant="danger">מחק</Button>
       </Form>

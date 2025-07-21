@@ -1,15 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
 import { useNavigate } from 'react-router-dom';
 
 const FieldsManagementPage = () => {
-      const navigate = useNavigate();
+    const navigate = useNavigate();
     const schoolId = localStorage.getItem('schoolId');
     const [fields, setFields] = useState([]);
     const [newField, setNewField] = useState('');
     const [message, setMessage] = useState('');
+    const inputRef = useRef(null); // יצירת ref לשדה הקלט
+
+    useEffect(() => {
+        inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+    }, []);
+    const handleAddField = () => {
+        const trimmed = newField.trim();
+        if (!trimmed) {
+            setMessage('❗ אי אפשר להוסיף תחום ריק');
+            return;
+        }
+        if (fields.includes(trimmed)) {
+            setMessage('❗ התחום כבר קיים');
+            return;
+        }
+        setFields([...fields, trimmed]);
+        setNewField('');
+        setMessage('');
+    };
+    const handleSave = async () => {
+        try {
+            await axios.put(`${BASE_URL}schools/${schoolId}`, {
+                fields: JSON.stringify(fields.filter(f => f.trim() !== '')),
+            });
+            setMessage('✅ התחומים נשמרו בהצלחה!');
+            navigate("/staff-manage")
+        } catch (error) {
+            console.error('שגיאה בשמירה:', error);
+            setMessage('❌ שגיאה בשמירת התחומים');
+        }
+
+    };
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter') {
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.tagName === 'INPUT') {
+                    e.preventDefault(); // למנוע שליחת טופס רגילה
+
+                    // אם הפוקוס בשדה "הוספת תחום"
+                    if (activeElement.placeholder === 'הוספת תחום חדש') {
+                        handleAddField();
+                    }
+                } else {
+                    handleSave();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleAddField, handleSave]);
+
 
     useEffect(() => {
         const fetchFields = async () => {
@@ -31,55 +84,30 @@ const FieldsManagementPage = () => {
         setFields(updatedFields);
     };
 
-    const handleAddField = () => {
-        const trimmed = newField.trim();
-        if (!trimmed) {
-            setMessage('❗ אי אפשר להוסיף תחום ריק');
-            return;
-        }
-        if (fields.includes(trimmed)) {
-            setMessage('❗ התחום כבר קיים');
-            return;
-        }
-        setFields([...fields, trimmed]);
-        setNewField('');
-        setMessage('');
-    };
+
 
     const handleDeleteField = (index) => {
         const updatedFields = fields.filter((_, i) => i !== index);
         setFields(updatedFields);
     };
 
-    const handleSave = async () => {
-        try {
-            await axios.put(`${BASE_URL}schools/${schoolId}`, {
-                fields: JSON.stringify(fields.filter(f => f.trim() !== '')),
-            });
-            setMessage('✅ התחומים נשמרו בהצלחה!');
-        } catch (error) {
-            console.error('שגיאה בשמירה:', error);
-            setMessage('❌ שגיאה בשמירת התחומים');
-        }
+    const defaultFields = ["שירה", "מחול", "אימון שיר", "תפאורה", "כתיבת שיר", "עריכה", "הצגה", "אימון הצגה"];
 
+    const handleResetDefaults = () => {
+        setFields([...defaultFields]);
     };
-   const defaultFields = ["שירה", "מחול", "אימון שיר", "תפאורה","כתיבת שיר", "עריכה", "הצגה", "אימון הצגה"];
-
-        const handleResetDefaults = () => {
-            setFields([...defaultFields]);
-        };
     return (
         <Container className="mt-5">
-             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
-               <h3 className="mb-4 text-center">ניהול תחומים בבית הספר</h3>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h3 className="mb-4 text-center">ניהול תחומים בבית הספר</h3>
                 <Button
-                  onClick={() => navigate('../staff-manage')}
-                  variant="outline-secondary"
-                  style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' , width:'15%'}}
+                    onClick={() => navigate('../staff-manage')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: '15%' }}
                 >
-                  חזרה 👉
+                    חזרה 👉
                 </Button>
-              </div>
+            </div>
             {message && <Alert variant={message.startsWith('✅') ? 'success' : 'danger'}>{message}</Alert>}
 
             {fields.map((field, index) => (
@@ -106,6 +134,7 @@ const FieldsManagementPage = () => {
                         placeholder="הוספת תחום חדש"
                         value={newField}
                         onChange={(e) => setNewField(e.target.value)}
+                        ref={inputRef}
                     />
                 </Col>
                 <Col sm="2">

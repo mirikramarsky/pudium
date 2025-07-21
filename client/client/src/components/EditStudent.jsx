@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -10,7 +10,11 @@ const EditStudent = () => {
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
+    useEffect(() => {
+        inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
+    }, []);
     useEffect(() => {
         const fetchStudent = async () => {
             const schoolid = localStorage.getItem('schoolId');
@@ -83,6 +87,7 @@ const EditStudent = () => {
                         value={formData.firstname || ''}
                         placeholder="שם פרטי"
                         onChange={handleChange}
+                        ref={inputRef}
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">

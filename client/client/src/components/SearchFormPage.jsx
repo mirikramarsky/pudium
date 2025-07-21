@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Container, Form, Button, Row, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const SearchFormPage = () => {
+  const inputRef = useRef(null); // יצירת ref לשדה הקלט
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -29,6 +31,7 @@ const SearchFormPage = () => {
   };
 
   useEffect(() => {
+    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
     const fetchClasses = async () => {
       try {
         const schoolId = localStorage.getItem("schoolId");
@@ -126,6 +129,26 @@ const SearchFormPage = () => {
       }
     }
   };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        const activeElement = document.activeElement;
+        if (
+          activeElement &&
+          (activeElement.tagName === 'INPUT' || activeElement.tagName === 'SELECT')
+        ) {
+          e.preventDefault(); // לא לתת לדפדפן לרענן או לעשות שליחה רגילה
+          handleSubmit(e);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [formData]); // מעקב אחרי הנתונים של הטופס
+
 
   return (
     <Container className="mt-4">
@@ -155,6 +178,7 @@ const SearchFormPage = () => {
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            ref={inputRef}
             required
           />
         </Form.Group>

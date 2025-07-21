@@ -9,12 +9,16 @@ class StudentsRepository {
         let student = await pool.query(`SELECT * FROM students WHERE id = $1 AND schoolId = $2`, [id, schoolId]);
         return student.rows;
     }
+     async getByFirstName(firstname, schoolId) {
+        let student = await pool.query(`SELECT * FROM students WHERE firstname ILIKE $1 AND schoolId = $2`, [`%${firstname}%`, schoolId]);
+        return student.rows;
+    }
     async getByLastName(lastName, schoolId) {
-        console.log("this lastname is not exist");
-        console.log("last name", lastName);
-        console.log("schoolId", schoolId);
         let student = await pool.query(`SELECT * FROM students WHERE lastname ILIKE $1 AND schoolId = $2`, [`%${lastName}%`, schoolId]);
-        console.log("students",student);
+        return student.rows;
+    }
+     async getByclasses(classes, schoolId) {
+        let student = await pool.query(`SELECT * FROM students WHERE class = $1 AND schoolId = $2`, [classes, schoolId]);
         return student.rows;
     }
     async getBySchoolId(schoolId) {

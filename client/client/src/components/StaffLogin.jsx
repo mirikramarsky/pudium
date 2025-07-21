@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
@@ -9,9 +9,10 @@ const StaffLogin = () => {
   const [error, setError] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const navigate = useNavigate();
+  const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
   useEffect(() => {
-    
+    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
     const name = localStorage.getItem('schoolName');
     if (name) setSchoolName(name);
   }, []);
@@ -45,6 +46,7 @@ const StaffLogin = () => {
             placeholder="הכניסי קוד איש צוות"
             value={staffCode}
             onChange={(e) => setStaffCode(e.target.value)}
+            ref={inputRef}
             required
           />
         </Form.Group>
