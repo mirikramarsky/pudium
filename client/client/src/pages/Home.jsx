@@ -20,7 +20,7 @@ import SearchDetailsNotToEdit from '../components/SearchDetailsNotToEdit';
 import PriorityPage from '../components/PriorityPage';
 import WelcomePage from '../components/WelcomePage';
 import { useLocation } from 'react-use';
-import SearchByStudent from '../components/searchByStudent';
+import SearchByStudent from '../components/SearchByStudent';
 // import BottomBanner from '../components/BottomBanner';
 function Layout({ children }) {
     const location = useLocation();
