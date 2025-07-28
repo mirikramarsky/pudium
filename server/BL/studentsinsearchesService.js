@@ -15,9 +15,11 @@ class StuInSeaService extends BaseService {
     }
     async getBySearchId(id, schoolId) {
         let result = await this.repository.getBySearchId(id);
-        console.log(result);
+        console.log("result", result);
+        const s = result.map(s => s.studentid);
+        console.log("s",s);
         
-        result = await studentService.getStudentsByIds(schoolId, result.map(s => s.studentid));
+        result = await studentService.getStudentsByIds(schoolId, s);
         console.log(result);
         
         if (result && result.length != 0)
