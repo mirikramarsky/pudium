@@ -41,34 +41,30 @@ const SearchDetailsNotToEdit = () => {
                 return;
             }
 
+            // שליפת פרטי החיפוש
             const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
             const searchData = resSearch.data[0];
-            
-            setSearch(searchData);
 
-            const allShownKey = `shown_${id}`;
-            const activeKey = `active_${id}`;
-            let savedAllShown = JSON.parse(localStorage.getItem(allShownKey) || '[]');
-            let savedActive = JSON.parse(localStorage.getItem(activeKey) || '[]');
-
-            // אם אין ב-LOCALSTORAGE מזהים, תביא אותם מהשרת
-            if (savedAllShown.length === 0) {
-                const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}`);
-                savedAllShown = resIds.data.map(s => s.id);
-                savedActive = [...savedAllShown];
-                
-                localStorage.setItem(allShownKey, JSON.stringify(savedAllShown));
-                localStorage.setItem(activeKey, JSON.stringify(savedActive));
+            if (!searchData) {
+                setError('החיפוש לא קיים');
+                setSearch(null);
+                setLoading(false);
+                return;
             }
 
-            if (savedAllShown.length > 0 && savedActive.length > 0) {
+            setSearch(searchData);
+
+            // שליפת התלמידות לפי מזהי חיפוש מהטבלה המתאימה
+            const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}`);
+            const studentIds = resIds.data.map(s => s.id);
+
+            if (studentIds.length > 0) {
                 const resAllStudents = await axios.get(`${BASE_URL}students/`);
                 const allStudents = resAllStudents.data;
-                const filteredActive = allStudents.filter(s => savedActive.includes(s.id));
-                const filteredAll = allStudents.filter(s => savedAllShown.includes(s.id));
-                setStudents(filteredActive);
-                setAllShownStudents(filteredAll);
-                setShownStudentIds(savedAllShown);
+                const filteredStudents = allStudents.filter(s => studentIds.includes(s.id));
+                setStudents(filteredStudents);
+                setAllShownStudents(filteredStudents);
+                setShownStudentIds(studentIds);
             } else {
                 setStudents([]);
                 setAllShownStudents([]);
@@ -85,6 +81,7 @@ const SearchDetailsNotToEdit = () => {
 
     fetchSearchAndStudents();
 }, [id]);
+
 
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;

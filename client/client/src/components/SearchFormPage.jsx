@@ -17,7 +17,8 @@ const SearchFormPage = () => {
     classes: [],
     staffName: localStorage.getItem('staffName') || '',
     searcherId: localStorage.getItem('staffId') || '',
-    schoolId: Number(localStorage.getItem("schoolId")) || 0
+    schoolId: Number(localStorage.getItem("schoolId")) || 0,
+    students:[]
   });
 
   const [fieldOptions, setFieldOptions] = useState([]);
@@ -114,7 +115,8 @@ const SearchFormPage = () => {
         classes: formData.classes,
         searcherId: formData.searcherId,
         searchername: formData.staffName,
-        schoolid: formData.schoolId
+        schoolid: formData.schoolId,
+        students: formData.students
       };
       const resSave = await axios.post(`${BASE_URL}searches/`, searchData);
       sessionStorage.setItem(`search-${resSave.data.id}`, JSON.stringify(searchData));

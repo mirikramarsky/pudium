@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Container, Form, Button, Alert, Row, Col } from 'react-bootstrap';
+import { Container, Form, Button, Alert, Row, Col, Table } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
 import { useNavigate } from 'react-router-dom';
@@ -41,9 +41,10 @@ const SearchByStudent = () => {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            if (firstName.trim() || lastName.trim() || studentClass.trim() || grade.trim()) {
+            if (!selectedStudent && (firstName.trim() || lastName.trim() || studentClass.trim() || grade.trim())) {
                 handleSearch();
             }
+
         }, 300);
         return () => clearTimeout(timeout);
     }, [lastName, firstName, studentClass, grade]);
@@ -89,14 +90,11 @@ const SearchByStudent = () => {
             }
 
             if (grade.trim()) {
-                filtered = filtered.filter(s => s.grade === grade.trim());
+                const gradeNum = Number(grade.trim());
+                filtered = filtered.filter(s => Number(s.grade) === gradeNum);
             }
 
-            const withoutSelected = filtered.filter(
-                s => !selectedStudents.some(sel => sel.id === s.id)
-            );
-
-            setFoundStudents(withoutSelected);
+            setFoundStudents(filtered);
         } catch (err) {
             setError('שגיאה בשליפת תלמידות: ' + (err.response?.data || err.message));
         }
@@ -105,11 +103,11 @@ const SearchByStudent = () => {
 
     const addStudent = async (student) => {
         setSelectedStudent(student);
-        setFoundStudents(prev => prev.filter(s => s.id !== student.id));
-        setFirstName('');
-        setLastName('');
-        setStudentClass('');
-        setGrade('');
+        setFoundStudents([]);
+        setFirstName(student.firstname || '');
+        setLastName(student.lastname || '');
+        setStudentClass(student.class || '');
+        setGrade(student.grade?.toString() || '');
         try {
             const res = await axios.get(`${BASE_URL}searches/student/${student.id}`);
             console.log('חיפושים של התלמידה:', res.data);
@@ -132,21 +130,23 @@ const SearchByStudent = () => {
         }
 
         const current = searches.filter(s => {
-            const d = new Date(s.date);
+            const d = new Date(s.searchdate);
             return d >= schoolYearStart && d <= schoolYearEnd;
         });
+
         const past = searches.filter(s => {
-            const d = new Date(s.date);
+            const d = new Date(s.searchdate);
             return d < schoolYearStart;
         });
 
         setCurrentYearSearches(current);
         setPastYearsSearches(past);
     };
+
     return (
         <Container className="mt-4">
             <div style={{ textAlign: 'right' }}>
-                <Button variant="outline-secondary" onClick={() => navigate('../staff-home')}>
+                <Button variant="outline-secondary" onClick={() => navigate('../recent-searches')}>
                     חזרה 👉
                 </Button>
             </div>
@@ -162,6 +162,7 @@ const SearchByStudent = () => {
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         ref={inputRef}
+                        isabled={!!selectedStudent}
                     />
                 </Form.Group>
 
@@ -171,6 +172,7 @@ const SearchByStudent = () => {
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
+                        isabled={!!selectedStudent}
                     />
                 </Form.Group>
 
@@ -180,17 +182,35 @@ const SearchByStudent = () => {
                         type="text"
                         value={studentClass}
                         onChange={(e) => setStudentClass(e.target.value)}
+                        isabled={!!selectedStudent}
                     />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>מספר כיתה </Form.Label>
                     <Form.Control
-                        type="text"
+                        type="number"
                         value={grade}
                         onChange={(e) => setGrade(e.target.value)}
+                        min="1"
+                        max="20"
+                        isabled={!!selectedStudent}
                     />
                 </Form.Group>
+                {selectedStudent && (
+                    <Button variant="warning" onClick={() => {
+                        setSelectedStudent(null);
+                        setStudentSearches([]);
+                        setCurrentYearSearches([]);
+                        setPastYearsSearches([]);
+                        setFirstName('');
+                        setLastName('');
+                        setStudentClass('');
+                        setGrade('');
+                    }}>
+                        שינוי תלמידה
+                    </Button>
+                )}
 
                 {foundStudents.length > 0 && (
                     <>
@@ -214,42 +234,160 @@ const SearchByStudent = () => {
                     <>
                         <h5>חיפושים בשנת הלימודים הנוכחית</h5>
                         {currentYearSearches.length > 0 ? (
-                            <table className="table">
+                            <Table striped bordered hover>
                                 <thead>
                                     <tr>
+                                        <th>שם החיפוש</th>
+                                        <th>מחפשת</th>
+                                        <th>תחום</th>
+                                        <th>כיתות</th>
+                                        <th>כמות</th>
                                         <th>תאריך</th>
-                                        <th>פרטים</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {currentYearSearches.map(search => (
-                                        <tr key={search.id}>
-                                            <td>{new Date(search.date).toLocaleDateString()}</td>
-                                            <td>{search.details}</td>
+                                        <tr key={search.id} onClick={() => navigate(`/search-result-not-to-edit/${search.id}`)}
+                                            style={{ cursor: 'pointer' }}>
+                                            <td>{search.searchname}</td>
+                                            <td>{search.searchername}</td>
+                                            <td>{search.field}</td>
+                                            <td>
+                                                {(() => {
+                                                    try {
+                                                        const parsed = JSON.parse(search.classes);
+                                                        if (!Array.isArray(parsed)) return '';
+
+                                                        const allClasses = JSON.parse(localStorage.getItem('classes') || '[]');
+                                                        const classesByGroup = {};
+
+                                                        allClasses.forEach(cls => {
+                                                            const match = cls.match(/^([א-ת]{1,2})/);
+                                                            const group = match ? match[1] : cls;
+                                                            if (!classesByGroup[group]) classesByGroup[group] = [];
+                                                            classesByGroup[group].push(cls);
+                                                        });
+
+                                                        const resultGroups = [];
+                                                        const remainingClasses = [];
+
+                                                        Object.entries(classesByGroup).forEach(([group, classList]) => {
+                                                            const allInSearch = classList.every(cls => parsed.includes(cls));
+                                                            if (allInSearch) {
+                                                                resultGroups.push(group);
+                                                            } else {
+                                                                const partial = classList.filter(cls => parsed.includes(cls));
+                                                                remainingClasses.push(...partial);
+                                                            }
+                                                        });
+
+                                                        return [...resultGroups, ...remainingClasses].join(', ');
+                                                    } catch (e) {
+                                                        return '';
+                                                    }
+                                                })()}
+                                            </td>
+                                            <td>{search.countstudents}</td>
+                                            <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </Table>
+                            // <table className="table">
+                            //     <thead>
+                            //         <tr>
+                            //             <th>תאריך</th>
+                            //             <th>פרטים</th>
+                            //         </tr>
+                            //     </thead>
+                            //     <tbody>
+                            //         {currentYearSearches.map(search => (
+                            //             <tr key={search.id}>
+                            //                 <td>{new Date(search.searchdate).toLocaleDateString()}</td>
+                            //                 <td>{search.details}</td>
+                            //             </tr>
+                            //         ))}
+                            //     </tbody>
+                            // </table>
                         ) : <p>אין חיפושים לשנה זו</p>}
 
                         <h5>חיפושים משנים קודמות</h5>
                         {pastYearsSearches.length > 0 ? (
-                            <table className="table">
+                            <Table striped bordered hover>
                                 <thead>
                                     <tr>
+                                        <th>שם החיפוש</th>
+                                        <th>מחפשת</th>
+                                        <th>תחום</th>
+                                        <th>כיתות</th>
+                                        <th>כמות</th>
                                         <th>תאריך</th>
-                                        <th>פרטים</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {pastYearsSearches.map(search => (
-                                        <tr key={search.id}>
-                                            <td>{new Date(search.date).toLocaleDateString()}</td>
-                                            <td>{search.details}</td>
+                                        <tr key={search.id} onClick={() => navigate(`/search-result-not-to-edit/${search.id}`)}
+                                            style={{ cursor: 'pointer' }}>
+                                            <td>{search.searchname}</td>
+                                            <td>{search.searchername}</td>
+                                            <td>{search.field}</td>
+                                            <td>
+                                                {(() => {
+                                                    try {
+                                                        const parsed = JSON.parse(search.classes);
+                                                        if (!Array.isArray(parsed)) return '';
+
+                                                        const allClasses = JSON.parse(localStorage.getItem('classes') || '[]');
+                                                        const classesByGroup = {};
+
+                                                        allClasses.forEach(cls => {
+                                                            const match = cls.match(/^([א-ת]{1,2})/);
+                                                            const group = match ? match[1] : cls;
+                                                            if (!classesByGroup[group]) classesByGroup[group] = [];
+                                                            classesByGroup[group].push(cls);
+                                                        });
+
+                                                        const resultGroups = [];
+                                                        const remainingClasses = [];
+
+                                                        Object.entries(classesByGroup).forEach(([group, classList]) => {
+                                                            const allInSearch = classList.every(cls => parsed.includes(cls));
+                                                            if (allInSearch) {
+                                                                resultGroups.push(group);
+                                                            } else {
+                                                                const partial = classList.filter(cls => parsed.includes(cls));
+                                                                remainingClasses.push(...partial);
+                                                            }
+                                                        });
+
+                                                        return [...resultGroups, ...remainingClasses].join(', ');
+                                                    } catch (e) {
+                                                        return '';
+                                                    }
+                                                })()}
+                                            </td>
+                                            <td>{search.countstudents}</td>
+                                            <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </Table>
+                            // <table className="table">
+                            //     <thead>
+                            //         <tr>
+                            //             <th>תאריך</th>
+                            //             <th>פרטים</th>
+                            //         </tr>
+                            //     </thead>
+                            //     <tbody>
+                            //         {pastYearsSearches.map(search => (
+                            //             <tr key={search.id}>
+                            //                 <td>{new Date(search.date).toLocaleDateString()}</td>
+                            //                 <td>{search.details}</td>
+                            //             </tr>
+                            //         ))}
+                            //     </tbody>
+                            // </table>
                         ) : <p>אין חיפושים משנים קודמות</p>}
                     </>
                 )}

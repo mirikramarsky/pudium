@@ -27,7 +27,6 @@ const SearchDetailsPage = () => {
     const [search, setSearch] = useState(null);
     const [students, setStudents] = useState([]);
     const [shownStudentIds, setShownStudentIds] = useState([]);
-    const [allShownStudents, setAllShownStudents] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [mailSent, setMailSent] = useState(false);
@@ -69,33 +68,25 @@ const SearchDetailsPage = () => {
                     setLoading(false);
                     return;
                 }
-
+                if (!Array.isArray(searchData.students)) {
+                    searchData.students = [];
+                }
                 setSearch(searchData);
+                console.log("searchData", searchData);
 
-                const allShownKey = `shown_${id}`;
-                const activeKey = `active_${id}`;
-                let savedAllShown = JSON.parse(localStorage.getItem(allShownKey) || '[]');
-                let savedActive = JSON.parse(localStorage.getItem(activeKey) || '[]');
-
-                // שלב 1 - אם יש ב-localStorage
-                if (savedAllShown.length > 0 && savedActive.length > 0) {
-                    console.log(typeof (JSON.stringify(savedActive)));
-                    console.log(savedActive)
+                // שלב 1 - אם קיימים תלמידות בשדה students של החיפוש
+                if (searchData.students && searchData.students.length > 0) {
+                    const fetchedIds = searchData.students;
                     const resStudents = await axios.post(
                         `${BASE_URL}students/students/${schoolId}`,
-                        { studentIds: JSON.stringify(savedActive) }
+                        { studentIds: JSON.stringify(fetchedIds) }
                     );
-                    const resAllStudents = await axios.post(
-                        `${BASE_URL}students/students/${schoolId}`,
-                        { studentIds: JSON.stringify(savedAllShown) }
-                    );
-
                     setStudents(resStudents.data);
-                    setAllShownStudents(resAllStudents.data);
-                    setShownStudentIds(savedAllShown);
+                    setShownStudentIds(fetchedIds);
                     setLoading(false);
                     return;
                 }
+
 
                 // שלב 2 - נסיון להביא קודים מהשרת
                 try {
@@ -103,17 +94,13 @@ const SearchDetailsPage = () => {
                     const fetchedIds = resIds.data.map(s => s.id);
 
                     if (fetchedIds.length > 0) {
-                        console.log(JSON.stringify(fetchedIds));
 
                         const resStudents = await axios.post(
                             `${BASE_URL}students/students/${schoolId}`,
                             { studentIds: JSON.stringify(fetchedIds) }
                         );
                         setStudents(resStudents.data);
-                        setAllShownStudents(resStudents.data);
                         setShownStudentIds(fetchedIds);
-                        localStorage.setItem(allShownKey, JSON.stringify(fetchedIds));
-                        localStorage.setItem(activeKey, JSON.stringify(fetchedIds));
                         setLoading(false);
                         return;
                     }
@@ -147,16 +134,12 @@ const SearchDetailsPage = () => {
                     const foundStudents = resStudents.data;
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
-                    setAllShownStudents(foundStudents);
                     setShownStudentIds(newIds);
-                    localStorage.setItem(allShownKey, JSON.stringify(newIds));
-                    localStorage.setItem(activeKey, JSON.stringify(newIds));
 
                 } catch (err) {
                     if (err.response && err.response.status === 400) {
                         setError('לא נמצאו תלמידות תואמות לחיפוש הזה');
                         setStudents([]);
-                        setAllShownStudents([]);
                         setShownStudentIds([]);
                     } else {
                         console.error('שגיאה בטעינת התלמידות:', err);
@@ -194,16 +177,18 @@ const SearchDetailsPage = () => {
 
             const updatedStudents = students.filter(s => s.id !== studentId);
             setStudents([...updatedStudents, ...(newStudent ? [newStudent] : [])]);
-            localStorage.setItem(`active_${id}`, JSON.stringify([...updatedStudents, ...(newStudent ? [newStudent] : [])].map(s => s.id)));
+
 
             if (newStudent) {
-                const updatedAll = [...shownStudentIds, newStudent.id];
-                setAllShownStudents(prev => [...prev.filter(s => s.id !== studentId), newStudent]);
+                const updatedAll = [...shownStudentIds.filter(id => id !== studentId), newStudent.id];
                 setShownStudentIds(updatedAll);
-                localStorage.setItem(`shown_${id}`, JSON.stringify(updatedAll));
+                await updateSearchStudents(updatedAll);
             }
-
-            if (!newStudent) alert("אין עוד תלמידות מתאימות לפרמטרים");
+            if (!newStudent) {
+                const updatedAll = shownStudentIds.filter(id => id !== studentId);
+                await updateSearchStudents(updatedAll);
+                alert("אין עוד תלמידות מתאימות לפרמטרים");
+            }
 
         } catch (err) {
             console.error('שגיאה בהבאת תלמידה חלופית:', err);
@@ -232,8 +217,6 @@ const SearchDetailsPage = () => {
 
             // ממזגת את כל האובייקטים לאובייקט אחד
             const merged = Object.assign({}, ...parsedArray);
-            console.log("emailData ", merged);
-            console.log("typeof", typeof merged);
 
             if (!merged) {
                 alert('לא נמצאו כתובות מייל');
@@ -295,11 +278,8 @@ const SearchDetailsPage = () => {
             const updatedActive = [...students, ...newStudents];
 
             setStudents(updatedActive);
-            setAllShownStudents(prev => [...prev, ...newStudents]);
             setShownStudentIds(updatedAll);
-            localStorage.setItem(`shown_${id}`, JSON.stringify(updatedAll));
-            localStorage.setItem(`active_${id}`, JSON.stringify(updatedActive.map(s => s.id)));
-
+            await updateSearchStudents(updatedAll);
         } catch (err) {
             console.error('שגיאה בשליפת תלמידות נוספות:', err);
             alert('שגיאה בשליפת תלמידות נוספות');
@@ -308,6 +288,12 @@ const SearchDetailsPage = () => {
     const waitTheSearch = async () => {
         navigate('../../data-fetch')
     }
+    const updateSearchStudents = async (studentIds) => {
+        await axios.put(`${BASE_URL}searches/${id}`, {
+            students: studentIds
+        });
+    };
+
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     return (
