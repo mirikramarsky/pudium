@@ -1,5 +1,6 @@
 const StuInSeaRepository = require("../DAL/Repositories/studentsInSEarches");
 const studentsRepository = require("../DAL/Repositories/studentsRepository");
+const studentService = require("./studentsService");
 const BaseService = require("./baseService");
 const idError = require("./errors/idError");
 class StuInSeaService extends BaseService {
@@ -14,7 +15,11 @@ class StuInSeaService extends BaseService {
     }
     async getBySearchId(id, schoolId) {
         let result = await this.repository.getBySearchId(id);
-        result = getStudentsByIds(schoolId, result);
+        console.log(result);
+        
+        result = await studentService.getStudentsByIds(schoolId, result.map(s => s.studentId));
+        console.log(result);
+        
         if (result && result.length != 0)
             return result;
         throw new idError('this id is not exist');
