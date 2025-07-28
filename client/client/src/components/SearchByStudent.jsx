@@ -13,7 +13,6 @@ const SearchByStudent = () => {
     const [studentClass, setStudentClass] = useState('');
     const [grade, setGrade] = useState('');
     const [foundStudents, setFoundStudents] = useState([]);
-    const [selectedStudents, setSelectedStudents] = useState([]);
     const [schoolId] = useState(localStorage.getItem('schoolId') || '');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');

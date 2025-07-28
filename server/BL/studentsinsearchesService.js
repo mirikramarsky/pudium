@@ -1,6 +1,6 @@
 const StuInSeaRepository = require("../DAL/Repositories/studentsInSEarches");
 const studentsRepository = require("../DAL/Repositories/studentsRepository");
-const studentService = require("./studentsService");
+const studentService = require("./studentsServise");
 const BaseService = require("./baseService");
 const idError = require("./errors/idError");
 class StuInSeaService extends BaseService {
