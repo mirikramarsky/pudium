@@ -279,6 +279,8 @@ const SearchDetailsPage = () => {
         navigate('../../data-fetch')
     }
     const updateSearchStudents = async (studentIds) => {
+        console.log("studentIds: ",studentIds);
+        
         await axios.put(`${BASE_URL}searches/${id}`, {
             students: studentIds
         });
