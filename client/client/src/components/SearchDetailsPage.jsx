@@ -86,9 +86,6 @@ const SearchDetailsPage = () => {
                     setLoading(false);
                     return;
                 }
-
-
-                // שלב 2 - נסיון להביא קודים מהשרת
                 try {
                     const resStudents = await axios.get(`${BASE_URL}stuInSea/search/${id}/${schoolId}`);
                     const studentsFromServer = resStudents.data;
@@ -110,9 +107,6 @@ const SearchDetailsPage = () => {
                         return;
                     }
                 }
-
-
-                // שלב 3 - אין בשרת כלום - מבצעים חיפוש רגיל
                 const searchParams = {
                     myField: searchData.field,
                     schoolId: Number(schoolId) || 0,
@@ -131,7 +125,7 @@ const SearchDetailsPage = () => {
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
                     setShownStudentIds(newIds);
-
+                    updateSearchStudents(newIds);
                 } catch (err) {
                     if (err.response && err.response.status === 400) {
                         setError('לא נמצאו תלמידות תואמות לחיפוש הזה');
