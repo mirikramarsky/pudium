@@ -18,7 +18,7 @@ class StuInSeaService extends BaseService {
         console.log("result", result);
         const s = result.map(s => s.studentid);
         console.log("s",s);
-        
+        if(s == []) return [];
         result = await studentService.getStudentsByIds(schoolId, s);
         console.log(result);
         
