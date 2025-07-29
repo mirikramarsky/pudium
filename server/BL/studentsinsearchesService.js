@@ -19,8 +19,9 @@ class StuInSeaService extends BaseService {
         const s = result.map(s => s.studentid);
         console.log("s",s);
         console.log(typeof s);
+        console.log(typeof []);
         
-        if(s == []) 
+        if(s.length == 0) 
             return [];
         console.log("I still in BL");
         
