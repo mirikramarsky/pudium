@@ -282,7 +282,7 @@ const SearchDetailsPage = () => {
         console.log("studentIds: ",studentIds);
         
         await axios.put(`${BASE_URL}searches/${id}`, {
-            excludeIds: studentIds
+            students: studentIds
         });
     };
 
