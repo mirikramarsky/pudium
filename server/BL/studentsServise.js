@@ -12,11 +12,15 @@ class SudentsService extends BaseService {
         throw new idError('this id is not exist');
     }
     async getStudentsByIds(schoolId, studentsIds) {
+        console.log("studentsIds", studentsIds);
+        
         const StuId = JSON.parse(studentsIds);
+console.log("StuId", StuId);
 
         const promises = StuId.map(SId => this.repository.getById(SId, schoolId));
+        console.log("promises", promises);
         const results = await Promise.all(promises);
-
+        console.log("results", results);
         // מניח שכל קריאה מחזירה מערך, ולוקחים את האיבר הראשון מכל אחד
         return results
             .filter(res => res && res.length > 0)
