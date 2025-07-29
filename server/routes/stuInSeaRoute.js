@@ -44,9 +44,9 @@ router.get('/student/:id', async(req, res,next)=>{
     }
 });
 
-router.get('/search/:id', async(req, res,next)=>{
+router.get('/search/:id/:schoolId', async(req, res,next)=>{
     try{
-        let result = await stuInSeaService.getBySearchId(req.params.id)
+        let result = await stuInSeaService.getBySearchId(req.params.id, req.params.schoolId);
         console.log("results", result);
         
         if(result != undefined)
