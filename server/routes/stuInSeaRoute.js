@@ -47,6 +47,8 @@ router.get('/student/:id', async(req, res,next)=>{
 router.get('/search/:id', async(req, res,next)=>{
     try{
         let result = await stuInSeaService.getBySearchId(req.params.id)
+        console.log("results", result);
+        
         if(result != undefined)
             res.json(result || []);
         else
