@@ -83,6 +83,7 @@ const SearchDetailsPage = () => {
                     );
                     setStudents(resStudents.data);
                     setShownStudentIds(fetchedIds);
+                    await updateSearchStudents(fetchedIds);
                     setLoading(false);
                     return;
                 }
