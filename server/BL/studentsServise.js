@@ -13,10 +13,11 @@ class SudentsService extends BaseService {
     }
     async getStudentsByIds(schoolId, studentsIds) {
         console.log("studentsIds", studentsIds);
-        
-        const StuId = JSON.parse(studentsIds);
-console.log("StuId", StuId);
-
+        let StuId = studentsIds;
+        // אם זה מחרוזת, הופכים אותה למערך
+        if(typeof studentsIds === 'string') 
+         StuId = JSON.parse(studentsIds);
+        console.log("StuId", StuId);
         const promises = StuId.map(SId => this.repository.getById(SId, schoolId));
         console.log("promises", promises);
         const results = await Promise.all(promises);
@@ -39,20 +40,20 @@ console.log("StuId", StuId);
             return result;
         throw new idError('this id is not exist');
     }
-    async getByFirstName(firstname, schoolId){
-         let result = await this.repository.getByFirstName(firstname, schoolId);
+    async getByFirstName(firstname, schoolId) {
+        let result = await this.repository.getByFirstName(firstname, schoolId);
         if (result && result.length != 0)
             return result;
         throw new idError('this lastname is not exist');
     }
-    async getByLastName(lastName, schoolId){
-         let result = await this.repository.getByLastName(lastName, schoolId);
+    async getByLastName(lastName, schoolId) {
+        let result = await this.repository.getByLastName(lastName, schoolId);
         if (result && result.length != 0)
             return result;
         throw new idError('this lastname is not exist');
     }
-    async getByClass(classes, schoolId){
-         let result = await this.repository.getByClass(classes, schoolId);
+    async getByClass(classes, schoolId) {
+        let result = await this.repository.getByClass(classes, schoolId);
         if (result && result.length != 0)
             return result;
         throw new idError('this lastname is not exist');
