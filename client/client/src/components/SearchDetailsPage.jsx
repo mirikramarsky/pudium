@@ -125,7 +125,7 @@ const SearchDetailsPage = () => {
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
                     setShownStudentIds(newIds);
-                    updateSearchStudents(newIds);
+                    await updateSearchStudents(newIds);
                 } catch (err) {
                     if (err.response && err.response.status === 400) {
                         setError('לא נמצאו תלמידות תואמות לחיפוש הזה');
