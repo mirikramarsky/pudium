@@ -11,10 +11,10 @@ const StaffManage = () => {
   const handleGoUpGrade = async () => {
     try {
       const response = await axios.get(`${BASE_URL}students/goUpGrade/${schoolId}`);
-      alert('כל התלמידות עלו כיתה בהצלחה!');
+      alert('השנה נפתחה בהצלחה!');
     } catch (err) {
-      console.error('שגיאה בעליית שנה:', err);
-      alert('אירעה שגיאה בעת עליית השנה.');
+      console.error('שגיאה בפתיחת שנה:', err);
+      alert('אירעה שגיאה בעת פתיחת השנה.');
     }
   };
 
@@ -46,7 +46,7 @@ const StaffManage = () => {
       <hr />
 
       <Button variant="info" className="m-2" onClick={handleGoUpGrade}>
-        ⬆️ עליית שנה לכל התלמידות
+        🎒 פתיחת שנה חדשה
       </Button>
 
       <Button variant="secondary" className="m-2" onClick={() => navigate('/manage-fields')}>

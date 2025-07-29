@@ -55,16 +55,16 @@ const SearchDetailsNotToEdit = () => {
             setSearch(searchData);
 
             // שליפת התלמידות לפי מזהי חיפוש מהטבלה המתאימה
-            const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}`);
-            const studentIds = resIds.data.map(s => s.id);
+            const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}/${schoolId}`);
+            const students = resIds.data;
 
-            if (studentIds.length > 0) {
-                const resAllStudents = await axios.get(`${BASE_URL}students/`);
-                const allStudents = resAllStudents.data;
-                const filteredStudents = allStudents.filter(s => studentIds.includes(s.id));
-                setStudents(filteredStudents);
-                setAllShownStudents(filteredStudents);
-                setShownStudentIds(studentIds);
+              if (students.length > 0) {
+                        const fetchedIds = studentsFromServer.map(s => s.id);
+                        setStudents(students);
+                        setAllShownStudents(students);
+                        setShownStudentIds(fetchedIds);
+                        setLoading(false);
+                        return;
             } else {
                 setStudents([]);
                 setAllShownStudents([]);
