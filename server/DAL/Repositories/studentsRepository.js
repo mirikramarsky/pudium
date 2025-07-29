@@ -7,7 +7,7 @@ class StudentsRepository {
     }
     async getById(id, schoolId) {
         let student = await pool.query(`SELECT * FROM students WHERE id = $1 AND schoolId = $2`, [id, schoolId]);
-        console.log("student", student);
+        console.log("student", student.rows);
         return student.rows;
     }
      async getByFirstName(firstname, schoolId) {
