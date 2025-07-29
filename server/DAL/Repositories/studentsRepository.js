@@ -176,6 +176,13 @@ class StudentsRepository {
             WHERE id = $1`, [id]);
         return student.rowCount > 0;
     }
+    async deleteGraduatedStudents(schoolId) {
+    const result = await pool.query(`
+        DELETE FROM students
+        WHERE schoolid = $1 AND class = 'יב'
+    `, [schoolId]);
+    return result.rowCount;
+}
 }
 
 let studentsRepository = new StudentsRepository();

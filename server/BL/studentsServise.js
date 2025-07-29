@@ -1,5 +1,6 @@
 const BaseService = require("./baseService");
 const studentsRepository = require("../DAL/Repositories/studentsRepository");
+const searchRepository = require("../DAL/Repositories/searchRepositry");
 const idError = require("./errors/idError");
 class SudentsService extends BaseService {
     constructor() {
@@ -69,12 +70,23 @@ class SudentsService extends BaseService {
             return result
         throw new idError("this id is exist")
     }
-    async goUpGrade(schoolid) {
-        let result = await this.repository.goUpGrade(schoolid);
-        if (result != 0)
-            return result
-        throw new idError("this id is not exist");
+    async goUpGrade(schoolId) {
+     // שלב 1: מחיקת תלמידות יב
+    await this.repository.deleteGraduatedStudents(schoolId);
 
+    // שלב 2: העלאת שנה לכל השאר
+    const updatedCount = await this.repository.goUpGrade(schoolId);
+    if (updatedCount === 0) {
+        throw new idError("this id is not exist");
+    }
+
+    // שלב 3: מחיקת חיפושים ישנים
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const cutoffDate = new Date(`${currentYear - 1}-09-01`);
+    await searchRepository.deleteOldSearches(cutoffDate);
+
+    return updatedCount;
     }
     async getStudentsByParams(params) {
         let result = await this.repository.getStudentsByParams(params);

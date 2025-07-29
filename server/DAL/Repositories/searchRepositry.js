@@ -149,6 +149,14 @@ class SearchRepository {
             WHERE id = $1`, [id]);
         return search.rowCount > 0;
     }
+    async deleteOldSearches(cutoffDate) {
+    const result = await pool.query(`
+        DELETE FROM searches
+        WHERE searchdate < $1
+    `, [cutoffDate]);
+    return result.rowCount;
+}
+
 }
 let searchRepository = new SearchRepository();
 

@@ -90,16 +90,12 @@ const SearchDetailsPage = () => {
 
                 // שלב 2 - נסיון להביא קודים מהשרת
                 try {
-                    const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}`);
-                    const fetchedIds = resIds.data.map(s => s.id);
+                    const resStudents = await axios.get(`${BASE_URL}stuInSea/search/${id}/${schoolId}`);
+                    const studentsFromServer = resStudents.data;
 
-                    if (fetchedIds.length > 0) {
-
-                        const resStudents = await axios.post(
-                            `${BASE_URL}students/students/${schoolId}`,
-                            { studentIds: JSON.stringify(fetchedIds) }
-                        );
-                        setStudents(resStudents.data);
+                    if (studentsFromServer.length > 0) {
+                        const fetchedIds = studentsFromServer.map(s => s.id);
+                        setStudents(studentsFromServer);
                         setShownStudentIds(fetchedIds);
                         setLoading(false);
                         return;
