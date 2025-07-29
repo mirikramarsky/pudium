@@ -44,12 +44,6 @@ app.get('/api/podium', async (req, res, next) => {
 app.use((err, req, res, next) => {
     res.status(500).send('sorry,😶😶😶😶😟😟😟😳😳 an error in app, pleasy runn again later...')
 });
-deleteT = require('./DAL/delete');
-deleteT().then(() => {  
-    console.log("❌ שגיאה במחיקה מהטבלאות");
-}).catch(err => {                   
-    console.error("❌ שגיאה במחיקה מהטבלאות:", err);
-});
 console.log("Loading server.js step 2");
 
 const port = process.env.PORT || 3000;
