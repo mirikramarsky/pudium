@@ -6,7 +6,6 @@ import BASE_URL from '../config';
 
 const SearchFormPage = () => {
   const inputRef = useRef(null); // יצירת ref לשדה הקלט
-  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -18,7 +17,7 @@ const SearchFormPage = () => {
     staffName: localStorage.getItem('staffName') || '',
     searcherId: localStorage.getItem('staffId') || '',
     schoolId: Number(localStorage.getItem("schoolId")) || 0,
-    students:[]
+    students:{"students": []} // שדה חדש לאחסון תלמידות
   });
 
   const [fieldOptions, setFieldOptions] = useState([]);

@@ -25,11 +25,8 @@ const SearchDetailsNotToEdit = () => {
     const { id } = useParams();
     const [search, setSearch] = useState(null);
     const [students, setStudents] = useState([]);
-    const [shownStudentIds, setShownStudentIds] = useState([]);
-    const [allShownStudents, setAllShownStudents] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-    const [mailSent, setMailSent] = useState(false);
 
    useEffect(() => {
     const fetchSearchAndStudents = async () => {
@@ -59,16 +56,11 @@ const SearchDetailsNotToEdit = () => {
             const students = resIds.data;
 
               if (students.length > 0) {
-                        const fetchedIds = studentsFromServer.map(s => s.id);
                         setStudents(students);
-                        setAllShownStudents(students);
-                        setShownStudentIds(fetchedIds);
                         setLoading(false);
                         return;
             } else {
                 setStudents([]);
-                setAllShownStudents([]);
-                setShownStudentIds([]);
             }
 
         } catch (err) {
@@ -86,7 +78,6 @@ const SearchDetailsNotToEdit = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-    console.log(students);
     
     return (
         <Container className="mt-4">

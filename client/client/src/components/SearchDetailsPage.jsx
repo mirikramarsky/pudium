@@ -68,15 +68,15 @@ const SearchDetailsPage = () => {
                     setLoading(false);
                     return;
                 }
-                if (!Array.isArray(searchData.students)) {
-                    searchData.students = [];
+                if (!Array.isArray(searchData.students.students)) {
+                    searchData.students.students = [];
                 }
                 setSearch(searchData);
                 console.log("searchData", searchData);
 
                 // שלב 1 - אם קיימים תלמידות בשדה students של החיפוש
-                if (searchData.students && searchData.students.length > 0) {
-                    const fetchedIds = searchData.students;
+                if (searchData.students && searchData.students.students.length > 0) {
+                    const fetchedIds = searchData.students.students;
                     const resStudents = await axios.post(
                         `${BASE_URL}students/students/${schoolId}`,
                         { studentIds: JSON.stringify(fetchedIds) }
@@ -282,7 +282,7 @@ const SearchDetailsPage = () => {
         console.log("studentIds: ",studentIds);
         
         await axios.put(`${BASE_URL}searches/${id}`, {
-            students: studentIds
+            students: {"students": studentIds }
         });
     };
 
