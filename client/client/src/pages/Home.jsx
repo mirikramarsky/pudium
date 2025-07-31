@@ -21,6 +21,7 @@ import PriorityPage from '../components/PriorityPage';
 import WelcomePage from '../components/WelcomePage';
 import { useLocation } from 'react-use';
 import SearchByStudent from '../components/SearchByStudent';
+import AddStudents from '../components/AddStudents';
 // import BottomBanner from '../components/BottomBanner';
 function Layout({ children }) {
     const location = useLocation();
@@ -69,6 +70,7 @@ function Home() {
                         <Route path="/search-results/:id" element={<SearchDetailsPage />} />
                         <Route path="/priority" element={<PriorityPage />} />
                         <Route path="/search-by-student" element={<SearchByStudent />} />
+                         <Route path="/addStudents" element={<AddStudents />} />
                     </Routes>
                 </Layout>
             </BrowserRouter>

@@ -16,8 +16,8 @@ class SudentsService extends BaseService {
         console.log("studentsIds", studentsIds);
         let StuId = studentsIds;
         // אם זה מחרוזת, הופכים אותה למערך
-        if(typeof studentsIds === 'string') 
-         StuId = JSON.parse(studentsIds);
+        if (typeof studentsIds === 'string')
+            StuId = JSON.parse(studentsIds);
         console.log("StuId", StuId);
         const promises = StuId.map(SId => this.repository.getById(SId, schoolId));
         console.log("promises", promises);
@@ -60,33 +60,50 @@ class SudentsService extends BaseService {
         throw new idError('this lastname is not exist');
     }
     async insert(params) {
-        params.severalPriority = 8;
-        params.field1Priority = 1;
-        params.field2Priority = 1;
-        params.field3Priority = 1;
-        params.field4Priority = 1;
-        let result = await this.repository.insert(params);
-        if (result)
-            return result
-        throw new idError("this id is exist")
+        const results = [];
+
+        for (let i = 0; i < params.students.length; i++) {
+            const student = params.students[i];
+
+            student.severalPriority = 8;
+            student.field1Priority = 1;
+            student.field2Priority = 1;
+            student.field3Priority = 1;
+            student.field4Priority = 1;
+            student.field1 = null;
+            student.field2 = null;
+            student.field3 = null;
+            student.field4 = null;
+
+            const result = await this.repository.insert(student);
+
+            if (!result) {
+                throw new idError(`Student with id ${student.id} already exists`);
+            }
+
+            results.push(result);
+        }
+
+        return results;
     }
+
     async goUpGrade(schoolId) {
-     // שלב 1: מחיקת תלמידות יב
-    await this.repository.deleteGraduatedStudents(schoolId);
+        // שלב 1: מחיקת תלמידות יב
+        await this.repository.deleteGraduatedStudents(schoolId);
 
-    // שלב 2: העלאת שנה לכל השאר
-    const updatedCount = await this.repository.goUpGrade(schoolId);
-    if (updatedCount === 0) {
-        throw new idError("this id is not exist");
-    }
+        // שלב 2: העלאת שנה לכל השאר
+        const updatedCount = await this.repository.goUpGrade(schoolId);
+        if (updatedCount === 0) {
+            throw new idError("this id is not exist");
+        }
 
-    // שלב 3: מחיקת חיפושים ישנים
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const cutoffDate = new Date(`${currentYear - 1}-09-01`);
-    await searchRepository.deleteOldSearches(cutoffDate);
+        // שלב 3: מחיקת חיפושים ישנים
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const cutoffDate = new Date(`${currentYear - 1}-09-01`);
+        await searchRepository.deleteOldSearches(cutoffDate);
 
-    return updatedCount;
+        return updatedCount;
     }
     async getStudentsByParams(params) {
         let result = await this.repository.getStudentsByParams(params);

@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
+import DeleteStudentModal from './DeleteStudentModal';
 const StaffManage = () => {
 
   const navigate = useNavigate();
   const schoolId = localStorage.getItem('schoolId');
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleGoUpGrade = async () => {
     try {
       const response = await axios.get(`${BASE_URL}students/goUpGrade/${schoolId}`);
@@ -60,6 +61,10 @@ const StaffManage = () => {
       <Button variant="secondary" className="m-2" onClick={() => navigate('/manage-fields')}>
         🎯 שינוי התחומים שבית הספר מציע
       </Button>
+        <DeleteStudentModal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+      />
     </Container>
   );
 };
