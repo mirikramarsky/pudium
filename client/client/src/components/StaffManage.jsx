@@ -44,7 +44,15 @@ const StaffManage = () => {
       </Button>
 
       <hr />
-
+     <Button variant="primary" className="m-2" onClick={() => navigate('/addStudents')}>
+        🎒 הוספת תלמידות למערכת
+      </Button>
+      <Button variant="light" className="m-2" onClick={() => setShowDeleteModal(true)}>
+        🎒 מחיקת תלמידה מהמערכת
+      </Button>
+      {/* <Button variant="dark" className="m-2" onClick={() => navigate('/editStudent')}>
+        🎒 עדכון פרטי תלמידה במערכת 
+      </Button> */}
       <Button variant="info" className="m-2" onClick={handleGoUpGrade}>
         🎒 פתיחת שנה חדשה
       </Button>
