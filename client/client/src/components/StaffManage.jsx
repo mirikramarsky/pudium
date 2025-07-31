@@ -4,6 +4,7 @@ import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
 import DeleteStudentModal from './DeleteStudentModal';
+import { useState } from 'react';
 const StaffManage = () => {
 
   const navigate = useNavigate();
