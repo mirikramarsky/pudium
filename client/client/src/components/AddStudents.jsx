@@ -41,8 +41,8 @@ const UploadStudentsExcel = () => {
                 id: row[0]?.toString().trim(),
                 firstname: row[1]?.toString().trim(),
                 lastname: row[2]?.toString().trim(),
-                class: row[3]?.toString().trim(),
-                grade: row[4]?.toString().trim(),
+                grade: row[3]?.toString().trim(),
+                class: row[4]?.toString().trim(),
                 schoolid: schoolId,
             }));
 
