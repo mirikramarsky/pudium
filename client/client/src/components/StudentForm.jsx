@@ -244,7 +244,7 @@ const StudentForm = () => {
     };
     const handleIdBlur = async () => {
         console.log('Handling ID blur:', formData.id);
-        
+
         const schoolId = localStorage.getItem('schoolId');
         if (!formData.id || !schoolId) return;
 
@@ -252,6 +252,7 @@ const StudentForm = () => {
             const response = await axios.post(`${BASE_URL}students/schoolid/${formData.id}`, {
                 schoolId
             });
+            console.log("Response data:", response.data);
 
             if (response.data) {
                 const { firstname, lastname, class: className, grade } = response.data;
