@@ -67,7 +67,7 @@ const UploadStudentsExcel = () => {
 
         // for (const student of students) {
             try {
-                const res = await axios.post(`${BASE_URL}students/`, students);
+                const res = await axios.post(`${BASE_URL}students/`,{students:students});
                 if (res.status === 200) success++;
                 else failed++;
             } catch (err) {
