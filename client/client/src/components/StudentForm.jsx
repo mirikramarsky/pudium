@@ -243,6 +243,8 @@ const StudentForm = () => {
         );
     };
     const handleIdBlur = async () => {
+        console.log('Handling ID blur:', formData.id);
+        
         const schoolId = localStorage.getItem('schoolId');
         if (!formData.id || !schoolId) return;
 
