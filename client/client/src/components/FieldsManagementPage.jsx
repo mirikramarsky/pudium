@@ -91,7 +91,7 @@ const FieldsManagementPage = () => {
         setFields(updatedFields);
     };
 
-    const defaultFields = ["שירה", "מחול", "אימון שיר", "תפאורה", "כתיבת שיר", "עריכה", "הצגה", "אימון הצגה"];
+    const defaultFields = ["שירה", "מחול", "אימון שיר", "תפאורה", "כתיבת שיר", "עריכה", "הצגה", "אימון הצגה","ארגון","סיוע טכני", "הפקה"]; // רשימת ברירת מחדל של תחומים   
 
     const handleResetDefaults = () => {
         setFields([...defaultFields]);

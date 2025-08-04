@@ -6,7 +6,7 @@ class SchoolService extends BaseService{
     }
      async insert(params){
         if (!params.fields)
-            params.fields = JSON.stringify(["שירה", "מחול", "אימון שיר", "תפאורה","כתיבת שיר", "עריכה", "הצגה", "אימון הצגה"])
+            params.fields = JSON.stringify(["שירה", "מחול", "אימון שיר", "תפאורה","כתיבת שיר", "עריכה", "הצגה", "אימון הצגה","ארגון","סיוע טכני", "הפקה"])
         let result = await this.repository.insert(params);
         if(result)
             return result

@@ -323,7 +323,7 @@ const StudentForm = () => {
 
                         {formData.firstname && (
                             <Alert variant="info" className="text-center">
-                                שלום {formData.firstname} {formData.lastname} מכיתה {formData.class}-{formData.grade}
+                               ל שלום {formData.firstname} {formData.lastname} מכיתה {formData.class}-{formData.grade}
                             </Alert>
                         )}
 
