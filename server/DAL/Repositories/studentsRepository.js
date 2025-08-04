@@ -5,11 +5,11 @@ class StudentsRepository {
         let students = await pool.query('SELECT * FROM students');
         return students.rows;
     }
-    async getById(id, schoolId) {        
+    async getById(id, schoolId) {
         let student = await pool.query(`SELECT * FROM students WHERE id = $1 AND schoolId = $2`, [id, schoolId]);
         return student.rows;
     }
-     async getByFirstName(firstname, schoolId) {
+    async getByFirstName(firstname, schoolId) {
         let student = await pool.query(`SELECT * FROM students WHERE firstname ILIKE $1 AND schoolId = $2`, [`%${firstname}%`, schoolId]);
         return student.rows;
     }
@@ -69,18 +69,19 @@ class StudentsRepository {
             AND severalPriority != 0
             AND id != ALL($5::int[])  -- החרגת מזהים
             ORDER BY 
-                educpriority DESC,  -- ✅ קודם כל מי שיש לה עדיפות חינוכית
+                educpriority DESC,
                 GREATEST(severalPriority, 
-                        CASE 
-                            WHEN field1 = $1 THEN field1priority
-                            WHEN field2 = $1 THEN field2priority
-                            WHEN field3 = $1 THEN field3priority
-                            WHEN field4 = $1 THEN field4priority
-                            ELSE 0
-                        END
+                 CASE 
+                    WHEN field1 = $1 THEN field1priority
+                    WHEN field2 = $1 THEN field2priority
+                    WHEN field3 = $1 THEN field3priority
+                    WHEN field4 = $1 THEN field4priority
+                    ELSE 0
+                END
                 ) DESC,
                 severalPriority DESC,
-                specific_priority DESC
+                specific_priority DESC,
+            RANDOM() 
             LIMIT $4
             `;
 
@@ -174,12 +175,12 @@ class StudentsRepository {
         return student.rowCount > 0;
     }
     async deleteGraduatedStudents(schoolId) {
-    const result = await pool.query(`
+        const result = await pool.query(`
         DELETE FROM students
         WHERE schoolid = $1 AND class = 'יב'
     `, [schoolId]);
-    return result.rowCount;
-}
+        return result.rowCount;
+    }
 }
 
 let studentsRepository = new StudentsRepository();
