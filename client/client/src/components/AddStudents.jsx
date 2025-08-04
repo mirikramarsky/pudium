@@ -4,103 +4,139 @@ import * as XLSX from 'xlsx';
 import axios from 'axios';
 import BASE_URL from '../config';
 
-const AddStudents = () => {
-  const [students, setStudents] = useState([]);
-  const [error, setError] = useState(null);
-  const [uploadMessage, setUploadMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const binaryStr = event.target.result;
-      const workbook = XLSX.read(binaryStr, { type: 'binary' });
-      const sheetName = workbook.SheetNames[0];
-      const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-      setStudents(data);
-      setUploadMessage(null);
-      setError(null);
+const UploadStudentsExcel = () => {
+    const [students, setStudents] = useState([]);
+    const [error, setError] = useState(null);
+    const [uploadMessage, setUploadMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const downloadTemplate = () => {
+        const worksheet = XLSX.utils.aoa_to_sheet([
+            ['123456789', 'שם פרטי', 'שם משפחה', '1', 'א'] // שורה לדוגמה, לא חובה
+        ]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'StudentsTemplate');
+        XLSX.writeFile(workbook, 'students_template.xlsx');
     };
-    reader.readAsBinaryString(file);
-  };
 
-  const handleUpload = async () => {
-    if (students.length === 0) {
-      setError('לא הועלה קובץ או שהקובץ ריק');
-      return;
-    }
+    const handleFileUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-    setLoading(true);
-    let success = 0;
-    let failed = 0;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const binaryStr = event.target.result;
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
 
-    for (const student of students) {
-      try {
-        const res = await axios.post(`${BASE_URL}students/`, student);
-        if (res.status === 200) success++;
-        else failed++;
-      } catch (err) {
-        failed++;
-        console.error('שגיאה:', err.response?.data || err.message);
-      }
-    }
+            const rows = raw.filter((row) => row.length >= 5); // לוודא שיש 5 עמודות לפחות
 
-    setUploadMessage(`תלמידות שהועלו בהצלחה: ${success} | שגיאות: ${failed}`);
-    setLoading(false);
-  };
+            const schoolId = localStorage.getItem('schoolId');
+            if (!schoolId) {
+                setError('קוד מוסד לא נמצא. אנא התחברי מחדש.');
+                return;
+            }
 
-  return (
-    <Container className="mt-4">
-      <h3 className="mb-4">העלאת קובץ Excel של תלמידות</h3>
+            const parsedStudents = rows.map((row) => ({
+                id: row[0]?.toString().trim(),
+                firstname: row[1]?.toString().trim(),
+                lastname: row[2]?.toString().trim(),
+                class: row[3]?.toString().trim(),
+                grade: row[4]?.toString().trim(),
+                schoolid: schoolId,
+            }));
 
-      <Form.Group controlId="formFile" className="mb-3">
-        <Form.Label>בחרי קובץ Excel (סיומת .xlsx / .xls)</Form.Label>
-        <Form.Control type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      </Form.Group>
+            setStudents(parsedStudents);
+            setUploadMessage(null);
+            setError(null);
+        };
+        reader.readAsBinaryString(file);
+    };
 
-      {error && <Alert variant="danger">{error}</Alert>}
-      {uploadMessage && <Alert variant="success">{uploadMessage}</Alert>}
+    const handleUpload = async () => {
+        if (students.length === 0) {
+            setError('לא הועלו נתונים.');
+            return;
+        }
 
-      {students.length > 0 && (
-        <>
-          <Table striped bordered hover responsive size="sm" className="mt-4">
-            <thead>
-              <tr>
-                {Object.keys(students[0]).map((key) => (
-                  <th key={key}>{key}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student, idx) => (
-                <tr key={idx}>
-                  {Object.values(student).map((val, i) => (
-                    <td key={i}>{val}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+        setLoading(true);
+        let success = 0;
+        let failed = 0;
 
-          <div className="mt-3 d-flex justify-content-end">
-            <Button onClick={handleUpload} disabled={loading}>
-              {loading ? (
+        for (const student of students) {
+            try {
+                const res = await axios.post(`${BASE_URL}students/`, student);
+                if (res.status === 200) success++;
+                else failed++;
+            } catch (err) {
+                failed++;
+                console.error('שגיאה:', err.response?.data || err.message);
+            }
+        }
+
+        setUploadMessage(`תלמידות שהועלו בהצלחה: ${success} | שגיאות: ${failed}`);
+        setLoading(false);
+    };
+
+    return (
+        <Container className="mt-4">
+            <h3 className="mb-4">העלאת תלמידות מקובץ Excel</h3>
+
+            <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>בחרי קובץ Excel (ללא שורת כותרת)</Form.Label>
+                <div className="d-flex gap-3 align-items-center">
+                    <Form.Control type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+                    <Button variant="secondary" onClick={downloadTemplate}>
+                        הורדת תבנית Excel
+                    </Button>
+                </div>
+            </Form.Group>
+
+
+            {error && <Alert variant="danger">{error}</Alert>}
+            {uploadMessage && <Alert variant="success">{uploadMessage}</Alert>}
+
+            {students.length > 0 && (
                 <>
-                  <Spinner animation="border" size="sm" className="me-2" />
-                  מעלה...
+                    <Table striped bordered hover responsive size="sm" className="mt-4">
+                        <thead>
+                            <tr>
+                                <th>ת"ז</th>
+                                <th>שם פרטי</th>
+                                <th>שם משפחה</th>
+                                <th>כיתה</th>
+                                <th>שכבה</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {students.map((student, idx) => (
+                                <tr key={idx}>
+                                    <td>{student.id}</td>
+                                    <td>{student.firstname}</td>
+                                    <td>{student.lastname}</td>
+                                    <td>{student.class}</td>
+                                    <td>{student.grade}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+
+                    <div className="mt-3 d-flex justify-content-end">
+                        <Button onClick={handleUpload} disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Spinner animation="border" size="sm" className="me-2" />
+                                    מעלה...
+                                </>
+                            ) : (
+                                'העלה תלמידות'
+                            )}
+                        </Button>
+                    </div>
                 </>
-              ) : (
-                'העלה תלמידות'
-              )}
-            </Button>
-          </div>
-        </>
-      )}
-    </Container>
-  );
+            )}
+        </Container>
+    );
 };
 
-export default AddStudents;
+export default UploadStudentsExcel;
