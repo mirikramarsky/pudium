@@ -62,21 +62,17 @@ const UploadStudentsExcel = () => {
         }
 
         setLoading(true);
-        let success = 0;
-        let failed = 0;
-
-        // for (const student of students) {
             try {
                 const res = await axios.post(`${BASE_URL}students/`,{students:students});
-                if (res.status === 200) success++;
-                else failed++;
+                 setUploadMessage(`התלמידות הועלו בהצלחה`);
             } catch (err) {
-                failed++;
                 console.error('שגיאה:', err.response?.data || err.message);
+                if (err.response?.status === 409) {
+                    setError(`התלמידה כבר קיימת במערכת`);
+                }
             }
-        // }
 
-        setUploadMessage(`תלמידות שהועלו בהצלחה: ${success} | שגיאות: ${failed}`);
+       
         setLoading(false);
     };
 

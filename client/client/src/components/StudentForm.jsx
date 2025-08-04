@@ -242,6 +242,49 @@ const StudentForm = () => {
             </>
         );
     };
+    const handleIdBlur = async () => {
+        const schoolId = localStorage.getItem('schoolId');
+        if (!formData.id || !schoolId) return;
+
+        try {
+            const response = await axios.post(`${BASE_URL}students/schoolid/${formData.id}`, {
+                schoolId
+            });
+
+            if (response.data) {
+                const { firstname, lastname, class: className, grade } = response.data;
+
+                setFormData(prev => ({
+                    ...prev,
+                    firstname,
+                    lastname,
+                    class: className,
+                    grade,
+                    schoolid: schoolId
+                }));
+
+                setMessage({ text: '', variant: '' }); // מנקה הודעות קודמות
+            } else {
+                setMessage({
+                    text: '⚠️ לא נמצאה תלמידה עם מספר זהות זה במוסד שלך',
+                    variant: 'danger'
+                });
+                setFormData(prev => ({
+                    ...prev,
+                    firstname: '',
+                    lastname: '',
+                    class: '',
+                    grade: ''
+                }));
+            }
+        } catch (err) {
+            console.error('שגיאה בשליפת התלמידה:', err);
+            setMessage({
+                text: 'שגיאה בשליפת הנתונים. ודאי שהמספר נכון ונסי שוב.',
+                variant: 'danger'
+            });
+        }
+    };
 
 
     return (
@@ -262,74 +305,23 @@ const StudentForm = () => {
                 <Row>
                     <Col md={6}>
                         <Form.Group className="mb-3">
-                            <Form.Label>שם פרטי *</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="firstname"
-                                value={formData.firstname}
-                                onChange={handleChange}
-                                ref={inputRef}
-                                required
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>שם משפחה *</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="lastname"
-                                value={formData.lastname}
-                                onChange={handleChange}
-                                required
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
-
-                <Row>
-                    <Col md={6}>
-                        <Form.Group className="mb-3">
-                            <Form.Label> קוד תלמידה *</Form.Label>
+                            <Form.Label>מספר זהות *</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="id"
                                 value={formData.id}
                                 onChange={handleChange}
+                                onBlur={handleIdBlur} // בעת עזיבת השדה, נשלוף את הנתונים
                                 required
                             />
                         </Form.Group>
-                    </Col>
 
-                    <Col md={3}>
-                        <Form.Group className="mb-3">
-                            <Form.Label> כיתה *</Form.Label>
-                            <Form.Select
-                                name="class"
-                                value={formData.class}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="" disabled hidden>בחרי כיתה</option>
-                                <option value="ט">ט</option>
-                                <option value="י">י</option>
-                                <option value="יא">י"א</option>
-                                <option value="יב">י"ב</option>
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                    <Col md={3}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>מספר כיתה *</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="grade"
-                                value={formData.grade}
-                                onChange={handleChange}
-                                required
-                                placeholder="לדוגמה: 3"
-                            />
-                        </Form.Group>
+                        {formData.firstname && (
+                            <Alert variant="info" className="text-center">
+                                שלום {formData.firstname} {formData.lastname} מכיתה {formData.class}-{formData.grade}
+                            </Alert>
+                        )}
+
                     </Col>
 
                 </Row>
