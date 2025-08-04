@@ -54,6 +54,8 @@ const UploadStudentsExcel = () => {
     };
 
     const handleUpload = async () => {
+        console.log('Uploading students:', students);
+        
         if (students.length === 0) {
             setError('לא הועלו נתונים.');
             return;
@@ -63,16 +65,16 @@ const UploadStudentsExcel = () => {
         let success = 0;
         let failed = 0;
 
-        for (const student of students) {
+        // for (const student of students) {
             try {
-                const res = await axios.post(`${BASE_URL}students/`, student);
+                const res = await axios.post(`${BASE_URL}students/`, students);
                 if (res.status === 200) success++;
                 else failed++;
             } catch (err) {
                 failed++;
                 console.error('שגיאה:', err.response?.data || err.message);
             }
-        }
+        // }
 
         setUploadMessage(`תלמידות שהועלו בהצלחה: ${success} | שגיאות: ${failed}`);
         setLoading(false);
