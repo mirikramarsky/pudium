@@ -254,8 +254,9 @@ const StudentForm = () => {
             });
             console.log("Response data:", response.data);
 
-            if (response.data) {
-                const { firstname, lastname, class: className, grade } = response.data;
+            if (response.data && response.data.length > 0) {
+                const student = response.data[0];
+                const { firstname, lastname, class: className, grade } = student;
 
                 setFormData(prev => ({
                     ...prev,
@@ -280,6 +281,7 @@ const StudentForm = () => {
                     grade: ''
                 }));
             }
+
         } catch (err) {
             console.error('שגיאה בשליפת התלמידה:', err);
             setMessage({
