@@ -48,7 +48,7 @@ const DeleteStudentModal = ({ show, onHide }) => {
                 postData = { class: studentClass.trim() };
             }else if (id.trim()) {
                 const theId = id.trim();
-                endpoint = `${BASE_URL}students/id/${theId}`;
+                endpoint = `${BASE_URL}students/schoolId/${theId}`;
                 postData = { schoolId: schoolId};
             }
             else {
