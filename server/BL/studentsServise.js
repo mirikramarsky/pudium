@@ -76,7 +76,8 @@ class SudentsService extends BaseService {
             student.field4 = null;
 
             const result = await this.repository.insert(student);
-
+            console.log("result", result);
+            
             if (!result) {
                 throw new idError(`Student with id ${student.id} already exists`);
             }
