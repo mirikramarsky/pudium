@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Container, ListGroup, Alert, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ const ClassesList = () => {
   const [staff, setStaff] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+const messageRef = useRef(null);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -18,10 +19,12 @@ const ClassesList = () => {
       const staffId = localStorage.getItem('staffId');
       if (!schoolId) {
         setError('קוד מוסד לא נמצא. אנא התחברי מחדש.');
+        scrollToMessage();
         return;
       }
       if (!staffId) {
         setError('קוד אשת צוות לא נמצא. אנא התחברי מחדש.');
+        scrollToMessage();
         return;
       }
 
@@ -61,6 +64,7 @@ const ClassesList = () => {
       } catch (err) {
         setLoading(false);
         setError('שגיאה בשליפת נתונים');
+        scrollToMessage();
         console.error(err);
       }
     };
@@ -98,8 +102,13 @@ const ClassesList = () => {
 
     fetchClasses();
   }, []);
+const scrollToMessage = () => {
+    if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+};
 
-  if (error) return <Alert variant="danger">{error}</Alert>;
+  if (error) return <div ref={messageRef}><Alert variant="danger">{error}</Alert></div>;
   if (loading) return <Alert variant="info">טוען כיתות...</Alert>;
   if (!staff) return null;
 

@@ -1,18 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Form, Button, Alert, Container } from 'react-bootstrap';
+import { Form, Button, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
+import ScrollToAlert from '../components/ScrollToAlert'; // 👈 הוספת קומפוננטת הודעה עם גלילה
 
 const AddStaff = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ id: '', name: '', confirm: '', class: "all" });
     const [message, setMessage] = useState(null);
-     const inputRef = useRef(null); // יצירת ref לשדה הקלט
+    const [messageVariant, setMessageVariant] = useState('info'); // 👈 אפשרות לצבע
 
-  useEffect(() => {
-    inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
-  }, []);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, []);
+
     const handleChange = e => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -28,9 +32,11 @@ const AddStaff = () => {
                 schoolId: Number(schoolId)
             });
             setMessage('נוספה בהצלחה');
-            navigate("/staff-manage")
+            setMessageVariant('success'); // 👈 צבע ירוק
+            navigate("/staff-manage");
         } catch (err) {
             setMessage('שגיאה בהוספה');
+            setMessageVariant('danger'); // 👈 צבע אדום
         }
     };
 
@@ -47,11 +53,17 @@ const AddStaff = () => {
                 </Button>
             </div>
 
-            {message && <Alert>{message}</Alert>}
+            {/* הודעה עם גלילה אוטומטית */}
+            {message && (
+                <ScrollToAlert variant={messageVariant}>
+                    {message}
+                </ScrollToAlert>
+            )}
+
             <Form onSubmit={handleSubmit}>
                 <Form.Group>
                     <Form.Label>שם</Form.Label>
-                    <Form.Control name="name" value={formData.name} onChange={handleChange} ref={inputRef}  />
+                    <Form.Control name="name" value={formData.name} onChange={handleChange} ref={inputRef} />
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>קוד</Form.Label>
@@ -73,7 +85,6 @@ const AddStaff = () => {
                     </Form.Select>
                 </Form.Group>
 
-
                 {formData.confirm === '2' && (
                     <Form.Group className="mb-3">
                         <Form.Label>כיתת חינוך</Form.Label>
@@ -81,13 +92,11 @@ const AddStaff = () => {
                             name="class"
                             type="text"
                             placeholder="כיתה"
-                            //    value={formData.class}
                             onChange={handleChange}
-                            required={formData.confirm === '2'}
+                            required
                         />
                     </Form.Group>
                 )}
-
 
                 <Button className="mt-3" type="submit">שמור</Button>
             </Form>

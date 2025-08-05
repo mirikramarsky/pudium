@@ -10,6 +10,7 @@ const DeleteStaff = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
    const inputRef = useRef(null); // יצירת ref לשדה הקלט
+const messageRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
@@ -21,13 +22,20 @@ const DeleteStaff = () => {
         data: { schoolId }
       });
       setSuccess(true);
+      scrollToMessage();
       setError(null);
       navigate("/staff-manage");
     } catch (err) {
       setError('שגיאה במחיקת אשת צוות');
+      scrollToMessage();
       console.error(err);
     }
   };
+  const scrollToMessage = () => {
+    if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+};
 
   return (
     <Container className="mt-4">
@@ -40,8 +48,8 @@ const DeleteStaff = () => {
         >
           חזרה 👉
         </Button>
-      </div>
-      {success && <Alert variant="success">נמחק בהצלחה</Alert>}
+      </div><div ref={messageRef}>
+      {success && <Alert variant="success">נמחק בהצלחה</Alert>}</div>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={(e) => { e.preventDefault(); handleDelete(); }}>
         <Form.Group className="mb-3">
