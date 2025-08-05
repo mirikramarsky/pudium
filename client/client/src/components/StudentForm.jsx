@@ -18,7 +18,7 @@ const StudentForm = () => {
         field2: '',
         field3: '',
         field4: '',
-        schoolid: '',
+        schoolId: '',
         otherField1: '',
         otherField2: '',
         otherField3: '',
@@ -129,8 +129,7 @@ const StudentForm = () => {
         e.preventDefault();
         const schoolId = localStorage.getItem('schoolId');
         const submissionData = {
-            ...formData,
-            schoolid: schoolId
+            ...formData
         };
 
         // מחליפים "אחר" בטקסט החופשי
@@ -161,7 +160,6 @@ const StudentForm = () => {
                 field2: '',
                 field3: '',
                 field4: '',
-                schoolid: '',
                 otherField1: '',
                 otherField2: '',
                 otherField3: '',
@@ -264,7 +262,7 @@ const StudentForm = () => {
                     lastname,
                     class: className,
                     grade,
-                    schoolid: schoolId
+                    schoolId: schoolId
                 }));
 
                 setMessage({ text: '', variant: '' }); // מנקה הודעות קודמות
