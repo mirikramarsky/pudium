@@ -118,9 +118,10 @@ class StudentsRepository {
 
         try {
             const student = await pool.query(query, values);
-            
             return student;
         } catch (err) {
+            console.log("error inserting student:", err);
+            
             if (err.code === '23505') {
                 log("Duplicate ID error detected");
                 throw new DuplicateIdError();
