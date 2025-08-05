@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Container, Alert, Form, Button, Table, Spinner } from 'react-bootstrap';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 import BASE_URL from '../config';
 
-const AddStudents  = () => {
+const AddStudents = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
     const [uploadMessage, setUploadMessage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [skippedStudents, setSkippedStudents] = useState([]);
+    const messageRef = useRef(null);
+
+    const scrollToMessage = () => {
+        if (messageRef.current) {
+            messageRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     const downloadTemplate = () => {
         const worksheet = XLSX.utils.aoa_to_sheet([
@@ -36,6 +43,7 @@ const AddStudents  = () => {
             const schoolId = localStorage.getItem('schoolId');
             if (!schoolId) {
                 setError('קוד מוסד לא נמצא. אנא התחברי מחדש.');
+                scrollToMessage();
                 return;
             }
 
@@ -58,6 +66,7 @@ const AddStudents  = () => {
     const handleUpload = async () => {
         if (students.length === 0) {
             setError('לא הועלו נתונים.');
+            scrollToMessage();
             return;
         }
 
@@ -72,10 +81,12 @@ const AddStudents  = () => {
 
             if (added.length > 0) {
                 setUploadMessage(`הועלו ${added.length} תלמידות בהצלחה.`);
+                scrollToMessage();
             }
 
             if (skipped.length > 0) {
                 setSkippedStudents(skipped);
+                scrollToMessage();
             }
         } catch (err) {
             console.error('שגיאה:', err.response?.data || err.message);
@@ -100,33 +111,33 @@ const AddStudents  = () => {
                 </div>
             </Form.Group>
 
-
-            {error && <Alert variant="danger">{error}</Alert>}
-            {uploadMessage && <Alert variant="success">{uploadMessage}</Alert>}
-            {skippedStudents.length > 0 && (
-                <>
-                    <Alert variant="warning">
-                        לא הועלו {skippedStudents.length} תלמידות:
-                    </Alert>
-                    <Table striped bordered hover responsive size="sm">
-                        <thead>
-                            <tr>
-                                <th>ת"ז</th>
-                                <th>סיבה</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {skippedStudents.map((student, idx) => (
-                                <tr key={idx}>
-                                    <td>{student.id}</td>
-                                    <td>{student.reason}</td>
+            <div ref={messageRef}>
+                {error && <Alert variant="danger">{error}</Alert>}
+                {uploadMessage && <Alert variant="success">{uploadMessage}</Alert>}
+                {skippedStudents.length > 0 && (
+                    <>
+                        <Alert variant="warning">
+                            לא הועלו {skippedStudents.length} תלמידות:
+                        </Alert>
+                        <Table striped bordered hover responsive size="sm">
+                            <thead>
+                                <tr>
+                                    <th>ת"ז</th>
+                                    <th>סיבה</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                </>
-            )}
-
+                            </thead>
+                            <tbody>
+                                {skippedStudents.map((student, idx) => (
+                                    <tr key={idx}>
+                                        <td>{student.id}</td>
+                                        <td>{student.reason}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </>
+                )}
+            </div>
             {students.length > 0 && (
                 <>
                     <Table striped bordered hover responsive size="sm" className="mt-4">
@@ -170,4 +181,4 @@ const AddStudents  = () => {
     );
 };
 
-export default AddStudents ;
+export default AddStudents;
