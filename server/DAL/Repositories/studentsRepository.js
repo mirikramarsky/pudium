@@ -122,7 +122,7 @@ class StudentsRepository {
         } catch (err) {
             console.log("error inserting student:", err.code);
             
-            if (err.code === '23505') {
+            if (err.code == 23505) {
                 log("Duplicate ID error detected");
                 throw new DuplicateIdError();
             } else {
