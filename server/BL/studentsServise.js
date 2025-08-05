@@ -85,11 +85,7 @@ class SudentsService extends BaseService {
                 firstname: student.firstname,
                 lastname: student.lastname
             });
-        } catch (err) {
-            console.log("error inserting student:", err);
-            
-            console.log(err.statusCode == 409);
-            
+        } catch (err) {   
             if (err.statusCode == 409 || err instanceof DuplicateIdError) {
                 console.log(`Student with ID ${student.id} already exists.`);
                 results.skipped.push({
