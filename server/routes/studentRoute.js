@@ -143,10 +143,7 @@ router.post('/params/', async(req, res,next)=>{
 });
 router.post('/', async(req, res,next)=>{
 try{
-    console.log("body",req.body);
-    
     let result = await studentService.insert(req.body);
-    console.log("results", result);
     
     if(result.location != null)
         res.json(result)

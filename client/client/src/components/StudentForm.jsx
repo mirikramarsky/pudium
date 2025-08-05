@@ -130,7 +130,7 @@ const StudentForm = () => {
         }
 
         try {
-            await axios.post(`${BASE_URL}students/`, {
+            await axios.put(`${BASE_URL}students/${submissionData.id}`, {
                 ...submissionData
             });
 
