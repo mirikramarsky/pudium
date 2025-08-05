@@ -113,13 +113,16 @@ class StudentsRepository {
             params.field4Priority,
             params.class,
             params.grade,
-            params.schoolid
+            params.schoolid || params.schoolId
         ];
 
         try {
             const student = await pool.query(query, values);
+            
             return student;
         } catch (err) {
+            console.log("Error inserting student:", err);
+            
             if (err.code === '23505') {
                 throw new DuplicateIdError();
             } else {
