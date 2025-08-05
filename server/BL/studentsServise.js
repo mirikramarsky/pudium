@@ -59,34 +59,51 @@ class SudentsService extends BaseService {
             return result;
         throw new idError('this lastname is not exist');
     }
-    async insert(params) {
-        const results = [];
+   async insert(params) {
+    const results = {
+        added: [],
+        skipped: []
+    };
 
-        for (let i = 0; i < params.students.length; i++) {
-            const student = params.students[i];
+    for (let i = 0; i < params.students.length; i++) {
+        const student = params.students[i];
 
-            student.severalPriority = 8;
-            student.field1Priority = 1;
-            student.field2Priority = 1;
-            student.field3Priority = 1;
-            student.field4Priority = 1;
-            student.field1 = null;
-            student.field2 = null;
-            student.field3 = null;
-            student.field4 = null;
+        student.severalPriority = 8;
+        student.field1Priority = 1;
+        student.field2Priority = 1;
+        student.field3Priority = 1;
+        student.field4Priority = 1;
+        student.field1 = null;
+        student.field2 = null;
+        student.field3 = null;
+        student.field4 = null;
 
+        try {
             const result = await this.repository.insert(student);
-            console.log("result", result);
-            
-            if (!result) {
-                throw new idError(`Student with id ${student.id} already exists`);
+            results.added.push({
+                id: student.id,
+                firstname: student.firstname,
+                lastname: student.lastname
+            });
+        } catch (err) {
+            if (err instanceof DuplicateIdError) {
+                results.skipped.push({
+                    id: student.id,
+                    reason: "כבר קיימת"
+                });
+            } else {
+                results.skipped.push({
+                    id: student.id,
+                    reason: "שגיאה לא צפויה"
+                });
+                console.error(`שגיאה בהוספת תלמידה ${student.id}:`, err);
             }
-
-            results.push(result);
         }
-
-        return results;
     }
+
+    return results;
+}
+
 
     async goUpGrade(schoolId) {
         // שלב 1: מחיקת תלמידות יב
