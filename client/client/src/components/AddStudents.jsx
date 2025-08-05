@@ -4,11 +4,13 @@ import * as XLSX from 'xlsx';
 import axios from 'axios';
 import BASE_URL from '../config';
 
-const UploadStudentsExcel = () => {
+const addStudents = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
     const [uploadMessage, setUploadMessage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [skippedStudents, setSkippedStudents] = useState([]);
+
     const downloadTemplate = () => {
         const worksheet = XLSX.utils.aoa_to_sheet([
             ['123456789', 'שם פרטי', 'שם משפחה', '1', 'א'] // שורה לדוגמה, לא חובה
@@ -54,27 +56,35 @@ const UploadStudentsExcel = () => {
     };
 
     const handleUpload = async () => {
-        console.log('Uploading students:', students);
-        
         if (students.length === 0) {
             setError('לא הועלו נתונים.');
             return;
         }
 
         setLoading(true);
-            try {
-                const res = await axios.post(`${BASE_URL}students/`,{students:students});
-                 setUploadMessage(`התלמידות הועלו בהצלחה`);
-            } catch (err) {
-                console.error('שגיאה:', err.response?.data || err.message);
-                if (err.response?.status === 409) {
-                    setError(`התלמידה כבר קיימת במערכת`);
-                }
+        setError(null);
+        setUploadMessage(null);
+        setSkippedStudents([]);
+
+        try {
+            const res = await axios.post(`${BASE_URL}students/`, { students });
+            const { added, skipped } = res.data;
+
+            if (added.length > 0) {
+                setUploadMessage(`הועלו ${added.length} תלמידות בהצלחה.`);
             }
 
-       
+            if (skipped.length > 0) {
+                setSkippedStudents(skipped);
+            }
+        } catch (err) {
+            console.error('שגיאה:', err.response?.data || err.message);
+            setError('אירעה שגיאה בלתי צפויה בהעלאת הקובץ.');
+        }
+
         setLoading(false);
     };
+
 
     return (
         <Container className="mt-4">
@@ -93,6 +103,29 @@ const UploadStudentsExcel = () => {
 
             {error && <Alert variant="danger">{error}</Alert>}
             {uploadMessage && <Alert variant="success">{uploadMessage}</Alert>}
+            {skippedStudents.length > 0 && (
+                <>
+                    <Alert variant="warning">
+                        לא הועלו {skippedStudents.length} תלמידות:
+                    </Alert>
+                    <Table striped bordered hover responsive size="sm">
+                        <thead>
+                            <tr>
+                                <th>ת"ז</th>
+                                <th>סיבה</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {skippedStudents.map((student, idx) => (
+                                <tr key={idx}>
+                                    <td>{student.id}</td>
+                                    <td>{student.reason}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </>
+            )}
 
             {students.length > 0 && (
                 <>
@@ -137,4 +170,4 @@ const UploadStudentsExcel = () => {
     );
 };
 
-export default UploadStudentsExcel;
+export default addStudents;
