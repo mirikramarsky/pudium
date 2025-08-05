@@ -86,7 +86,8 @@ class SudentsService extends BaseService {
                 lastname: student.lastname
             });
         } catch (err) {
-            console.log("error inserting student:", typeof(err));
+            console.log(err instanceof DuplicateIdError);
+            console.log("error inserting student:", err);
             
             if (err instanceof DuplicateIdError) {
                 console.log(`Student with ID ${student.id} already exists.`);
