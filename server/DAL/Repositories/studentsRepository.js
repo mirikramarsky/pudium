@@ -120,7 +120,7 @@ class StudentsRepository {
             const student = await pool.query(query, values);
             return student;
         } catch (err) {
-            console.log("error inserting student:", (err.code == '23505') ? "Duplicate ID" : err.message);
+            console.log("error inserting student:", (err.code == '23505'));
             console.log("error inserting student:", typeof(err.code));
             
             
@@ -128,6 +128,8 @@ class StudentsRepository {
                 log("Duplicate ID error detected");
                 throw new DuplicateIdError();
             } else {
+                console.log(`Unexpected error inserting student: ${err.message}`);
+                
                 throw err;
             }
         }
