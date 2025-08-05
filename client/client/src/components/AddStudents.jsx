@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import axios from 'axios';
 import BASE_URL from '../config';
 
-const addStudents = () => {
+const AddStudents  = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
     const [uploadMessage, setUploadMessage] = useState(null);
@@ -170,4 +170,4 @@ const addStudents = () => {
     );
 };
 
-export default addStudents;
+export default AddStudents ;
