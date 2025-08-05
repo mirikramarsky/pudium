@@ -25,8 +25,6 @@ const StudentForm = () => {
         otherField4: '',
     });
 
-    const [classOptions, setClassOptions] = useState([]);
-
     const [fields, setFields] = useState([]);
     const inputRef = useRef(null); // יצירת ref לשדה הקלט
 
@@ -34,7 +32,7 @@ const StudentForm = () => {
         inputRef.current?.focus(); // קביעת פוקוס אוטומטי כשנטען
     }, []);
     useEffect(() => {
-        const fetchFieldsAndClasses = async () => {
+        const fetchFields = async () => {
             const schoolId = localStorage.getItem('schoolId');
             if (!schoolId) return;
 
@@ -47,23 +45,13 @@ const StudentForm = () => {
                 }
 
                 setFields(schoolFields);
-
-                const localClasses = localStorage.getItem('classes');
-                if (localClasses) {
-                    setClassOptions(JSON.parse(localClasses));
-                } else {
-                    const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
-                    const classes = res.data || [];
-                    localStorage.setItem('classes', JSON.stringify(classes));
-                    setClassOptions(classes);
-                }
             } catch (err) {
-                console.error("שגיאה בטעינת התחומים או הכיתות:", err);
+                console.error("שגיאה בטעינת התחומים :", err);
                 alert("שגיאה בטעינת הנתונים. נסי לרענן את הדף או לבדוק את החיבור לשרת.");
             }
         };
 
-        fetchFieldsAndClasses();
+        fetchFields();
     }, []);
 
 
@@ -127,7 +115,6 @@ const StudentForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const schoolId = localStorage.getItem('schoolId');
         const submissionData = {
             ...formData
         };
@@ -144,8 +131,7 @@ const StudentForm = () => {
 
         try {
             await axios.post(`${BASE_URL}students/`, {
-                ...submissionData,
-                schoolId
+                ...submissionData
             });
 
             setMessage({ text: 'התלמידה נוספה בהצלחה ✅', variant: 'success' });
