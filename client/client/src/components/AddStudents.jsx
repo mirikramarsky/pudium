@@ -3,6 +3,7 @@ import { Container, Alert, Form, Button, Table, Spinner } from 'react-bootstrap'
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 import BASE_URL from '../config';
+import { useNavigate } from 'react-router-dom';
 
 const AddStudents = () => {
     const [students, setStudents] = useState([]);
@@ -12,6 +13,7 @@ const AddStudents = () => {
     const [skippedStudents, setSkippedStudents] = useState([]);
     const messageRef = useRef(null);
 
+    const navigate = useNavigate();
     const scrollToMessage = () => {
         if (messageRef.current) {
             messageRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -99,7 +101,16 @@ const AddStudents = () => {
 
     return (
         <Container className="mt-4">
-            <h3 className="mb-4">העלאת תלמידות מקובץ Excel</h3>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h3 className="mb-4">העלאת תלמידות מקובץ Excel</h3>
+                <Button
+                    onClick={() => navigate('../staff-manage')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div>
 
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>בחרי קובץ Excel (ללא שורת כותרת)</Form.Label>

@@ -1,6 +1,7 @@
 const BaseService = require("./baseService");
 const studentsRepository = require("../DAL/Repositories/studentsRepository");
 const searchRepository = require("../DAL/Repositories/searchRepositry");
+const staffRepository = require("../DAL/Repositories/staffRepositoty");
 const idError = require("./errors/idError");
 class SudentsService extends BaseService {
     constructor() {
@@ -115,6 +116,15 @@ class SudentsService extends BaseService {
         if (updatedCount === 0) {
             throw new idError("this id is not exist");
         }
+
+        // שלב 3: עדכון צוות בית הספר
+        const staffMembers = await staffRepository.getBySchoolId(schoolId);
+        for (const staff of staffMembers) {
+            const updatedFields = {
+                class: ""
+            };
+            await staffRepository.update(staff.id, updatedFields);
+        }   
 
         // שלב 3: מחיקת חיפושים ישנים
         const now = new Date();
