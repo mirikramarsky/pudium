@@ -37,7 +37,7 @@ const StaffLogin = () => {
 
   return (
     <Container className="mt-5">
-      <h2 className="text-center mb-3">שלום וברוכה הבאה לבית הספר {schoolName}</h2>
+      <h2 className="text-center mb-3">שלום וברוכה הבאה ל{schoolName}</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group>
