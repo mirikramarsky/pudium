@@ -70,17 +70,20 @@ const AddStudents = () => {
 
     const reader = new FileReader();
     const isCSV = file.name.endsWith(".csv");
-
+    console.log(isCSV);
+    
     reader.onload = (event) => {
         const data = event.target.result;
 
         let rows;
         if (isCSV) {
             // CSV
+            console.log("I am CSV");
             const text = new TextDecoder("utf-8").decode(data);
             rows = text.split("\n").map(r => r.split(","));
         } else {
             // XLS/XLSX
+            console.log("I am XLSX");
             const workbook = XLSX.read(data, { type: "binary" });
             const sheetName = workbook.SheetNames[0];
             rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
