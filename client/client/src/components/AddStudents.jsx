@@ -64,65 +64,122 @@ const AddStudents = () => {
     //     };
     //     reader.readAsBinaryString(file);
     // };
-   const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    // const handleFileUpload = (e) => {
+    //     const file = e.target.files?.[0];
+    //     if (!file) return;
 
-    const reader = new FileReader();
-    const isCSV = file.name.endsWith(".csv");
-    console.log(isCSV);
-    
-    reader.onload = (event) => {
-        const data = event.target.result;
+    //     const reader = new FileReader();
+    //     const isCSV = file.name.includes(".csv");
 
-        let rows;
+    //     console.log(isCSV);
+
+    //     reader.onload = (event) => {
+    //         const data = event.target.result;
+
+    //         let rows;
+    //         if (isCSV) {
+    //             // CSV
+    //             console.log("I am CSV");
+    //             const text = new TextDecoder("utf-8").decode(data);
+    //             rows = text.split("\n").map(r => r.split(","));
+    //         } else {
+    //             // XLS/XLSX
+    //             console.log("I am XLSX");
+    //             const workbook = XLSX.read(data, { type: "binary" });
+    //             const sheetName = workbook.SheetNames[0];
+    //             rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+    //         }
+
+    //         // לדלג על כותרות
+    //         rows = rows.slice(1).filter((row) => row.length >= 4);
+
+    //         const schoolId = localStorage.getItem("schoolId");
+    //         if (!schoolId) {
+    //             setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
+    //             return;
+    //         }
+
+    //         const parsedStudents = rows.map((row) => {
+    //             const fullClass = row[3]?.toString().trim();
+    //             const grade = fullClass ? fullClass[0] : "";
+    //             const classNum = fullClass ? fullClass.slice(1) : "";
+    //             return {
+    //                 id: row[2]?.toString().trim(),
+    //                 firstname: row[1]?.toString().trim(),
+    //                 lastname: row[0]?.toString().trim(),
+    //                 grade,
+    //                 class: classNum,
+    //                 schoolid: schoolId,
+    //             };
+    //         });
+
+    //         setStudents(parsedStudents);
+    //         setUploadMessage(null);
+    //         setError(null);
+    //     };
+
+    //     if (isCSV) {
+    //         reader.readAsArrayBuffer(file);
+    //     } else {
+    //         reader.readAsBinaryString(file);
+    //     }
+    // };
+    const handleFileUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        const filename = file.name.toLowerCase();
+        const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
+
+        reader.onload = (event) => {
+            let rows;
+
+            if (isCSV) {
+                // CSV
+                const text = new TextDecoder("utf-8").decode(event.target.result);
+                rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה גם ב־tab וגם ב־comma
+            } else {
+                // XLS/XLSX
+                const workbook = XLSX.read(event.target.result, { type: "binary" });
+                const sheetName = workbook.SheetNames[0];
+                rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+            }
+
+            // לדלג על שורת הכותרות
+            rows = rows.slice(1).filter((row) => row.length >= 4);
+
+            const schoolId = localStorage.getItem("schoolId");
+            if (!schoolId) {
+                setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
+                return;
+            }
+
+            const parsedStudents = rows.map((row) => {
+                const fullClass = row[3]?.toString().trim();
+                const grade = fullClass ? fullClass[0] : "";
+                const classNum = fullClass ? fullClass.slice(1) : "";
+                return {
+                    id: row[2]?.toString().trim(),
+                    firstname: row[1]?.toString().trim(),
+                    lastname: row[0]?.toString().trim(),
+                    grade,
+                    class: classNum,
+                    schoolid: schoolId,
+                };
+            });
+
+            setStudents(parsedStudents);
+            setUploadMessage(null);
+            setError(null);
+        };
+
         if (isCSV) {
-            // CSV
-            console.log("I am CSV");
-            const text = new TextDecoder("utf-8").decode(data);
-            rows = text.split("\n").map(r => r.split(","));
+            reader.readAsArrayBuffer(file);
         } else {
-            // XLS/XLSX
-            console.log("I am XLSX");
-            const workbook = XLSX.read(data, { type: "binary" });
-            const sheetName = workbook.SheetNames[0];
-            rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+            reader.readAsBinaryString(file);
         }
-
-        // לדלג על כותרות
-        rows = rows.slice(1).filter((row) => row.length >= 4);
-
-        const schoolId = localStorage.getItem("schoolId");
-        if (!schoolId) {
-            setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
-            return;
-        }
-
-        const parsedStudents = rows.map((row) => {
-            const fullClass = row[3]?.toString().trim();
-            const grade = fullClass ? fullClass[0] : "";
-            const classNum = fullClass ? fullClass.slice(1) : "";
-            return {
-                id: row[2]?.toString().trim(),
-                firstname: row[1]?.toString().trim(),
-                lastname: row[0]?.toString().trim(),
-                grade,
-                class: classNum,
-                schoolid: schoolId,
-            };
-        });
-
-        setStudents(parsedStudents);
-        setUploadMessage(null);
-        setError(null);
     };
-
-    if (isCSV) {
-        reader.readAsArrayBuffer(file);
-    } else {
-        reader.readAsBinaryString(file);
-    }
-};
 
 
     const handleUpload = async () => {
@@ -175,7 +232,12 @@ const AddStudents = () => {
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>בחרי קובץ Excel (ללא שורת כותרת)</Form.Label>
                 <div className="d-flex gap-3 align-items-center">
-                    <Form.Control type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+                    <Form.Control
+                        type="file"
+                        accept=".xlsx, .xls, .csv, .csv.xls"
+                        onChange={handleFileUpload}
+                    />
+
                     <Button variant="secondary" onClick={downloadTemplate}>
                         הורדת תבנית Excel
                     </Button>
