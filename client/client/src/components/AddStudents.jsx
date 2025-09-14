@@ -22,7 +22,7 @@ const AddStudents = () => {
 
     const downloadTemplate = () => {
         const worksheet = XLSX.utils.aoa_to_sheet([
-            [ 'שם פרטי', 'שם משפחה','123456789', '1א'] // שורה לדוגמה, לא חובה
+            ['שם פרטי', 'שם משפחה', '123456789', '1א'] // שורה לדוגמה, לא חובה
         ]);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'StudentsTemplate');
@@ -147,7 +147,14 @@ const AddStudents = () => {
                 const sheetName = workbook.SheetNames[0];
                 rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
             }
-alert("rows: " + rows);
+            const htmlString = rows[0]; // כל התוכן שקיבלת
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, "text/html");
+            const table = doc.querySelector("table");
+            const data = Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
+            console.log(data);
+            rows = data;
+            alert("rows: " + rows);
             // לדלג על שורת הכותרות
             rows = rows.slice(1).filter((row) => row.length >= 4);
 
