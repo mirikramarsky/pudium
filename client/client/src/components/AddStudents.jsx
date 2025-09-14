@@ -216,7 +216,7 @@ const AddStudents = () => {
             const headerIndex = rows.findIndex(r => r.includes("Last name kinuy") && r.includes("First name kinuy"));
 
             if (headerIndex === -1) {
-                setError("לא נמצאה שורת כותרות בקובץ.");
+                setError(rows);
                 return;
             }
 
