@@ -29,6 +29,41 @@ const AddStudents = () => {
         XLSX.writeFile(workbook, 'students_template.xlsx');
     };
 
+    // const handleFileUpload = (e) => {
+    //     const file = e.target.files?.[0];
+    //     if (!file) return;
+
+    //     const reader = new FileReader();
+    //     reader.onload = (event) => {
+    //         const binaryStr = event.target.result;
+    //         const workbook = XLSX.read(binaryStr, { type: 'binary' });
+    //         const sheetName = workbook.SheetNames[0];
+    //         const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+
+    //         const rows = raw.filter((row) => row.length >= 5); // לוודא שיש 5 עמודות לפחות
+
+    //         const schoolId = localStorage.getItem('schoolId');
+    //         if (!schoolId) {
+    //             setError('קוד מוסד לא נמצא. אנא התחברי מחדש.');
+    //             scrollToMessage();
+    //             return;
+    //         }
+
+    //         const parsedStudents = rows.map((row) => ({
+    //             id: row[0]?.toString().trim(),
+    //             firstname: row[1]?.toString().trim(),
+    //             lastname: row[2]?.toString().trim(),
+    //             grade: row[3]?.toString().trim(),
+    //             class: row[4]?.toString().trim(),
+    //             schoolid: schoolId,
+    //         }));
+
+    //         setStudents(parsedStudents);
+    //         setUploadMessage(null);
+    //         setError(null);
+    //     };
+    //     reader.readAsBinaryString(file);
+    // };
     const handleFileUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -40,7 +75,8 @@ const AddStudents = () => {
             const sheetName = workbook.SheetNames[0];
             const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
 
-            const rows = raw.filter((row) => row.length >= 5); // לוודא שיש 5 עמודות לפחות
+            // לדלג על שורת הכותרות
+            const rows = raw.slice(1).filter((row) => row.length >= 4);
 
             const schoolId = localStorage.getItem('schoolId');
             if (!schoolId) {
@@ -49,14 +85,20 @@ const AddStudents = () => {
                 return;
             }
 
-            const parsedStudents = rows.map((row) => ({
-                id: row[0]?.toString().trim(),
-                firstname: row[1]?.toString().trim(),
-                lastname: row[2]?.toString().trim(),
-                grade: row[3]?.toString().trim(),
-                class: row[4]?.toString().trim(),
-                schoolid: schoolId,
-            }));
+            const parsedStudents = rows.map((row) => {
+                const fullClass = row[3]?.toString().trim(); // למשל "ג1"
+                const grade = fullClass ? fullClass[0] : ""; // האות הראשונה
+                const classNum = fullClass ? fullClass.slice(1) : ""; // המספר שאחרי האות
+
+                return {
+                    id: row[2]?.toString().trim(),         // ת"ז
+                    firstname: row[1]?.toString().trim(),  // שם פרטי
+                    lastname: row[0]?.toString().trim(),   // שם משפחה
+                    grade: grade,                          // שכבה (ג, ד...)
+                    class: classNum,                       // מספר כיתה (1,2..)
+                    schoolid: schoolId,
+                };
+            });
 
             setStudents(parsedStudents);
             setUploadMessage(null);
