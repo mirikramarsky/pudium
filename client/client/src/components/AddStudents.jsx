@@ -22,7 +22,7 @@ const AddStudents = () => {
 
     const downloadTemplate = () => {
         const worksheet = XLSX.utils.aoa_to_sheet([
-            ['123456789', 'שם פרטי', 'שם משפחה', '1', 'א'] // שורה לדוגמה, לא חובה
+            [ 'שם פרטי', 'שם משפחה','123456789', '1א'] // שורה לדוגמה, לא חובה
         ]);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'StudentsTemplate');
@@ -125,6 +125,7 @@ const AddStudents = () => {
     //     }
     // };
     const handleFileUpload = (e) => {
+        alert("I am in handleFileUpload");
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -230,7 +231,7 @@ const AddStudents = () => {
             </div>
 
             <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>בחרי קובץ Excel (ללא שורת כותרת)</Form.Label>
+                <Form.Label>בחרי קובץ Excel </Form.Label>
                 <div className="d-flex gap-3 align-items-center">
                     <Form.Control
                         type="file"
