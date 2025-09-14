@@ -124,48 +124,112 @@ const AddStudents = () => {
     //         reader.readAsBinaryString(file);
     //     }
     // };
+    // const handleFileUpload = (e) => {
+    //     alert("I am in handleFileUpload");
+    //     const file = e.target.files?.[0];
+    //     alert("file: " + file);
+    //     if (!file) return;
+
+    //     const reader = new FileReader();
+    //     const filename = file.name.toLowerCase();
+    //     const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
+    //     alert("isCSV: " + isCSV);
+    //     reader.onload = (event) => {
+    //         let rows;
+
+    //         if (isCSV) {
+    //             // CSV
+    //             const text = new TextDecoder("utf-8").decode(event.target.result);
+    //             rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה גם ב־tab וגם ב־comma
+    //         } else {
+    //             // XLS/XLSX
+    //             const workbook = XLSX.read(event.target.result, { type: "binary" });
+    //             const sheetName = workbook.SheetNames[0];
+    //             rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+    //         }
+    //         const htmlString = rows[0]; // כל התוכן שקיבלת
+    //         const parser = new DOMParser();
+    //         const doc = parser.parseFromString(htmlString, "text/html");
+    //         const table = doc.querySelector("table");
+    //         alert("table: " + table);
+    //         const data = Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
+    //         console.log(data);
+    //         rows = data;
+    //         alert("rows: " + rows);
+    //         // לדלג על שורת הכותרות
+    //         rows = rows.slice(1).filter((row) => row.length >= 4);
+
+    //         const schoolId = localStorage.getItem("schoolId");
+    //         if (!schoolId) {
+    //             setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
+    //             return;
+    //         }
+
+    //         const parsedStudents = rows.map((row) => {
+    //             const fullClass = row[3]?.toString().trim();
+    //             const grade = fullClass ? fullClass[0] : "";
+    //             const classNum = fullClass ? fullClass.slice(1) : "";
+    //             return {
+    //                 id: row[2]?.toString().trim(),
+    //                 firstname: row[1]?.toString().trim(),
+    //                 lastname: row[0]?.toString().trim(),
+    //                 grade,
+    //                 class: classNum,
+    //                 schoolid: schoolId,
+    //             };
+    //         });
+
+    //         setStudents(parsedStudents);
+    //         setUploadMessage(null);
+    //         setError(null);
+    //     };
+
+    //     if (isCSV) {
+    //         reader.readAsArrayBuffer(file);
+    //     } else {
+    //         reader.readAsBinaryString(file);
+    //     }
+    // };
     const handleFileUpload = (e) => {
-        alert("I am in handleFileUpload");
         const file = e.target.files?.[0];
-        alert("file: " + file);
         if (!file) return;
 
         const reader = new FileReader();
         const filename = file.name.toLowerCase();
         const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
-        alert("isCSV: " + isCSV);
+
         reader.onload = (event) => {
             let rows;
 
             if (isCSV) {
                 // CSV
                 const text = new TextDecoder("utf-8").decode(event.target.result);
-                rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה גם ב־tab וגם ב־comma
+                rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה ב־tab וגם ב־comma
             } else {
                 // XLS/XLSX
                 const workbook = XLSX.read(event.target.result, { type: "binary" });
                 const sheetName = workbook.SheetNames[0];
                 rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
             }
-            const htmlString = rows[0]; // כל התוכן שקיבלת
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlString, "text/html");
-            const table = doc.querySelector("table");
-            alert("table: " + table);
-            const data = Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
-            console.log(data);
-            rows = data;
-            alert("rows: " + rows);
-            // לדלג על שורת הכותרות
-            rows = rows.slice(1).filter((row) => row.length >= 4);
 
+            // למצוא את השורה שמכילה את הכותרות
+            const headerIndex = rows.findIndex(r => r.includes("Last name kinuy") && r.includes("First name kinuy"));
+
+            if (headerIndex === -1) {
+                setError("לא נמצאה שורת כותרות בקובץ.");
+                return;
+            }
+
+            // לקבל את השורות אחרי הכותרות בלבד
+            const dataRows = rows.slice(headerIndex + 1).filter(row => row.length >= 4);
+            alert("dataRows: " + dataRows);
             const schoolId = localStorage.getItem("schoolId");
             if (!schoolId) {
                 setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
                 return;
             }
 
-            const parsedStudents = rows.map((row) => {
+            const parsedStudents = dataRows.map((row) => {
                 const fullClass = row[3]?.toString().trim();
                 const grade = fullClass ? fullClass[0] : "";
                 const classNum = fullClass ? fullClass.slice(1) : "";
