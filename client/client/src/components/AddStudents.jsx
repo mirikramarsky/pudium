@@ -151,6 +151,7 @@ const AddStudents = () => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlString, "text/html");
             const table = doc.querySelector("table");
+            alert("table: " + table);
             const data = Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
             console.log(data);
             rows = data;
