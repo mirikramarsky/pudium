@@ -127,13 +127,13 @@ const AddStudents = () => {
     const handleFileUpload = (e) => {
         alert("I am in handleFileUpload");
         const file = e.target.files?.[0];
-        alert("file: ",file);
+        alert("file: " + file);
         if (!file) return;
 
         const reader = new FileReader();
         const filename = file.name.toLowerCase();
         const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
-        alert("isCSV: ",isCSV);
+        alert("isCSV: " + isCSV);
         reader.onload = (event) => {
             let rows;
 
@@ -147,7 +147,7 @@ const AddStudents = () => {
                 const sheetName = workbook.SheetNames[0];
                 rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
             }
-alert("rows: ",rows);
+alert("rows: " + rows);
             // לדלג על שורת הכותרות
             rows = rows.slice(1).filter((row) => row.length >= 4);
 
