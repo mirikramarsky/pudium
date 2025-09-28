@@ -254,6 +254,83 @@ const AddStudents = () => {
     //         reader.readAsBinaryString(file);
     //     }
     // };
+    // const handleFileUpload = (e) => {
+    //     const file = e.target.files?.[0];
+    //     if (!file) return;
+
+    //     const reader = new FileReader();
+    //     const filename = file.name.toLowerCase();
+    //     const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
+
+    //     reader.onload = (event) => {
+    //         let htmlString;
+    //         console.log("Raw file content:", event.target.result);
+    //         if (isCSV) {
+    //             // אם זה CSV, זה כבר טקסט רגיל
+    //             htmlString = new TextDecoder("utf-8").decode(event.target.result);
+    //         } else {
+    //             // אם זה XLS/XLSX, נהפוך ל־HTML באמצעות SheetJS
+    //             const workbook = XLSX.read(event.target.result, { type: "binary" });
+    //             const sheetName = workbook.SheetNames[0];
+    //             htmlString = XLSX.utils.sheet_to_html(workbook.Sheets[sheetName]);
+
+    //         }
+    //         console.log("HTML String:", htmlString);
+
+    //         // לפרסר את כל ה־HTML
+    //         const parser = new DOMParser();
+    //         const doc = parser.parseFromString(htmlString, "text/html");
+    //         console.log("Parsed DOM document:", doc);
+    //         console.log("All tables found:", doc.querySelectorAll("table"));
+
+    //         // למצוא את הטבלה שבה כותרת העמודות היא "Last name kinuy"
+    //         const tables = Array.from(doc.querySelectorAll("table"));
+    //         const targetTable = tables.find(t =>
+    //             t.querySelector("thead th")?.textContent.includes("Last name kinuy")
+    //         );
+    //         console.log("Target table:", targetTable);
+
+    //         if (!targetTable) {
+    //             setError("לא נמצאה טבלת תלמידות בקובץ.");
+    //             return;
+    //         }
+
+    //         // להמיר את השורות ל־array
+    //         const dataRows = Array.from(targetTable.querySelectorAll("tbody tr"))
+    //             .map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
+    //         console.log("Data rows:", dataRows);
+
+    //         const schoolId = localStorage.getItem("schoolId");
+    //         if (!schoolId) {
+    //             setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
+    //             return;
+    //         }
+
+    //         const parsedStudents = dataRows.map((row) => {
+    //             const fullClass = row[3]?.toString().trim();
+    //             const grade = fullClass ? fullClass[0] : "";
+    //             const classNum = fullClass ? fullClass.slice(1) : "";
+    //             return {
+    //                 id: row[2]?.toString().trim(),
+    //                 firstname: row[1]?.toString().trim(),
+    //                 lastname: row[0]?.toString().trim(),
+    //                 grade,
+    //                 class: classNum,
+    //                 schoolid: schoolId,
+    //             };
+    //         });
+
+    //         setStudents(parsedStudents);
+    //         setUploadMessage(null);
+    //         setError(null);
+    //     };
+
+    //     if (isCSV) {
+    //         reader.readAsArrayBuffer(file);
+    //     } else {
+    //         reader.readAsBinaryString(file);
+    //     }
+    // };
     const handleFileUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -263,42 +340,29 @@ const AddStudents = () => {
         const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
 
         reader.onload = (event) => {
-            let htmlString;
-            console.log("Raw file content:", event.target.result);
+            let rows;
+
             if (isCSV) {
-                // אם זה CSV, זה כבר טקסט רגיל
-                htmlString = new TextDecoder("utf-8").decode(event.target.result);
+                const text = new TextDecoder("utf-8").decode(event.target.result);
+                rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה ב־tab ו־comma
             } else {
-                // אם זה XLS/XLSX, נהפוך ל־HTML באמצעות SheetJS
                 const workbook = XLSX.read(event.target.result, { type: "binary" });
                 const sheetName = workbook.SheetNames[0];
-                htmlString = XLSX.utils.sheet_to_html(workbook.Sheets[sheetName]);
-
+                rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
             }
-            console.log("HTML String:", htmlString);
 
-            // לפרסר את כל ה־HTML
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlString, "text/html");
-            console.log("Parsed DOM document:", doc);
-            console.log("All tables found:", doc.querySelectorAll("table"));
-
-            // למצוא את הטבלה שבה כותרת העמודות היא "Last name kinuy"
-            const tables = Array.from(doc.querySelectorAll("table"));
-            const targetTable = tables.find(t =>
-                t.querySelector("thead th")?.textContent.includes("Last name kinuy")
+            // מציאת השורה שמכילה את הכותרות
+            const headerRowIndex = rows.findIndex(r =>
+                r.some(cell => cell?.toString().toLowerCase().includes("last name"))
             );
-            console.log("Target table:", targetTable);
 
-            if (!targetTable) {
-                setError("לא נמצאה טבלת תלמידות בקובץ.");
+            if (headerRowIndex === -1) {
+                setError("לא נמצאה שורת כותרות מתאימה בקובץ.");
                 return;
             }
 
-            // להמיר את השורות ל־array
-            const dataRows = Array.from(targetTable.querySelectorAll("tbody tr"))
-                .map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
-            console.log("Data rows:", dataRows);
+            // כל השורות אחרי הכותרות
+            const dataRows = rows.slice(headerRowIndex + 1).filter(r => r.length > 0);
 
             const schoolId = localStorage.getItem("schoolId");
             if (!schoolId) {
@@ -306,19 +370,14 @@ const AddStudents = () => {
                 return;
             }
 
-            const parsedStudents = dataRows.map((row) => {
-                const fullClass = row[3]?.toString().trim();
-                const grade = fullClass ? fullClass[0] : "";
-                const classNum = fullClass ? fullClass.slice(1) : "";
-                return {
-                    id: row[2]?.toString().trim(),
-                    firstname: row[1]?.toString().trim(),
-                    lastname: row[0]?.toString().trim(),
-                    grade,
-                    class: classNum,
-                    schoolid: schoolId,
-                };
-            });
+            const parsedStudents = dataRows.map(row => ({
+                id: row[2]?.toString().trim() || "",
+                firstname: row[1]?.toString().trim() || "",
+                lastname: row[0]?.toString().trim() || "",
+                grade: row[3]?.toString().trim()[0] || "",
+                class: row[3]?.toString().trim().slice(1) || "",
+                schoolid: schoolId,
+            }));
 
             setStudents(parsedStudents);
             setUploadMessage(null);
