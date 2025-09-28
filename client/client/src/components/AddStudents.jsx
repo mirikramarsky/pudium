@@ -452,8 +452,8 @@ const AddStudents = () => {
                     id: row[2]?.toString().trim() || "",
                     firstname: row[1]?.toString().trim() || "",
                     lastname: row[0]?.toString().trim() || "",
-                    grade: fullClass ? fullClass[0] : "",
-                    class: fullClass ? fullClass.slice(1) : "",
+                    class: fullClass ? fullClass[0] : "",
+                    grade: fullClass ? fullClass.slice(1) : "",
                     schoolid: schoolId,
                 };
             }).filter(s => s.id && s.firstname && s.lastname); // מסננים שורות ריקות
@@ -484,6 +484,8 @@ const AddStudents = () => {
         setSkippedStudents([]);
 
         try {
+            console.log("Uploading students:", students);
+            
             const res = await axios.post(`${BASE_URL}students/`, { students });
             const { added, skipped } = res.data;
 
