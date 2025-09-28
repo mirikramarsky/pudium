@@ -331,6 +331,65 @@ const AddStudents = () => {
     //         reader.readAsBinaryString(file);
     //     }
     // };
+    // const handleFileUpload = (e) => {
+    //     const file = e.target.files?.[0];
+    //     if (!file) return;
+
+    //     const reader = new FileReader();
+    //     const filename = file.name.toLowerCase();
+    //     const isCSV = filename.endsWith(".csv") || filename.endsWith(".csv.xls");
+
+    //     reader.onload = (event) => {
+    //         let rows;
+
+    //         if (isCSV) {
+    //             const text = new TextDecoder("utf-8").decode(event.target.result);
+    //             rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה ב־tab ו־comma
+    //         } else {
+    //             const workbook = XLSX.read(event.target.result, { type: "binary" });
+    //             const sheetName = workbook.SheetNames[0];
+    //             rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+    //         }
+
+    //         // מציאת השורה שמכילה את הכותרות
+    //         const headerRowIndex = rows.findIndex(r =>
+    //             r.some(cell => cell?.toString().toLowerCase().includes("last name"))
+    //         );
+
+    //         if (headerRowIndex === -1) {
+    //             setError("לא נמצאה שורת כותרות מתאימה בקובץ.");
+    //             return;
+    //         }
+
+    //         // כל השורות אחרי הכותרות
+    //         const dataRows = rows.slice(headerRowIndex + 1).filter(r => r.length > 0);
+
+    //         const schoolId = localStorage.getItem("schoolId");
+    //         if (!schoolId) {
+    //             setError("קוד מוסד לא נמצא. אנא התחברי מחדש.");
+    //             return;
+    //         }
+
+    //         const parsedStudents = dataRows.map(row => ({
+    //             id: row[2]?.toString().trim() || "",
+    //             firstname: row[1]?.toString().trim() || "",
+    //             lastname: row[0]?.toString().trim() || "",
+    //             grade: row[3]?.toString().trim()[0] || "",
+    //             class: row[3]?.toString().trim().slice(1) || "",
+    //             schoolid: schoolId,
+    //         }));
+
+    //         setStudents(parsedStudents);
+    //         setUploadMessage(null);
+    //         setError(null);
+    //     };
+
+    //     if (isCSV) {
+    //         reader.readAsArrayBuffer(file);
+    //     } else {
+    //         reader.readAsBinaryString(file);
+    //     }
+    // };
     const handleFileUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -344,17 +403,33 @@ const AddStudents = () => {
 
             if (isCSV) {
                 const text = new TextDecoder("utf-8").decode(event.target.result);
-                rows = text.split("\n").map(r => r.split(/\t|,/)); // תמיכה ב־tab ו־comma
+                rows = text.split(/\r?\n/).map(r => r.split(/\t|,/)); // תמיכה ב-tab ו-comma
             } else {
                 const workbook = XLSX.read(event.target.result, { type: "binary" });
                 const sheetName = workbook.SheetNames[0];
                 rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
             }
 
-            // מציאת השורה שמכילה את הכותרות
-            const headerRowIndex = rows.findIndex(r =>
-                r.some(cell => cell?.toString().toLowerCase().includes("last name"))
-            );
+            // סינון שורות ריקות או הערות
+            rows = rows.filter(r => r.some(cell => cell && cell.toString().trim() !== ""));
+
+            // רשימה של אפשרויות כותרות ידועות בעברית ובאנגלית
+            const knownHeaders = [
+                ["last name kinuy", "first name kinuy", "ת.ז.", "כיתה"],
+                ["שם משפחה", "שם פרטי", "ת.ז.", "כיתה"]
+            ];
+
+            // מציאת השורה הראשונה שמכילה לפחות 2 כותרות ידועות
+            let headerRowIndex = -1;
+            for (let i = 0; i < rows.length; i++) {
+                const rowLower = rows[i].map(cell => cell?.toString().toLowerCase());
+                if (knownHeaders.some(headers =>
+                    headers.filter(h => rowLower.includes(h.toLowerCase())).length >= 2
+                )) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
 
             if (headerRowIndex === -1) {
                 setError("לא נמצאה שורת כותרות מתאימה בקובץ.");
@@ -362,7 +437,7 @@ const AddStudents = () => {
             }
 
             // כל השורות אחרי הכותרות
-            const dataRows = rows.slice(headerRowIndex + 1).filter(r => r.length > 0);
+            const dataRows = rows.slice(headerRowIndex + 1);
 
             const schoolId = localStorage.getItem("schoolId");
             if (!schoolId) {
@@ -370,14 +445,18 @@ const AddStudents = () => {
                 return;
             }
 
-            const parsedStudents = dataRows.map(row => ({
-                id: row[2]?.toString().trim() || "",
-                firstname: row[1]?.toString().trim() || "",
-                lastname: row[0]?.toString().trim() || "",
-                grade: row[3]?.toString().trim()[0] || "",
-                class: row[3]?.toString().trim().slice(1) || "",
-                schoolid: schoolId,
-            }));
+            // מיפוי השורות לאובייקט תלמיד
+            const parsedStudents = dataRows.map(row => {
+                const fullClass = row[3]?.toString().trim() || "";
+                return {
+                    id: row[2]?.toString().trim() || "",
+                    firstname: row[1]?.toString().trim() || "",
+                    lastname: row[0]?.toString().trim() || "",
+                    grade: fullClass ? fullClass[0] : "",
+                    class: fullClass ? fullClass.slice(1) : "",
+                    schoolid: schoolId,
+                };
+            }).filter(s => s.id && s.firstname && s.lastname); // מסננים שורות ריקות
 
             setStudents(parsedStudents);
             setUploadMessage(null);
