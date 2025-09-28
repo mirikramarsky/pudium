@@ -123,6 +123,7 @@ class StudentsRepository {
             if (err.code == '23505') {
                 throw new DuplicateIdError();
             } else {
+                console.error("DB error:", err);
                 throw err;
             }
         }
