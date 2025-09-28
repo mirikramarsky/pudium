@@ -264,7 +264,7 @@ const AddStudents = () => {
 
         reader.onload = (event) => {
             let htmlString;
-
+            console.log("Raw file content:", event.target.result);
             if (isCSV) {
                 // אם זה CSV, זה כבר טקסט רגיל
                 htmlString = new TextDecoder("utf-8").decode(event.target.result);
@@ -273,17 +273,22 @@ const AddStudents = () => {
                 const workbook = XLSX.read(event.target.result, { type: "binary" });
                 const sheetName = workbook.SheetNames[0];
                 htmlString = XLSX.utils.sheet_to_html(workbook.Sheets[sheetName]);
+
             }
+            console.log("HTML String:", htmlString);
 
             // לפרסר את כל ה־HTML
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlString, "text/html");
+            console.log("Parsed DOM document:", doc);
+            console.log("All tables found:", doc.querySelectorAll("table"));
 
             // למצוא את הטבלה שבה כותרת העמודות היא "Last name kinuy"
             const tables = Array.from(doc.querySelectorAll("table"));
             const targetTable = tables.find(t =>
                 t.querySelector("thead th")?.textContent.includes("Last name kinuy")
             );
+            console.log("Target table:", targetTable);
 
             if (!targetTable) {
                 setError("לא נמצאה טבלת תלמידות בקובץ.");
@@ -293,6 +298,7 @@ const AddStudents = () => {
             // להמיר את השורות ל־array
             const dataRows = Array.from(targetTable.querySelectorAll("tbody tr"))
                 .map(row => Array.from(row.cells).map(cell => cell.textContent.trim()));
+            console.log("Data rows:", dataRows);
 
             const schoolId = localStorage.getItem("schoolId");
             if (!schoolId) {
