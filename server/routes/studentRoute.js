@@ -18,7 +18,11 @@ router.get('/', async (req, res, next) => {
 });
 router.get('/:schoolId', async (req, res, next) => {
     try {
+        console.log("get students by school id", req.params.schoolId);
+        
         let result = await studentService.getBySchoolId(req.params.schoolId)
+        console.log("result", result);
+        
         if (result != undefined)
             res.json(result || []);
         else
