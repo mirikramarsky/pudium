@@ -37,13 +37,34 @@ const StudentsFieldsTable = () => {
     const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
         setStudents(prev => {
             const updated = [...prev];
-            if (isOther) {
-                updated[studentIndex].otherFields[fieldIndex] = value;
-                if (value) updated[studentIndex].selectedFields[fieldIndex] = 'אחר';
-            } else {
-                updated[studentIndex].selectedFields[fieldIndex] = value;
-                if (value !== 'אחר') updated[studentIndex].otherFields[fieldIndex] = '';
+            const student = { ...updated[studentIndex] };
+
+            // ספירת התחומים שנבחרו כרגע
+            const allSelected = [
+                ...student.selectedFields.filter(f => f && f !== ''),
+                ...student.otherFields.filter(f => f && f !== '')
+            ];
+
+            // אם מנסים להוסיף תחום חדש מעבר ל-4
+            const isNewSelection = isOther
+                ? value && !student.otherFields[fieldIndex]
+                : value && !student.selectedFields.includes(value);
+
+            if (isNewSelection && allSelected.length >= 4) {
+                setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
+                return prev; // לא לשנות
             }
+
+            // עדכון רגיל
+            if (isOther) {
+                student.otherFields[fieldIndex] = value;
+                if (value) student.selectedFields[fieldIndex] = 'אחר';
+            } else {
+                student.selectedFields[fieldIndex] = value;
+                if (value !== 'אחר') student.otherFields[fieldIndex] = '';
+            }
+
+            updated[studentIndex] = student;
             return updated;
         });
     };
@@ -53,7 +74,7 @@ const StudentsFieldsTable = () => {
             f === 'אחר' ? student.otherFields[i] : f
         );
         try {
-            await axios.put(`${BASE_URL}students/${student.id}`, {
+            await axios.put(`${BASE_URL}students/schoolid/${student.id}`, {
                 schoolId: Number(schoolId),
                 field1: fieldsToSend[0] || '',
                 field2: fieldsToSend[1] || '',
@@ -93,13 +114,13 @@ const StudentsFieldsTable = () => {
                                     <Form.Check
                                         type="checkbox"
                                         checked={student.selectedFields.includes(field)}
-                                        onChange={e => handleFieldChange(si, fi, field, false)}
+                                        onChange={() => handleFieldChange(si, fi, field, false)}
                                     />
                                 </td>
                             ))}
 
-                            {[0,1,2,3].map((oi) => (
-                                <td key={oi}>
+                            {[0, 1, 2, 3].map((oi) => (
+                                <td key={oi} style={{ minWidth: '150px' }}>
                                     <Form.Control
                                         type="text"
                                         value={student.otherFields[oi] || ''}
