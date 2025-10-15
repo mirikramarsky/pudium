@@ -20,7 +20,7 @@ const StudentsFieldsTable = () => {
                     const studentFields = [s.field1, s.field2, s.field3, s.field4];
                     return {
                         ...s,
-                        selectedFields: studentFields.map(f => schoolFields.includes(f) ? f : 'אחר'),
+                        selectedFields: studentFields.map(f => schoolFields.includes(f) ? f : '-'),
                         otherFields: studentFields.map(f => schoolFields.includes(f) ? '' : f)
                     };
                 });
@@ -35,6 +35,8 @@ const StudentsFieldsTable = () => {
     }, [schoolId]);
 
     const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
+        console.log("handleFieldChange called with:", { studentIndex, fieldIndex, value, isOther });
+        
         setStudents(prev => {
             const updated = [...prev];
             const student = { ...updated[studentIndex] };
@@ -44,12 +46,12 @@ const StudentsFieldsTable = () => {
                 ...student.selectedFields.filter(f => f && f !== ''),
                 ...student.otherFields.filter(f => f && f !== '')
             ];
+            console.log("all selected.length: ", allSelected.length );
 
             // אם מנסים להוסיף תחום חדש מעבר ל-4
             const isNewSelection = isOther
                 ? value && !student.otherFields[fieldIndex]
                 : value && !student.selectedFields.includes(value);
-            console.log("all selected.length: ", allSelected );
             
             if (isNewSelection && allSelected.length >= 4) {
                 setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
@@ -59,10 +61,10 @@ const StudentsFieldsTable = () => {
             // עדכון רגיל
             if (isOther) {
                 student.otherFields[fieldIndex] = value;
-                if (value) student.selectedFields[fieldIndex] = 'אחר';
+                if (value) student.selectedFields[fieldIndex] = '-';
             } else {
                 student.selectedFields[fieldIndex] = value;
-                if (value !== 'אחר') student.otherFields[fieldIndex] = '';
+                if (value !== '-') student.otherFields[fieldIndex] = '';
             }
 
             updated[studentIndex] = student;
@@ -72,7 +74,7 @@ const StudentsFieldsTable = () => {
 
     const handleSave = async (student) => {
         const fieldsToSend = student.selectedFields.map((f, i) =>
-            f === 'אחר' ? student.otherFields[i] : f
+            f === '-' ? student.otherFields[i] : f
         );
         try {
             await axios.put(`${BASE_URL}students/schoolid/${student.id}`, {
@@ -99,7 +101,7 @@ const StudentsFieldsTable = () => {
                         <th>שם פרטי</th>
                         <th>שם משפחה</th>
                         {fields.map((f, idx) => <th key={idx}>{f}</th>)}
-                        {[...Array(4)].map((_, idx) => <th key={idx}>אחר {idx + 1}</th>)}
+                        {[...Array(4)].map((_, idx) => <th key={idx}>- {idx + 1}</th>)}
                         <th>פעולה</th>
                     </tr>
                 </thead>
@@ -126,7 +128,7 @@ const StudentsFieldsTable = () => {
                                         type="text"
                                         value={student.otherFields[oi] || ''}
                                         onChange={e => handleFieldChange(si, oi, e.target.value, true)}
-                                        placeholder="אחר"
+                                        placeholder="-"
                                     />
                                 </td>
                             ))}
