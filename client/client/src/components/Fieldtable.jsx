@@ -49,7 +49,8 @@ const StudentsFieldsTable = () => {
             const isNewSelection = isOther
                 ? value && !student.otherFields[fieldIndex]
                 : value && !student.selectedFields.includes(value);
-
+            console.log("all selected.length: ", allSelected );
+            
             if (isNewSelection && allSelected.length >= 4) {
                 setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
                 return prev; // לא לשנות

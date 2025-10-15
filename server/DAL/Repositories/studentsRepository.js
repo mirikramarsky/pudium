@@ -22,8 +22,6 @@ class StudentsRepository {
         return student.rows;
     }
     async getBySchoolId(schoolId) {
-        console.log("getBySchoolId in repo", schoolId);
-        
         let student = await pool.query(`SELECT * FROM students WHERE schoolId = $1`, [schoolId]);
         return student.rows;
     }
