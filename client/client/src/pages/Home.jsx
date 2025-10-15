@@ -22,7 +22,7 @@ import WelcomePage from '../components/WelcomePage';
 import { useLocation } from 'react-use';
 import SearchByStudent from '../components/SearchByStudent';
 import AddStudents from '../components/AddStudents';
-import StudentsFieldsTable from '../components/fieldtable';
+import StudentsFieldsTable from '../components/Fieldtable';
 // import BottomBanner from '../components/BottomBanner';
 function Layout({ children }) {
     const location = useLocation();
