@@ -37,7 +37,11 @@ class SudentsService extends BaseService {
         throw new idError('this id is not exist');
     }
     async getBySchoolId(schoolId) {
-        let result = await this.repository.getBySchoolIdId(schoolId);
+        console.log("get students by school id in service", schoolId);
+        
+        let result = await this.repository.getBySchoolId(schoolId);
+        console.log("result", result);
+        
         if (result && result.length != 0)
             return result;
         throw new idError('this id is not exist');
