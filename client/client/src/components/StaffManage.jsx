@@ -46,11 +46,14 @@ const StaffManage = () => {
       </Button>
 
       <hr />
-     <Button variant="primary" className="m-2" onClick={() => navigate('/addStudents')}>
+      <Button variant="primary" className="m-2" onClick={() => navigate('/addStudents')}>
         🎒 הוספת תלמידות למערכת
       </Button>
       <Button variant="light" className="m-2" onClick={() => setShowDeleteModal(true)}>
         🎒 מחיקת תלמידה מהמערכת
+      </Button>
+      <Button variant="dark" className="m-2" onClick={() => navigate('/fill-students-fields')}>
+        🧮 מילוי התחומים לתלמידות
       </Button>
       {/* <Button variant="dark" className="m-2" onClick={() => navigate('/editStudent')}>
         🎒 עדכון פרטי תלמידה במערכת 
@@ -62,7 +65,7 @@ const StaffManage = () => {
       <Button variant="secondary" className="m-2" onClick={() => navigate('/manage-fields')}>
         🎯 שינוי התחומים שבית הספר מציע
       </Button>
-        <DeleteStudentModal
+      <DeleteStudentModal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
       />
