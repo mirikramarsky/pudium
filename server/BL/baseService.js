@@ -20,7 +20,8 @@ class BaseService {
         throw new idError("this id is exist")
     }
     async update(id, updatedFields){
-        let result = await this.repository.update(id, updatedFields);
+        schoolId = updatedFields.schoolId
+        let result = await this.repository.update(id, schoolId,  updatedFields);
         if(result != 0)
             return result;
         throw new idError('this id is not exist');

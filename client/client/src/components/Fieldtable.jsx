@@ -53,7 +53,7 @@ const StudentsFieldsTable = () => {
             f === 'אחר' ? student.otherFields[i] : f
         );
         try {
-            await axios.post(`${BASE_URL}students/schoolid/${student.id}`, {
+            await axios.put(`${BASE_URL}students/${student.id}`, {
                 schoolId: Number(schoolId),
                 field1: fieldsToSend[0] || '',
                 field2: fieldsToSend[1] || '',

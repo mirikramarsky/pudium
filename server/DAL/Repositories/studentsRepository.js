@@ -130,7 +130,7 @@ class StudentsRepository {
             }
         }
     }
-    async update(id, updatedFields) {
+    async update(id,schoolId, updatedFields) {
         const sets = [];
         const values = [];
         let i = 1;
@@ -145,7 +145,7 @@ class StudentsRepository {
         if (sets.length === 0) return { message: 'Nothing to update.' };
 
         values.push(id);
-        const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i}`;
+        const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i} AND schoolId = $${schoolId}`;
         const result = await pool.query(query, values);
         return result.rowCount > 0;
     }
