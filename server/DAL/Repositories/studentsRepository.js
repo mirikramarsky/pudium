@@ -148,8 +148,6 @@ class StudentsRepository {
         const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i} AND schoolId = $${schoolId}`;
         const result = await pool.query(query, values);
         console.log("query:", query);
-        
-        log("Update result:", result);
         return result.rowCount > 0;
     }
     async decreaseSeveralPriority(id) {
