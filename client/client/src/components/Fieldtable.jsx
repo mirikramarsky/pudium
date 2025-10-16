@@ -53,46 +53,77 @@ const StudentsFieldsTable = () => {
         }
     };
 
-    const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
+    // const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
+    //     setStudents(prev => {
+    //         const updated = [...prev];
+    //         const student = { ...updated[studentIndex] };
+
+    //         const allSelected = [
+    //             ...student.selectedFields.filter(f => f && f !== '' && f !== '-'),
+    //             ...student.otherFields.filter(f => f && f !== '' && f !== '-')
+    //         ];
+
+    //         const isNewSelection = isOther
+    //             ? value && !student.otherFields[fieldIndex]
+    //             : value && !student.selectedFields.includes(value);
+
+    //         if (isNewSelection && allSelected.length >= 4) {
+    //             setMessage({ text: `כל תלמידה יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
+    //             return prev; 
+    //         }
+
+    //         if (isOther) {
+    //             student.otherFields[fieldIndex] = value;
+    //             if (value) student.selectedFields[fieldIndex] = '-';
+    //         } else {
+    //             // ביטול אם התחום כבר נבחר
+    //             if (student.selectedFields.includes(value)) {
+    //                 student.selectedFields[fieldIndex] = '-';
+    //             } else {
+    //                 student.selectedFields[fieldIndex] = value;
+    //                 if (value !== '-') student.otherFields[fieldIndex] = '';
+    //             }
+    //         }
+
+    //         updated[studentIndex] = student;
+    //         return updated;
+    //     });
+
+    //     // שמירה אוטומטית לצ'קבוקס
+    //     if (!isOther) {
+    //         saveStudent(students[studentIndex]);
+    //     }
+    // };
+    const handleFieldChange = (studentIndex, value, isOther, otherIndex) => {
         setStudents(prev => {
             const updated = [...prev];
             const student = { ...updated[studentIndex] };
 
-            const allSelected = [
-                ...student.selectedFields.filter(f => f && f !== '' && f !== '-'),
-                ...student.otherFields.filter(f => f && f !== '' && f !== '-')
-            ];
-
-            const isNewSelection = isOther
-                ? value && !student.otherFields[fieldIndex]
-                : value && !student.selectedFields.includes(value);
-
-            if (isNewSelection && allSelected.length >= 4) {
-                setMessage({ text: `כל תלמידה יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
-                return prev; 
-            }
-
             if (isOther) {
-                student.otherFields[fieldIndex] = value;
-                if (value) student.selectedFields[fieldIndex] = '-';
-            } else {
-                // ביטול אם התחום כבר נבחר
-                if (student.selectedFields.includes(value)) {
-                    student.selectedFields[fieldIndex] = '-';
+                student.otherFields[otherIndex] = value;
+                if (value) {
+                    // תחום אחר נכנס ל-selectedFields כמחיצה בלבד (לצורך שמירה)
+                    student.selectedFields[otherIndex] = '-';
                 } else {
-                    student.selectedFields[fieldIndex] = value;
-                    if (value !== '-') student.otherFields[fieldIndex] = '';
+                    student.selectedFields[otherIndex] = '';
+                }
+            } else {
+                const alreadySelectedIndex = student.selectedFields.indexOf(value);
+
+                if (alreadySelectedIndex > -1) {
+                    // אם התחום כבר מסומן – להסיר אותו
+                    student.selectedFields[alreadySelectedIndex] = '';
+                } else {
+                    // הוספה של תחום חדש (מבלי למחוק תחומים אחרים)
+                    const emptyIndex = student.selectedFields.findIndex(f => f === '');
+                    if (emptyIndex > -1) student.selectedFields[emptyIndex] = value;
                 }
             }
 
             updated[studentIndex] = student;
+            saveStudent(updated[studentIndex]); // שמירה אוטומטית
             return updated;
         });
-
-        // שמירה אוטומטית לצ'קבוקס
-        if (!isOther) {
-            saveStudent(students[studentIndex]);
-        }
     };
 
     return (
