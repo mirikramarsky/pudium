@@ -36,7 +36,8 @@ const StudentsFieldsTable = () => {
 
     const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
         console.log("handleFieldChange called with:", { studentIndex, fieldIndex, value, isOther });
-
+        console.log("Current students state:", students);
+        
         setStudents(prev => {
             const updated = [...prev];
             const student = { ...updated[studentIndex] };
