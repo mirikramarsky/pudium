@@ -44,7 +44,8 @@ class SudentsService extends BaseService {
     }
     async update(id, updatedFields){
         console.log(" service update", id, updatedFields);
-        schoolId = updatedFields.schoolId
+        const schoolId = updatedFields.schoolId
+        console.log(" schoolId", schoolId);
         let result = await this.repository.update(id, schoolId,  updatedFields);
         console.log(" service result", result);
         if(result != 0)
