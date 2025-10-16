@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Form, Button, Alert } from 'react-bootstrap';
+import { Table, Form, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
 
@@ -34,46 +34,7 @@ const StudentsFieldsTable = () => {
         fetchData();
     }, [schoolId]);
 
-    const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
-        console.log("handleFieldChange called with:", { studentIndex, fieldIndex, value, isOther });
-        console.log("Current students state:", students);
-        
-        setStudents(prev => {
-            const updated = [...prev];
-            const student = { ...updated[studentIndex] };
-
-            // ספירת התחומים שנבחרו כרגע
-            const allSelected = [
-                ...student.selectedFields.filter(f => f && f !== '' && f !== '-'),
-                ...student.otherFields.filter(f => f && f !== '' && f !== '-')
-            ];
-            console.log("all selected.length: ", allSelected.length);
-
-            // אם מנסים להוסיף תחום חדש מעבר ל-4
-            const isNewSelection = isOther
-                ? value && !student.otherFields[fieldIndex]
-                : value && !student.selectedFields.includes(value);
-
-            if (isNewSelection && allSelected.length >= 4) {
-                setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
-                return prev; // לא לשנות
-            }
-
-            // עדכון רגיל
-            if (isOther) {
-                student.otherFields[fieldIndex] = value;
-                if (value) student.selectedFields[fieldIndex] = '-';
-            } else {
-                student.selectedFields[fieldIndex] = value;
-                if (value !== '-') student.otherFields[fieldIndex] = '';
-            }
-
-            updated[studentIndex] = student;
-            return updated;
-        });
-    };
-
-    const handleSave = async (student) => {
+    const saveStudent = async (student) => {
         const fieldsToSend = student.selectedFields.map((f, i) =>
             f === '-' ? student.otherFields[i] : f
         );
@@ -92,6 +53,48 @@ const StudentsFieldsTable = () => {
         }
     };
 
+    const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
+        setStudents(prev => {
+            const updated = [...prev];
+            const student = { ...updated[studentIndex] };
+
+            const allSelected = [
+                ...student.selectedFields.filter(f => f && f !== '' && f !== '-'),
+                ...student.otherFields.filter(f => f && f !== '' && f !== '-')
+            ];
+
+            const isNewSelection = isOther
+                ? value && !student.otherFields[fieldIndex]
+                : value && !student.selectedFields.includes(value);
+
+            if (isNewSelection && allSelected.length >= 4) {
+                setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
+                return prev; 
+            }
+
+            if (isOther) {
+                student.otherFields[fieldIndex] = value;
+                if (value) student.selectedFields[fieldIndex] = '-';
+            } else {
+                // ביטול אם התחום כבר נבחר
+                if (student.selectedFields.includes(value)) {
+                    student.selectedFields[fieldIndex] = '-';
+                } else {
+                    student.selectedFields[fieldIndex] = value;
+                    if (value !== '-') student.otherFields[fieldIndex] = '';
+                }
+            }
+
+            updated[studentIndex] = student;
+            return updated;
+        });
+
+        // שמירה אוטומטית לצ'קבוקס
+        if (!isOther) {
+            saveStudent(students[studentIndex]);
+        }
+    };
+
     return (
         <div>
             {message.text && <Alert variant={message.variant}>{message.text}</Alert>}
@@ -103,7 +106,6 @@ const StudentsFieldsTable = () => {
                         <th>שם משפחה</th>
                         {fields.map((f, idx) => <th key={idx}>{f}</th>)}
                         {[...Array(4)].map((_, idx) => <th key={idx}>אחר {idx + 1}</th>)}
-                        <th>פעולה</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,15 +130,20 @@ const StudentsFieldsTable = () => {
                                     <Form.Control
                                         type="text"
                                         value={student.otherFields[oi] || ''}
-                                        onChange={e => handleFieldChange(si, oi, e.target.value, true)}
+                                        onChange={e => {
+                                            const val = e.target.value;
+                                            setStudents(prev => {
+                                                const updated = [...prev];
+                                                updated[si].otherFields[oi] = val;
+                                                if (val) updated[si].selectedFields[oi] = '-';
+                                                return updated;
+                                            });
+                                        }}
+                                        onBlur={() => saveStudent(students[si])}
                                         placeholder="-"
                                     />
                                 </td>
                             ))}
-
-                            <td>
-                                <Button onClick={() => handleSave(student)}>שמור</Button>
-                            </td>
                         </tr>
                     ))}
                 </tbody>
