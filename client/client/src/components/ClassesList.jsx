@@ -8,20 +8,23 @@ const ClassesList = () => {
   const [classes, setClasses] = useState({});
   const [error, setError] = useState(null);
   const [staff, setStaff] = useState(null);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-const messageRef = useRef(null);
+  const navigate = useNavigate();
+  const messageRef = useRef(null);
 
   useEffect(() => {
     const fetchClasses = async () => {
       setLoading(true);
+
       const schoolId = localStorage.getItem('schoolId');
       const staffId = localStorage.getItem('staffId');
+
       if (!schoolId) {
         setError('קוד מוסד לא נמצא. אנא התחברי מחדש.');
         scrollToMessage();
         return;
       }
+
       if (!staffId) {
         setError('קוד אשת צוות לא נמצא. אנא התחברי מחדש.');
         scrollToMessage();
@@ -36,51 +39,28 @@ const messageRef = useRef(null);
         const staffData = staffRes.data[0];
         setStaff(staffData);
 
-        // בדיקה האם להביא מחדש את הכיתות
-        const lastUpdated = localStorage.getItem('classes_lastUpdated');
-        const now = Date.now();
-        const FIVE_MIN = 5 * 60 * 1000;
+        // שליפת הכיתות ישירות מהשרת
+        const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
+        const classList = res.data || [];
 
-        let flatClassList = [];
-
-        if (
-          !lastUpdated ||
-          now - parseInt(lastUpdated) > FIVE_MIN ||
-          !localStorage.getItem('classes')
-        ) {
-          // אם אין classes או עברו יותר מ־5 דקות – שלוף מהשרת
-          const res = await axios.get(`${BASE_URL}students/classes/${schoolId}`);
-          const classes = res.data || [];
-          localStorage.setItem('classes', JSON.stringify(classes));
-          localStorage.setItem('classes_lastUpdated', now.toString());
-          flatClassList = classes;
-        } else {
-          // טען מה־localStorage
-          flatClassList = JSON.parse(localStorage.getItem('classes'));
-        }
-
-        groupAndSetClasses(flatClassList);
-
+        groupAndSetClasses(classList);
       } catch (err) {
-        setLoading(false);
+        console.error(err);
         setError('שגיאה בשליפת נתונים');
         scrollToMessage();
-        console.error(err);
+        setLoading(false);
       }
     };
 
     const groupAndSetClasses = (flatClassList) => {
       const grouped = {};
+
       flatClassList.forEach((classStr) => {
         let groupKey = '';
 
-        if (classStr.startsWith('יא')) {
-          groupKey = 'יא';
-        } else if (classStr.startsWith('יב')) {
-          groupKey = 'יב';
-        } else {
-          groupKey = classStr[0];
-        }
+        if (classStr.startsWith('יא')) groupKey = 'יא';
+        else if (classStr.startsWith('יב')) groupKey = 'יב';
+        else groupKey = classStr[0];
 
         if (!grouped[groupKey]) grouped[groupKey] = [];
         grouped[groupKey].push(classStr);
@@ -96,22 +76,20 @@ const messageRef = useRef(null);
 
       setClasses(grouped);
       setLoading(false);
-
     };
 
+    const scrollToMessage = () => {
+      if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
 
     fetchClasses();
   }, []);
-const scrollToMessage = () => {
-    if (messageRef.current) {
-        messageRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-};
 
   if (error) return <div ref={messageRef}><Alert variant="danger">{error}</Alert></div>;
   if (loading) return <Alert variant="info">טוען כיתות...</Alert>;
   if (!staff) return null;
-
 
   return (
     <Container className="mt-4">
@@ -125,6 +103,7 @@ const scrollToMessage = () => {
           חזרה 👉
         </Button>
       </div>
+
       {Object.keys(classes).length === 0 ? (
         <Alert variant="info">אין כיתות להצגה</Alert>
       ) : (
@@ -146,7 +125,7 @@ const scrollToMessage = () => {
                       if (isAllowed) {
                         let letter = '';
                         let number = '';
-                        console.log(letter);
+
                         if (cls.startsWith('יא')) {
                           letter = 'יא';
                           number = cls.slice(2);
@@ -160,7 +139,7 @@ const scrollToMessage = () => {
 
                         navigate(`/class/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
                       } else {
-                        alert('על פי הרשאת הגישה שלך, אין באפשרותך להכנס לכיתה זו. תודה רבה.');
+                        alert('על פי הרשאת הגישה שלך, אין באפשרותך להיכנס לכיתה זו. תודה רבה.');
                       }
                     }}
                   >
@@ -172,7 +151,7 @@ const scrollToMessage = () => {
           </div>
         ))
       )}
-    </Container >
+    </Container>
   );
 };
 

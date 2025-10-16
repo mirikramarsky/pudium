@@ -36,23 +36,23 @@ const StudentsFieldsTable = () => {
 
     const handleFieldChange = (studentIndex, fieldIndex, value, isOther) => {
         console.log("handleFieldChange called with:", { studentIndex, fieldIndex, value, isOther });
-        
+
         setStudents(prev => {
             const updated = [...prev];
             const student = { ...updated[studentIndex] };
 
             // ספירת התחומים שנבחרו כרגע
             const allSelected = [
-                ...student.selectedFields.filter(f => f && f !== ''),
-                ...student.otherFields.filter(f => f && f !== '')
+                ...student.selectedFields.filter(f => f && f !== '' && f !== '-'),
+                ...student.otherFields.filter(f => f && f !== '' && f !== '-')
             ];
-            console.log("all selected.length: ", allSelected.length );
+            console.log("all selected.length: ", allSelected.length);
 
             // אם מנסים להוסיף תחום חדש מעבר ל-4
             const isNewSelection = isOther
                 ? value && !student.otherFields[fieldIndex]
                 : value && !student.selectedFields.includes(value);
-            
+
             if (isNewSelection && allSelected.length >= 4) {
                 setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
                 return prev; // לא לשנות
@@ -101,7 +101,7 @@ const StudentsFieldsTable = () => {
                         <th>שם פרטי</th>
                         <th>שם משפחה</th>
                         {fields.map((f, idx) => <th key={idx}>{f}</th>)}
-                        {[...Array(4)].map((_, idx) => <th key={idx}>- {idx + 1}</th>)}
+                        {[...Array(4)].map((_, idx) => <th key={idx}>אחר {idx + 1}</th>)}
                         <th>פעולה</th>
                     </tr>
                 </thead>
