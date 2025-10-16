@@ -46,10 +46,10 @@ const StudentsFieldsTable = () => {
                 field3: fieldsToSend[2] || '',
                 field4: fieldsToSend[3] || ''
             });
-            setMessage({ text: `שמור בהצלחה לתלמידה ${student.firstname}`, variant: 'success' });
+            setMessage({ text: `שמור בהצלחה לתלמידה ${student.firstname} ${student.lastname}`, variant: 'success' });
         } catch (err) {
             console.error('שגיאה בשמירה:', err);
-            setMessage({ text: `שגיאה בשמירה לתלמידה ${student.firstname}`, variant: 'danger' });
+            setMessage({ text: `שגיאה בשמירה לתלמידה ${student.firstname} ${student.lastname}`, variant: 'danger' });
         }
     };
 
@@ -68,7 +68,7 @@ const StudentsFieldsTable = () => {
                 : value && !student.selectedFields.includes(value);
 
             if (isNewSelection && allSelected.length >= 4) {
-                setMessage({ text: `תלמידה ${student.firstname} יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
+                setMessage({ text: `כל תלמידה יכולה לבחור עד 4 תחומים בלבד`, variant: 'danger' });
                 return prev; 
             }
 

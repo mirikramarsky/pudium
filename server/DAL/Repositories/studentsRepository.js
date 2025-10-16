@@ -129,7 +129,6 @@ class StudentsRepository {
         }
     }
     async update(id,schoolId, updatedFields) {
-        console.log("repository update", id, schoolId, updatedFields);
         
         const sets = [];
         const values = [];
@@ -147,7 +146,6 @@ class StudentsRepository {
         values.push(id);
         const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i} AND schoolId = $${schoolId}`;
         const result = await pool.query(query, values);
-        console.log("update query:", query, values, result);
         
         return result.rowCount > 0;
     }

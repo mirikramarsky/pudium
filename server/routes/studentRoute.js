@@ -153,10 +153,8 @@ router.post('/', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
     try {
-        console.log("update student", req.params.id, req.body);
-        
+     
         let result = await studentService.update(req.params.id, req.body);
-        console.log("result", result);
         if (result != undefined)
             res.send(result)
         else
