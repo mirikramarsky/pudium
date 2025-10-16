@@ -129,6 +129,8 @@ class StudentsRepository {
         }
     }
     async update(id,schoolId, updatedFields) {
+        console.log("repository update", id, schoolId, updatedFields);
+        
         const sets = [];
         const values = [];
         let i = 1;
