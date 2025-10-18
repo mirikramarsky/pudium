@@ -519,35 +519,29 @@ const StudentsFieldsTable = () => {
   };
 
   const saveStudent = async (student) => {
-    const fieldsToSend = [];
+  const merged = [
+    ...student.selectedFields.filter(f => f && f.trim() !== ''),
+    ...student.otherFields.filter(f => f && f.trim() !== '')
+  ].slice(0, 4);
+  console.log('merged', merged);
+  
+  try {
+    await axios.put(`${BASE_URL}students/${student.id}`, {
+      schoolId: Number(schoolId),
+      field1: merged[0] || '',
+      field2: merged[1] || '',
+      field3: merged[2] || '',
+      field4: merged[3] || '',
+    });
+    setMessage({
+      text: `נשמר בהצלחה לתלמידה ${student.firstname} ${student.lastname}`,
+      variant: 'success',
+    });
+  } catch (err) {
+    console.error('שגיאה בשמירה:', err);
+  }
+};
 
-    for (let i = 0; i < 4; i++) {
-      fieldsToSend[i] =
-        student.selectedFields[i] && student.selectedFields[i].trim() !== ''
-          ? student.selectedFields[i]
-          : student.otherFields[i] || '';
-    }
-
-    try {
-      await axios.put(`${BASE_URL}students/${student.id}`, {
-        schoolId: Number(schoolId),
-        field1: fieldsToSend[0] || '',
-        field2: fieldsToSend[1] || '',
-        field3: fieldsToSend[2] || '',
-        field4: fieldsToSend[3] || '',
-      });
-      setMessage({
-        text: `נשמר בהצלחה לתלמידה ${student.firstname} ${student.lastname}`,
-        variant: 'success',
-      });
-    } catch (err) {
-      console.error('שגיאה בשמירה:', err);
-      setMessage({
-        text: `שגיאה בשמירה לתלמידה ${student.firstname} ${student.lastname}`,
-        variant: 'danger',
-      });
-    }
-  };
 
   const handleCheckboxChange = (studentIndex, fieldName) => {
     setStudents((prev) => {
@@ -581,7 +575,7 @@ const StudentsFieldsTable = () => {
     });
   };
 
-  const handleOtherChange = (studentIndex, otherIndex, value) => {
+  const  handleOtherChange = (studentIndex, otherIndex, value) => {
     setStudents((prev) => {
       const updated = [...prev];
       const student = { ...updated[studentIndex] };
@@ -594,6 +588,8 @@ const StudentsFieldsTable = () => {
   const handleOtherBlur = (studentIndex) => {
     const student = students[studentIndex];
     const totalSelected = countValidFields(student);
+    console.log('totalSelected', totalSelected);
+    
     if (totalSelected > 4) {
       setMessage({
         text: 'לא ניתן לבחור יותר מ-4 תחומים (כולל "אחר")',
