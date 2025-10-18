@@ -472,8 +472,7 @@
 
 
 
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Table, Form, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../config';
@@ -483,6 +482,9 @@ const StudentsFieldsTable = () => {
   const [fields, setFields] = useState([]);
   const [message, setMessage] = useState({ text: '', variant: '' });
   const schoolId = localStorage.getItem('schoolId');
+
+  // שמירה של טיימרים כדי לבטל debounce קודם
+  const typingTimeouts = useRef({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -519,29 +521,27 @@ const StudentsFieldsTable = () => {
   };
 
   const saveStudent = async (student) => {
-  const merged = [
-    ...student.selectedFields.filter(f => f && f.trim() !== ''),
-    ...student.otherFields.filter(f => f && f.trim() !== '')
-  ].slice(0, 4);
-  console.log('merged', merged);
-  
-  try {
-    await axios.put(`${BASE_URL}students/${student.id}`, {
-      schoolId: Number(schoolId),
-      field1: merged[0] || '',
-      field2: merged[1] || '',
-      field3: merged[2] || '',
-      field4: merged[3] || '',
-    });
-    setMessage({
-      text: `נשמר בהצלחה לתלמידה ${student.firstname} ${student.lastname}`,
-      variant: 'success',
-    });
-  } catch (err) {
-    console.error('שגיאה בשמירה:', err);
-  }
-};
+    const merged = [
+      ...student.selectedFields.filter(f => f && f.trim() !== ''),
+      ...student.otherFields.filter(f => f && f.trim() !== '')
+    ].slice(0, 4);
 
+    try {
+      await axios.put(`${BASE_URL}students/${student.id}`, {
+        schoolId: Number(schoolId),
+        field1: merged[0] || '',
+        field2: merged[1] || '',
+        field3: merged[2] || '',
+        field4: merged[3] || '',
+      });
+      setMessage({
+        text: `נשמר בהצלחה לתלמידה ${student.firstname} ${student.lastname}`,
+        variant: 'success',
+      });
+    } catch (err) {
+      console.error('שגיאה בשמירה:', err);
+    }
+  };
 
   const handleCheckboxChange = (studentIndex, fieldName) => {
     setStudents((prev) => {
@@ -575,29 +575,31 @@ const StudentsFieldsTable = () => {
     });
   };
 
-  const  handleOtherChange = (studentIndex, otherIndex, value) => {
+  const handleOtherChange = (studentIndex, otherIndex, value) => {
     setStudents((prev) => {
       const updated = [...prev];
       const student = { ...updated[studentIndex] };
       student.otherFields[otherIndex] = value;
       updated[studentIndex] = student;
+
+      // ביטול טיימר קודם לאותה תלמידה
+      clearTimeout(typingTimeouts.current[student.id]);
+
+      // יצירת debounce לשמירה אחרי 600ms מהקלדה אחרונה
+      typingTimeouts.current[student.id] = setTimeout(() => {
+        const totalSelected = countValidFields(student);
+        if (totalSelected > 4) {
+          setMessage({
+            text: 'לא ניתן לבחור יותר מ-4 תחומים (כולל "אחר")',
+            variant: 'danger',
+          });
+          return;
+        }
+        saveStudent(student);
+      }, 600);
+
       return updated;
     });
-  };
-
-  const handleOtherBlur = (studentIndex) => {
-    const student = students[studentIndex];
-    const totalSelected = countValidFields(student);
-    console.log('totalSelected', totalSelected);
-    
-    if (totalSelected > 4) {
-      setMessage({
-        text: 'לא ניתן לבחור יותר מ-4 תחומים (כולל "אחר")',
-        variant: 'danger',
-      });
-      return;
-    }
-    saveStudent(student);
   };
 
   return (
@@ -640,7 +642,6 @@ const StudentsFieldsTable = () => {
                     type="text"
                     value={student.otherFields[oi] || ''}
                     onChange={(e) => handleOtherChange(si, oi, e.target.value)}
-                    onBlur={() => handleOtherBlur(si)}
                     placeholder="-"
                   />
                 </td>
