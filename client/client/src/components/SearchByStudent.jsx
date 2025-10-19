@@ -292,22 +292,6 @@ const SearchByStudent = () => {
                                     ))}
                                 </tbody>
                             </Table>
-                            // <table className="table">
-                            //     <thead>
-                            //         <tr>
-                            //             <th>תאריך</th>
-                            //             <th>פרטים</th>
-                            //         </tr>
-                            //     </thead>
-                            //     <tbody>
-                            //         {currentYearSearches.map(search => (
-                            //             <tr key={search.id}>
-                            //                 <td>{new Date(search.searchdate).toLocaleDateString()}</td>
-                            //                 <td>{search.details}</td>
-                            //             </tr>
-                            //         ))}
-                            //     </tbody>
-                            // </table>
                         ) : <p>אין חיפושים לשנה זו</p>}
 
                         <h5>חיפושים משנים קודמות</h5>
@@ -371,22 +355,6 @@ const SearchByStudent = () => {
                                     ))}
                                 </tbody>
                             </Table>
-                            // <table className="table">
-                            //     <thead>
-                            //         <tr>
-                            //             <th>תאריך</th>
-                            //             <th>פרטים</th>
-                            //         </tr>
-                            //     </thead>
-                            //     <tbody>
-                            //         {pastYearsSearches.map(search => (
-                            //             <tr key={search.id}>
-                            //                 <td>{new Date(search.date).toLocaleDateString()}</td>
-                            //                 <td>{search.details}</td>
-                            //             </tr>
-                            //         ))}
-                            //     </tbody>
-                            // </table>
                         ) : <p>אין חיפושים משנים קודמות</p>}
                     </>
                 )}

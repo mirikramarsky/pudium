@@ -37,49 +37,50 @@ function Layout({ children }) {
             {isWelcomePage ? (
                 children
             ) : (
-                <div className="content-card">
-                    {children}
-                </div>
+                <div class="content-card">
+                    <div class="card-inner"></div>
+                     {children}
+                    </div>
             )}
-        </div>
-    );
+                </div>
+            );
 }
 
-function Home() {
+            function Home() {
     return (
-        <>
-            <BrowserRouter>
-                <Layout>
-                    <Routes>
-                        <Route path="/" element={<WelcomePage />} />
-                        <Route path="/school-id" element={<SchoolCode />} />
-                        <Route path="/staff-login" element={<StaffLogin />} />
-                        <Route path="/student-form" element={<StudentForm />} />
-                        <Route path="/staff-home" element={<StaffHome />} />
-                        <Route path="/classes" element={<ClassesList />} />
-                        <Route path="/class/:class/:grade" element={<StudentsByClass />} />
-                        <Route path="/edit-student/:id" element={<EditStudent />} />
-                        <Route path="/data-fetch" element={<SearchFormPage />} />
-                        <Route path="/recent-searches" element={<RecentSearchesPage />} />
-                        <Route path="/staff/edit" element={<EditStaff />} />
-                        <Route path="/staff/add" element={<AddStaff />} />
-                        <Route path="/staff/delete" element={<DeleteStaff />} />
-                        <Route path="/staff-manage" element={<StaffManage />} />
-                        <Route path="/manage-fields" element={<FieldsManagementPage />} />
-                        <Route path="/wait-searches" element={<WaitingSearches />} />
-                        <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
-                        <Route path="/search-results/:id" element={<SearchDetailsPage />} />
-                        <Route path="/priority" element={<PriorityPage />} />
-                        <Route path="/search-by-student" element={<SearchByStudent />} />
-                        <Route path="/addStudents" element={<AddStudents />} />
-                        <Route path="/fill-students-fields" element={<StudentsFieldsTable />} />
+            <>
+                <BrowserRouter>
+                    <Layout>
+                        <Routes>
+                            <Route path="/" element={<WelcomePage />} />
+                            <Route path="/school-id" element={<SchoolCode />} />
+                            <Route path="/staff-login" element={<StaffLogin />} />
+                            <Route path="/student-form" element={<StudentForm />} />
+                            <Route path="/staff-home" element={<StaffHome />} />
+                            <Route path="/classes" element={<ClassesList />} />
+                            <Route path="/class/:class/:grade" element={<StudentsByClass />} />
+                            <Route path="/edit-student/:id" element={<EditStudent />} />
+                            <Route path="/data-fetch" element={<SearchFormPage />} />
+                            <Route path="/recent-searches" element={<RecentSearchesPage />} />
+                            <Route path="/staff/edit" element={<EditStaff />} />
+                            <Route path="/staff/add" element={<AddStaff />} />
+                            <Route path="/staff/delete" element={<DeleteStaff />} />
+                            <Route path="/staff-manage" element={<StaffManage />} />
+                            <Route path="/manage-fields" element={<FieldsManagementPage />} />
+                            <Route path="/wait-searches" element={<WaitingSearches />} />
+                            <Route path="/search-result-not-to-edit/:id" element={<SearchDetailsNotToEdit />} />
+                            <Route path="/search-results/:id" element={<SearchDetailsPage />} />
+                            <Route path="/priority" element={<PriorityPage />} />
+                            <Route path="/search-by-student" element={<SearchByStudent />} />
+                            <Route path="/addStudents" element={<AddStudents />} />
+                            <Route path="/fill-students-fields" element={<StudentsFieldsTable />} />
 
-                    </Routes>
-                </Layout>
-            </BrowserRouter>
-            {/* <BottomBanner></BottomBanner> */}
-        </>
-    );
+                        </Routes>
+                    </Layout>
+                </BrowserRouter>
+                {/* <BottomBanner></BottomBanner> */}
+            </>
+            );
 }
 
-export default Home;
+            export default Home;

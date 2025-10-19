@@ -1,122 +1,4 @@
-/*
-body {
-   font-family: 'Assistant', 'Heebo', sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-.main-wrapper {
-  position: relative;
-  min-height: 100vh;
-  background: url('../logo.png') no-repeat right center;
-  background-size: contain;
-  background-color: #fff;
-  overflow-x: hidden;
-}
-
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: -1;
-  background-image: 
-    url("../public/up.png"),
-    url("../public/down.png");
-  background-repeat: no-repeat, no-repeat;
-  background-position: top, bottom;
-  background-size: 100% 72%, 100% 28%;
-}
-
-.content {
-  height: 100vh;
-  overflow: auto;
-}
-
-
-h1,
-h2,
-h3 {
-  color: #00bcd4;
-}
-
-button {
-  background-color: #00bcd4;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.varela-round-regular {
-  font-family: "Varela Round", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-button:hover {
-  background-color: #f50057;
-  transform: scale(1.05);
-}
-
-input,
-textarea {
-  border: 2px solid #ccc;
-  border-radius: 6px;
-  padding: 0.5rem;
-  width: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
-}
-
-input:focus,
-textarea:focus {
-  border-color: #00bcd4;
-  outline: none;
-}
-
-.container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  animation: fade-in 1s ease;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  transition: transform 0.3s;
-}
-
-.logo:hover {
-  transform: rotate(10deg) scale(1.1);
-} */
+/* 
 body,
 html {
   margin: 0;
@@ -139,14 +21,11 @@ html {
   background-repeat: no-repeat;
   overflow-x: hidden;
 }
-
-/* תמונת צד ימין */
 .side-image {
   position: fixed;
   top: 0;
   right: 0;
   width: 30vw;
-  /* או מה שמתאים לך */
   height: 100%;
   background: url('../public/logo.png') center center no-repeat;
   background-size: cover;
@@ -156,10 +35,8 @@ html {
   max-width: 1000px;
 }
 
-/* כרטיס התוכן */
 .content-card {
   margin-right: calc(29vw + 20px);;
-  /* משאיר מקום לתמונת הצד */
   margin-left: 12%;
   margin-top: 5%;
   background: white;
@@ -171,7 +48,6 @@ html {
   z-index: 1;
   position: relative;
 }
-/* רספונסיביות למסכים קטנים יותר */
 @media (max-width: 768px) {
   .side-image {
     display: none;
@@ -183,15 +59,14 @@ html {
   }
 }
 .content-card {
-  overflow-x: auto; /* מוסיף גלילה אופקית */
+  overflow-x: auto; 
   overflow-y: auto;
   position: relative;
-  direction: rtl; /* כדי שהפס יופיע בצד ימין במידת הצורך */
+  direction: rtl; 
 }
 
-/* גורם לפס הגלילה האופקי להופיע למעלה במקום למטה */
 .content-card::-webkit-scrollbar {
-  height: 12px; /* גובה פס הגלילה */
+  height: 12px; 
 }
 
 .content-card::-webkit-scrollbar-track {
@@ -203,8 +78,99 @@ html {
   border-radius: 6px;
 }
 
-/* הטריק שמעביר את הגלילה למעלה */
+
 .content-card {
   display: flex;
   flex-direction: column-reverse;
+} */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  direction: rtl;
+  font-family: 'Assistant', sans-serif;
+}
+
+/* מעטפת כללית */
+.page-wrapper {
+  min-width: 100vw;
+  position: relative;
+  min-height: 100vh;
+  background:
+    linear-gradient(to bottom, transparent 72%, transparent 72%),
+    url('../public/up.png') top center no-repeat,
+    url('../public/down.png') bottom center no-repeat;
+  background-size: 100% 29%, 100% 71%;
+  background-repeat: no-repeat;
+  overflow-x: hidden;
+}
+
+/* תמונת צד ימין */
+.side-image {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30vw;
+  height: 100%;
+  background: url('../public/logo.png') center center no-repeat;
+  background-size: cover;
+  z-index: 0;
+  pointer-events: none;
+  min-width: 180px;
+  max-width: 1000px;
+}
+
+/* כרטיס התוכן */
+.content-card {
+  margin-right: calc(29vw + 20px);
+  margin-left: 12%;
+  margin-top: 5%;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-height: calc(90vh - 40px);
+  border-radius: 10px;
+  z-index: 1;
+  position: relative;
+
+  /* גלילה */
+  overflow-x: auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse; /* גורם לפס הגלילה האופקי להיות למעלה */
+  direction: rtl;
+}
+
+/* תוכן פנימי כדי לשמור על סדר רגיל */
+.card-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* עיצוב פס הגלילה */
+.content-card::-webkit-scrollbar {
+  height: 12px;
+}
+
+.content-card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.content-card::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 6px;
+}
+
+/* רספונסיביות למסכים קטנים יותר */
+@media (max-width: 768px) {
+  .side-image {
+    display: none;
+  }
+
+  .content-card {
+    margin: 5% 5%;
+    max-height: calc(90vh - 40px);
+  }
 }
