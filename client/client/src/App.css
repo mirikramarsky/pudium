@@ -182,3 +182,29 @@ html {
     max-height: calc(90vh - 40px);
   }
 }
+.content-card {
+  overflow-x: auto; /* מוסיף גלילה אופקית */
+  overflow-y: auto;
+  position: relative;
+  direction: rtl; /* כדי שהפס יופיע בצד ימין במידת הצורך */
+}
+
+/* גורם לפס הגלילה האופקי להופיע למעלה במקום למטה */
+.content-card::-webkit-scrollbar {
+  height: 12px; /* גובה פס הגלילה */
+}
+
+.content-card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.content-card::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 6px;
+}
+
+/* הטריק שמעביר את הגלילה למעלה */
+.content-card {
+  display: flex;
+  flex-direction: column-reverse;
+}
