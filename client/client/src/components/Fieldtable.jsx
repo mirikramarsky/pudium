@@ -604,6 +604,16 @@ const StudentsFieldsTable = () => {
 
   return (
     <div>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <h2>טבלת תחומי התלמידות</h2>
+        <Button
+          onClick={() => navigate('../staff-manage')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
       {message.text && <Alert variant={message.variant}>{message.text}</Alert>}
       <Table striped bordered hover responsive>
         <thead>
@@ -611,6 +621,7 @@ const StudentsFieldsTable = () => {
             <th>ת"ז</th>
             <th>שם פרטי</th>
             <th>שם משפחה</th>
+            <th>כיתה</th>
             {fields.map((f, idx) => (
               <th key={idx}>{f}</th>
             ))}
@@ -625,7 +636,7 @@ const StudentsFieldsTable = () => {
               <td>{student.id}</td>
               <td>{student.firstname}</td>
               <td>{student.lastname}</td>
-
+              <td>{student.grade + student.class}</td>
               {fields.map((field, fi) => (
                 <td key={fi}>
                   <Form.Check
