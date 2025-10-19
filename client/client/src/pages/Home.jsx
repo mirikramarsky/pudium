@@ -24,8 +24,6 @@ import SearchByStudent from '../components/SearchByStudent';
 import AddStudents from '../components/AddStudents';
 import StudentsFieldsTable from '../components/Fieldtable';
 // import BottomBanner from '../components/BottomBanner';
-import React, { useEffect, useRef } from 'react';
-import { useLocation } from 'react-use';
 
 function Layout({ children }) {
   const wrapperRef = useRef();
@@ -79,11 +77,6 @@ function Layout({ children }) {
     </div>
   );
 }
-
-export default Layout;
-
-
-
 function Home() {
     return (
         <>
