@@ -24,42 +24,64 @@ import SearchByStudent from '../components/SearchByStudent';
 import AddStudents from '../components/AddStudents';
 import StudentsFieldsTable from '../components/Fieldtable';
 // import BottomBanner from '../components/BottomBanner';
+import React, { useEffect, useRef } from 'react';
+import { useLocation } from 'react-use';
+
 function Layout({ children }) {
-    const wrapperRef = useRef();
+  const wrapperRef = useRef();
+  const fakeRef = useRef();
 
-    useEffect(() => {
-        const wrapper = wrapperRef.current;
-        // סינכרון גלילה - עדכון מיקום הדיב החיצוני
-        const fakeBar = wrapper.querySelector('.scroll-top-fakebar');
-        const onScroll = () => {
-            fakeBar.scrollLeft = wrapper.scrollLeft;
-        };
-        wrapper.addEventListener('scroll', onScroll);
-        return () => wrapper.removeEventListener('scroll', onScroll);
-    }, []);
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    const fakeBar = fakeRef.current;
 
-    const location = useLocation();
-    const isWelcomePage = location.pathname === '/';
+    // סנכרון כשגוללים בתוכן
+    const syncFromContent = () => {
+      fakeBar.scrollLeft = wrapper.scrollLeft;
+    };
 
-    return (
-        <div className="page-wrapper">
-            <div className="side-image"></div>
+    // סנכרון כשגוללים בפס העליון
+    const syncFromFake = () => {
+      wrapper.scrollLeft = fakeBar.scrollLeft;
+    };
 
-            {isWelcomePage ? (
-                children
-            ) : (
-                <div className="content-card">
-                    <div className="scroll-top-wrapper" ref={wrapperRef}>
-                        <div className="scroll-top-fakebar"></div>
-                        <div className="scroll-content">
-                            {children}
-                        </div>
-                    </div>
-                </div>
-            )}
+    wrapper.addEventListener('scroll', syncFromContent);
+    fakeBar.addEventListener('scroll', syncFromFake);
+
+    return () => {
+      wrapper.removeEventListener('scroll', syncFromContent);
+      fakeBar.removeEventListener('scroll', syncFromFake);
+    };
+  }, []);
+
+  const location = useLocation();
+  const isWelcomePage = location.pathname === '/';
+
+  return (
+    <div className="page-wrapper">
+      <div className="side-image"></div>
+
+      {isWelcomePage ? (
+        children
+      ) : (
+        <div className="content-card">
+          {/* פס הגלילה העליון */}
+          <div className="scroll-top-fakebar" ref={fakeRef}>
+            <div className="scroll-fake-inner"></div>
+          </div>
+
+          {/* אזור התוכן עם גלילה אמיתית */}
+          <div className="scroll-top-wrapper" ref={wrapperRef}>
+            <div className="scroll-content">{children}</div>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 }
+
+export default Layout;
+
 
 
 function Home() {
