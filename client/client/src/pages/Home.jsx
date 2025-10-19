@@ -38,8 +38,8 @@ function Layout({ children }) {
                 children
             ) : (
                 <div class="content-card">
-                    <div class="card-inner"></div>
-                     {children}
+                    <div class="card-inner">
+                     {children}</div>
                     </div>
             )}
                 </div>
