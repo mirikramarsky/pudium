@@ -121,8 +121,6 @@ html {
   min-width: 180px;
   max-width: 1000px;
 }
-
-/* תוכן פנימי כדי לשמור על סדר רגיל */
 .content-card {
   margin-right: calc(29vw + 20px);
   margin-left: 12%;
@@ -133,15 +131,32 @@ html {
   border-radius: 10px;
   max-height: calc(90vh - 40px);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
+/* גלילה אופקית למעלה */
 .scroll-top-wrapper {
   overflow-x: auto;
-  max-height: 100%;
+  overflow-y: hidden;
+  position: relative;
 }
 
+/* פס הגלילה יהיה למעלה באמצעות דיב חיצוני */
+.scroll-top-fakebar {
+  height: 12px;
+  background: #aaa;
+  border-radius: 6px;
+  position: absolute;
+  top: 0; /* מעל התוכן */
+  left: 0;
+  right: 0;
+}
+
+/* התוכן עצמו */
 .scroll-content {
-  min-width: 1000px; /* או רוחב תוכן אמיתי */
+  min-width: 1000px; /* רוחב תוכן אמיתי */
+  padding-top: 12px; /* רווח למקום ה"פס" */
 }
 
 /* רספונסיביות למסכים קטנים יותר */

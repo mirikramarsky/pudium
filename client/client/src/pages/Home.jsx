@@ -29,12 +29,16 @@ function Layout({ children }) {
 
     useEffect(() => {
         const wrapper = wrapperRef.current;
-        // מעביר את ה-scroll האופקי ל-"top"
-        wrapper.scrollLeft = 0;
+        // סינכרון גלילה - עדכון מיקום הדיב החיצוני
+        const fakeBar = wrapper.querySelector('.scroll-top-fakebar');
+        const onScroll = () => {
+            fakeBar.scrollLeft = wrapper.scrollLeft;
+        };
+        wrapper.addEventListener('scroll', onScroll);
+        return () => wrapper.removeEventListener('scroll', onScroll);
     }, []);
-    const location = useLocation();
 
-    // אם זה דף הפתיחה - לא עוטפים בכרטיס
+    const location = useLocation();
     const isWelcomePage = location.pathname === '/';
 
     return (
@@ -46,16 +50,17 @@ function Layout({ children }) {
             ) : (
                 <div className="content-card">
                     <div className="scroll-top-wrapper" ref={wrapperRef}>
+                        <div className="scroll-top-fakebar"></div>
                         <div className="scroll-content">
                             {children}
                         </div>
                     </div>
                 </div>
-
             )}
         </div>
     );
 }
+
 
 function Home() {
     return (
