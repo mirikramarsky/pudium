@@ -29,28 +29,30 @@ function Layout({ children }) {
   const wrapperRef = useRef();
   const fakeRef = useRef();
 
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    const fakeBar = fakeRef.current;
+useEffect(() => {
+  const wrapper = wrapperRef.current;
+  const fakeBar = fakeRef.current;
 
-    // סנכרון כשגוללים בתוכן
-    const syncFromContent = () => {
-      fakeBar.scrollLeft = wrapper.scrollLeft;
-    };
+  // אם האלמנטים לא קיימים (למשל בעמוד הבית) — לא לעשות כלום
+  if (!wrapper || !fakeBar) return;
 
-    // סנכרון כשגוללים בפס העליון
-    const syncFromFake = () => {
-      wrapper.scrollLeft = fakeBar.scrollLeft;
-    };
+  const syncFromContent = () => {
+    fakeBar.scrollLeft = wrapper.scrollLeft;
+  };
 
-    wrapper.addEventListener('scroll', syncFromContent);
-    fakeBar.addEventListener('scroll', syncFromFake);
+  const syncFromFake = () => {
+    wrapper.scrollLeft = fakeBar.scrollLeft;
+  };
 
-    return () => {
-      wrapper.removeEventListener('scroll', syncFromContent);
-      fakeBar.removeEventListener('scroll', syncFromFake);
-    };
-  }, []);
+  wrapper.addEventListener('scroll', syncFromContent);
+  fakeBar.addEventListener('scroll', syncFromFake);
+
+  return () => {
+    wrapper.removeEventListener('scroll', syncFromContent);
+    fakeBar.removeEventListener('scroll', syncFromFake);
+  };
+}, []);
+
 
   const location = useLocation();
   const isWelcomePage = location.pathname === '/';
