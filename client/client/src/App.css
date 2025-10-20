@@ -149,7 +149,6 @@ html {
   background: #aaa;
   border-radius: 6px;
 }
-
 /* הפס הפנימי שבתוך ה-fakebar */
 .scroll-fake-inner {
   width: 80vw; /* או דינמי – לפי הצורך שלך */
