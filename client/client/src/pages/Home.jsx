@@ -28,35 +28,27 @@ import StudentsFieldsTable from '../components/Fieldtable';
 function Layout({ children }) {
   const wrapperRef = useRef();
   const fakeRef = useRef();
-  const fakeInnerRef = useRef();
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
     const fakeBar = fakeRef.current;
-    const fakeInner = fakeInnerRef.current;
 
-    // עדכון רוחב הפס העליון לפי רוחב התוכן
-    const updateWidths = () => {
-      fakeInner.style.width = wrapper.scrollWidth + 'px';
-    };
-    updateWidths();
-
-    // סנכרון בין הגלילות
+    // סנכרון כשגוללים בתוכן
     const syncFromContent = () => {
       fakeBar.scrollLeft = wrapper.scrollLeft;
     };
+
+    // סנכרון כשגוללים בפס העליון
     const syncFromFake = () => {
       wrapper.scrollLeft = fakeBar.scrollLeft;
     };
 
     wrapper.addEventListener('scroll', syncFromContent);
     fakeBar.addEventListener('scroll', syncFromFake);
-    window.addEventListener('resize', updateWidths);
 
     return () => {
       wrapper.removeEventListener('scroll', syncFromContent);
       fakeBar.removeEventListener('scroll', syncFromFake);
-      window.removeEventListener('resize', updateWidths);
     };
   }, []);
 
@@ -73,10 +65,10 @@ function Layout({ children }) {
         <div className="content-card">
           {/* פס הגלילה העליון */}
           <div className="scroll-top-fakebar" ref={fakeRef}>
-            <div className="scroll-fake-inner" ref={fakeInnerRef}></div>
+            <div className="scroll-fake-inner"></div>
           </div>
 
-          {/* אזור התוכן */}
+          {/* אזור התוכן עם גלילה אמיתית */}
           <div className="scroll-top-wrapper" ref={wrapperRef}>
             <div className="scroll-content">{children}</div>
           </div>

@@ -120,13 +120,13 @@ html {
   pointer-events: none;
   min-width: 180px;
   max-width: 1000px;
-}
-.content-card {
+}.content-card {
   margin-right: calc(29vw + 20px);
   margin-left: 12%;
   margin-top: 5%;
   background: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 0;
   border-radius: 10px;
   max-height: calc(90vh - 40px);
   position: relative;
@@ -134,7 +134,7 @@ html {
   flex-direction: column;
 }
 
-/* פס הגלילה העליון */
+/* פס הגלילה העליון (אמיתי) */
 .scroll-top-fakebar {
   overflow-x: auto;
   overflow-y: hidden;
@@ -150,12 +150,13 @@ html {
   border-radius: 6px;
 }
 
-/* האלמנט הפנימי (רוחב דינמי) */
+/* הפס הפנימי שבתוך ה-fakebar */
 .scroll-fake-inner {
+  width: 2000px; /* או דינמי – לפי הצורך שלך */
   height: 1px;
 }
 
-/* אזור התוכן */
+/* אזור התוכן האמיתי */
 .scroll-top-wrapper {
   overflow-x: auto;
   overflow-y: auto;
@@ -164,9 +165,10 @@ html {
 }
 
 .scroll-content {
-  min-width: 100%; /* יתעדכן לפי התוכן בפועל */
+  min-width: 2000px; /* אותו רוחב כמו ב-fakebar */
   padding-top: 10px;
 }
+
 /* רספונסיביות למסכים קטנים יותר */
 @media (max-width: 768px) {
   .side-image {
