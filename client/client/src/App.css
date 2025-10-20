@@ -152,7 +152,7 @@ html {
 
 /* הפס הפנימי שבתוך ה-fakebar */
 .scroll-fake-inner {
-  width: 2000px; /* או דינמי – לפי הצורך שלך */
+  width: 80vw; /* או דינמי – לפי הצורך שלך */
   height: 1px;
 }
 
