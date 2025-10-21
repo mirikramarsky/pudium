@@ -131,16 +131,18 @@ html {
   padding: 20px;
   border-radius: 10px;
   position: relative;
-  display: block;
-  width: fit-content;  /* רוחב לפי תוכן */
-  max-width: 100%;     /* לא יחרוג ממסך */
-  max-height: 90vh;    /* כאן הגבלת גובה */
-  overflow-y: auto;    /* גלילה אנכית אם התוכן גבוה */
-  overflow-x: visible; /* גלילה אופקית של הדף */
+
+  /* רוחב */
+  width: auto;       /* לא fit-content, אלא תופס את רוחב המסך פחות המרחקים */
+  max-width: 100%;  
+
+  /* גובה */
+  height: 90vh;      /* כאן חשוב – לא max-height אלא height */
+  overflow-y: auto;  /* גלילה אנכית */
+  overflow-x: visible;
+
+  display: block; 
 }
-
-
-
 
 
 /* רספונסיביות למסכים קטנים יותר */
