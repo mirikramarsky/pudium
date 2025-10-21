@@ -132,16 +132,13 @@ html {
   border-radius: 10px;
   position: relative;
   display: block;
-  /* כבר לא צריך flex */
-  width: fit-content;
-  /* הרוחב יהיה לפי התוכן */
-  max-width: 100%;
-  /* כדי שלא יחרוג מדי */
-  overflow: visible;
-  /* ביטול גלילה פנימית */
-  height: auto;
-  /* ביטול הגבלת גובה */
+  width: fit-content;  /* רוחב לפי תוכן */
+  max-width: 100%;     /* לא יחרוג ממסך */
+  max-height: 90vh;    /* כאן הגבלת גובה */
+  overflow-y: auto;    /* גלילה אנכית אם התוכן גבוה */
+  overflow-x: visible; /* גלילה אופקית של הדף */
 }
+
 
 
 
