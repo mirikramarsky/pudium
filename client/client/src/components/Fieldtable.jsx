@@ -43,7 +43,18 @@ const StudentsFieldsTable = () => {
 
     fetchData();
   }, [schoolId]);
-
+  const updateStudentById = (studentId, mutateFn) => {
+    setStudents(prev => {
+      const updated = prev.map(s => {
+        if (s.id !== studentId) return s;
+        const newS = mutateFn({ ...s });
+        return newS;
+      });
+      // עדכון צלומים מבוססי סינון
+      filterStudents(updated, filter);
+      return updated;
+    });
+  };
   const countValidFields = (student) => {
     const allFields = [...student.selectedFields, ...student.otherFields];
     return allFields.filter((f) => f && f.trim() !== '').length;
@@ -72,45 +83,46 @@ const StudentsFieldsTable = () => {
     }
   };
 
-  const handleCheckboxChange = (studentIndex, fieldName) => {
-    setStudents((prev) => {
-      const updated = [...prev];
-      const student = { ...updated[studentIndex] };
+  const handleCheckboxChange = (studentId, fieldName) => {
+    updateStudentById(studentId, (student) => {
       const totalSelected = countValidFields(student);
 
       if (student.selectedFields.includes(fieldName)) {
+        // הסרת בחירה
         const idx = student.selectedFields.indexOf(fieldName);
-        student.selectedFields[idx] = '';
+        if (idx !== -1) student.selectedFields[idx] = '';
       } else {
+        // הוספת בחירה — בדוק מגבלה
         if (totalSelected >= 4) {
           setMessage({
             text: 'לא ניתן לבחור יותר מ-4 תחומים (כולל "אחר")',
             variant: 'danger',
           });
-          return prev;
+          return student; // לא משנים
         }
-
         const emptyIndex = student.selectedFields.findIndex((f) => f === '');
         if (emptyIndex !== -1) {
           student.selectedFields[emptyIndex] = fieldName;
+        } else {
+          // במידה ואין תא ריק (נדיר) — נדחוס במיקום ראשון
+          student.selectedFields[0] = fieldName;
         }
       }
 
-      updated[studentIndex] = student;
+      // שמירה אסינכרונית (לא חוסמת את ה-setState)
       saveStudent(student);
-      filterStudents(updated, filter);
-      return updated;
+      return student;
     });
   };
 
-  const handleOtherChange = (studentIndex, otherIndex, value) => {
-    setStudents((prev) => {
-      const updated = [...prev];
-      const student = { ...updated[studentIndex] };
-      student.otherFields[otherIndex] = value;
-      updated[studentIndex] = student;
 
-      clearTimeout(typingTimeouts.current[student.id]);
+  const handleOtherChange = (studentId, otherIndex, value) => {
+    updateStudentById(studentId, (student) => {
+      student.otherFields[otherIndex] = value;
+
+      // דבונסינג על שמירה
+      const to = typingTimeouts.current[student.id];
+      if (to) clearTimeout(to);
       typingTimeouts.current[student.id] = setTimeout(() => {
         const totalSelected = countValidFields(student);
         if (totalSelected > 4) {
@@ -123,8 +135,7 @@ const StudentsFieldsTable = () => {
         saveStudent(student);
       }, 600);
 
-      filterStudents(updated, filter);
-      return updated;
+      return student;
     });
   };
 
@@ -225,7 +236,7 @@ const StudentsFieldsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredStudents.map((student, si) => (
+          {filteredStudents.map((student) => (
             <tr key={student.id}>
               <td>{student.id}</td>
               <td>{student.firstname}</td>
@@ -236,7 +247,7 @@ const StudentsFieldsTable = () => {
                   <Form.Check
                     type="checkbox"
                     checked={student.selectedFields.includes(field)}
-                    onChange={() => handleCheckboxChange(si, field)}
+                    onChange={() => handleCheckboxChange(student.id, field)} // <-- id כאן
                   />
                 </td>
               ))}
@@ -245,7 +256,7 @@ const StudentsFieldsTable = () => {
                   <Form.Control
                     type="text"
                     value={student.otherFields[oi] || ''}
-                    onChange={(e) => handleOtherChange(si, oi, e.target.value)}
+                    onChange={(e) => handleOtherChange(student.id, oi, e.target.value)} // <-- id כאן
                     placeholder="-"
                   />
                 </td>
