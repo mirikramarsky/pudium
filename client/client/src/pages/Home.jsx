@@ -26,34 +26,6 @@ import StudentsFieldsTable from '../components/Fieldtable';
 // import BottomBanner from '../components/BottomBanner';
 
 function Layout({ children }) {
-  const wrapperRef = useRef();
-  const fakeRef = useRef();
-
-useEffect(() => {
-  const wrapper = wrapperRef.current;
-  const fakeBar = fakeRef.current;
-
-  // אם האלמנטים לא קיימים (למשל בעמוד הבית) — לא לעשות כלום
-  if (!wrapper || !fakeBar) return;
-
-  const syncFromContent = () => {
-    fakeBar.scrollLeft = wrapper.scrollLeft;
-  };
-
-  const syncFromFake = () => {
-    wrapper.scrollLeft = fakeBar.scrollLeft;
-  };
-
-  wrapper.addEventListener('scroll', syncFromContent);
-  fakeBar.addEventListener('scroll', syncFromFake);
-
-  return () => {
-    wrapper.removeEventListener('scroll', syncFromContent);
-    fakeBar.removeEventListener('scroll', syncFromFake);
-  };
-}, []);
-
-
   const location = useLocation();
   const isWelcomePage = location.pathname === '/';
 
@@ -65,20 +37,13 @@ useEffect(() => {
         children
       ) : (
         <div className="content-card">
-          {/* פס הגלילה העליון */}
-          <div className="scroll-top-fakebar" ref={fakeRef}>
-            <div className="scroll-fake-inner"></div>
-          </div>
-
-          {/* אזור התוכן עם גלילה אמיתית */}
-          <div className="scroll-top-wrapper" ref={wrapperRef}>
-            <div className="scroll-content">{children}</div>
-          </div>
+          {children}
         </div>
       )}
     </div>
   );
 }
+
 function Home() {
     return (
         <>
