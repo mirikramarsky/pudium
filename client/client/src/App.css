@@ -127,22 +127,25 @@ html {
   margin-left: 12%;
   margin-top: 5%;
   background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   padding: 20px;
   border-radius: 10px;
   position: relative;
 
   /* רוחב */
-  width: auto;       /* לא fit-content, אלא תופס את רוחב המסך פחות המרחקים */
-  max-width: 100%;  
-
+  display: block;       /* לא flex */
+  width: max-content;   /* הכרטיס יתרחב לפי תוכן */
+  min-width: calc(100% - 29vw - 20px - 12%); /* תמיד לפחות רוחב המסך פחות המרחקים */
+  
   /* גובה */
-  height: 90vh;      /* כאן חשוב – לא max-height אלא height */
-  overflow-y: auto;  /* גלילה אנכית */
-  overflow-x: visible;
+  height: 90vh;      
+  overflow-y: auto;   /* גלילה אנכית */
+  overflow-x: hidden; /* אין גלילה אופקית בתוך הכרטיס */
 
-  display: block; 
+  /* אפשרות לעמוד לגלול אופקית אם הכרטיס גדול */
+  white-space: nowrap; /* אם יש תוכן inline כמו טבלאות */
 }
+
 
 
 /* רספונסיביות למסכים קטנים יותר */
