@@ -155,12 +155,21 @@ button:focus-visible {
   transform: scale(1.05);
 }
 /* כותרות נעוצות */
+.table-container {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+}
+
+/* הכותרות הנעוצות */
 .stick {
   position: sticky;
   top: 0;
-  background: #f8f9fa; /* רקע כמו bootstrap */
-  z-index: 2;
+  background-color: #f8f9fa;
+  z-index: 3; /* יותר גבוה מכל תוכן הטבלה */
+  border-bottom: 2px solid #dee2e6;
 }
+
 
 /* עמודות 'אחר' צרות יותר */
 .small-col {

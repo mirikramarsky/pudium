@@ -220,8 +220,8 @@ const StudentsFieldsTable = () => {
 
       {message.text && <Alert variant={message.variant}>{message.text}</Alert>}
 
-    <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
-  <Table striped bordered hover responsive>
+<div className="table-container">
+  <Table striped bordered hover>
     <thead>
       <tr>
         <th className="stick">ת"ז</th>
@@ -267,6 +267,7 @@ const StudentsFieldsTable = () => {
     </tbody>
   </Table>
 </div>
+
 
     </div>
   );
