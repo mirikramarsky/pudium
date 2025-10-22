@@ -223,15 +223,15 @@ const StudentsFieldsTable = () => {
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th>ת"ז</th>
-            <th>שם פרטי</th>
-            <th>שם משפחה</th>
-            <th>כיתה</th>
+            <th class="stick">ת"ז</th>
+            <th class="stick">שם פרטי</th>
+            <th class="stick">שם משפחה</th>
+            <th class="stick">כיתה</th>
             {fields.map((f, idx) => (
-              <th key={idx}>{f}</th>
+              <th class="stick" key={idx}>{f}</th>
             ))}
             {[0, 1, 2, 3].map((_, idx) => (
-              <th key={idx}>אחר {idx + 1}</th>
+              <th  class="stick" key={idx}>אחר {idx + 1}</th>
             ))}
           </tr>
         </thead>
