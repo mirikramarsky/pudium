@@ -220,51 +220,54 @@ const StudentsFieldsTable = () => {
 
       {message.text && <Alert variant={message.variant}>{message.text}</Alert>}
 
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th class="stick">ת"ז</th>
-            <th class="stick">שם פרטי</th>
-            <th class="stick">שם משפחה</th>
-            <th class="stick">כיתה</th>
-            {fields.map((f, idx) => (
-              <th class="stick" key={idx}>{f}</th>
-            ))}
-            {[0, 1, 2, 3].map((_, idx) => (
-              <th  class="stick" key={idx}>אחר {idx + 1}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {filteredStudents.map((student) => (
-            <tr key={student.id}>
-              <td>{student.id}</td>
-              <td>{student.firstname}</td>
-              <td>{student.lastname}</td>
-              <td>{student.class + student.grade}</td>
-              {fields.map((field, fi) => (
-                <td key={fi}>
-                  <Form.Check
-                    type="checkbox"
-                    checked={student.selectedFields.includes(field)}
-                    onChange={() => handleCheckboxChange(student.id, field)} // <-- id כאן
-                  />
-                </td>
-              ))}
-              {[0, 1, 2, 3].map((oi) => (
-                <td key={oi} style={{ minWidth: '150px' }}>
-                  <Form.Control
-                    type="text"
-                    value={student.otherFields[oi] || ''}
-                    onChange={(e) => handleOtherChange(student.id, oi, e.target.value)} // <-- id כאן
-                    placeholder="-"
-                  />
-                </td>
-              ))}
-            </tr>
+    <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
+  <Table striped bordered hover responsive>
+    <thead>
+      <tr>
+        <th className="stick">ת"ז</th>
+        <th className="stick">שם פרטי</th>
+        <th className="stick">שם משפחה</th>
+        <th className="stick">כיתה</th>
+        {fields.map((f, idx) => (
+          <th className="stick" key={idx}>{f}</th>
+        ))}
+        {[0, 1, 2, 3].map((_, idx) => (
+          <th className="stick small-col" key={idx}>אחר {idx + 1}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {filteredStudents.map((student) => (
+        <tr key={student.id}>
+          <td>{student.id}</td>
+          <td>{student.firstname}</td>
+          <td>{student.lastname}</td>
+          <td>{student.class + student.grade}</td>
+          {fields.map((field, fi) => (
+            <td key={fi}>
+              <Form.Check
+                type="checkbox"
+                checked={student.selectedFields.includes(field)}
+                onChange={() => handleCheckboxChange(student.id, field)}
+              />
+            </td>
           ))}
-        </tbody>
-      </Table>
+          {[0, 1, 2, 3].map((oi) => (
+            <td key={oi} className="small-col">
+              <Form.Control
+                type="text"
+                value={student.otherFields[oi] || ''}
+                onChange={(e) => handleOtherChange(student.id, oi, e.target.value)}
+                placeholder="-"
+              />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+</div>
+
     </div>
   );
 };

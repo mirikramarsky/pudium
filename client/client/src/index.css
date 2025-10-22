@@ -69,12 +69,6 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-.stick{
-  position: sticky;
-  top: 0;
-  background: #f8f9fa; /* רקע כמו ה-bg-light של bootstrap */
-  z-index: 2; /* כדי שהכותרות יהיו מעל התאים */
-}
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -159,6 +153,20 @@ button:focus-visible {
 
 .start-button:hover {
   transform: scale(1.05);
+}
+/* כותרות נעוצות */
+.stick {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa; /* רקע כמו bootstrap */
+  z-index: 2;
+}
+
+/* עמודות 'אחר' צרות יותר */
+.small-col {
+  width: 80px; /* אפשר לשנות לפי הצורך */
+  max-width: 80px;
+  min-width: 60px;
 }
 
 /* אפקט כניסה */
