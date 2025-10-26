@@ -114,14 +114,15 @@ const SearchDetailsPage = () => {
                     classes: searchData.classes ? JSON.parse(searchData.classes) : [],
                     excludeIds: []
                 };
-                console.log("searchParams",searchParams);
+                console.log("searchParams2",searchParams);
                 
                 try {
                     const resStudents = await axios.post(
                         `${BASE_URL}students/params/`,
                         searchParams
                     );
-
+                    console.log("searchParams response", resStudents);
+                    
                     const foundStudents = resStudents.data;
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
