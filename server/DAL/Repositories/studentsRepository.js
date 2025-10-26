@@ -128,28 +128,34 @@ class StudentsRepository {
             }
         }
     }
-    async update(id,schoolId, updatedFields) {
-        console.log("students repository update", id, schoolId, updatedFields);
-        
-        const sets = [];
-        const values = [];
-        let i = 1;
+  async update(id, schoolId, updatedFields) {
+    console.log("students repository update", id, schoolId, updatedFields);
+    
+    const sets = [];
+    const values = [];
+    let i = 1;
 
-        for (const key in updatedFields) {
-            if (updatedFields[key] !== undefined) {
-                sets.push(`${key} = $${i++}`);
-                values.push(updatedFields[key]);
-            }
+    for (const key in updatedFields) {
+        if (updatedFields[key] !== undefined) {
+            sets.push(`${key} = $${i++}`);
+            values.push(updatedFields[key]);
         }
-
-        if (sets.length === 0) return { message: 'Nothing to update.' };
-
-        values.push(id);
-        const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i} AND schoolId = $${schoolId}`;
-        const result = await pool.query(query, values);
-        console.log("query:", query);
-        return result.rowCount > 0;
     }
+
+    if (sets.length === 0) return { message: 'Nothing to update.' };
+
+    // נוסיף את שני הערכים לפרמטרים:
+    values.push(id);
+    values.push(schoolId);
+
+    // שימי לב: הוספנו שני פרמטרים ($i ו-$i+1)
+    const query = `UPDATE students SET ${sets.join(', ')} WHERE id = $${i} AND schoolId = $${i + 1}`;
+
+    const result = await pool.query(query, values);
+    console.log("query:", query, "values:", values);
+    return result.rowCount > 0;
+}
+
     async decreaseSeveralPriority(id) {
         let result;
         const resultp = await pool.query(`SELECT severalpriority FROM students WHERE id = $1`, [id]);
