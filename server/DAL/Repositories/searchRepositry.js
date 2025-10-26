@@ -55,7 +55,6 @@ class SearchRepository {
         const result = await pool.query(query, values);
         return result.rows;
     }
-
     async getStudentsBySearchId(searchId) {
         // 1. שליפת החיפוש
         const { rows: searchRows } = await db.query(
@@ -124,7 +123,7 @@ class SearchRepository {
             FROM studentsinsearches
             )
            AND schoolid = $1
-        `,[id]);
+        `, [id]);
         return result.rows;
     }
     async update(id, updatedFields) {
@@ -150,13 +149,12 @@ class SearchRepository {
         return search.rowCount > 0;
     }
     async deleteOldSearches(cutoffDate) {
-    const result = await pool.query(`
+        const result = await pool.query(`
         DELETE FROM searches
         WHERE searchdate < $1
     `, [cutoffDate]);
-    return result.rowCount;
-}
-
+        return result.rowCount;
+    }
 }
 let searchRepository = new SearchRepository();
 

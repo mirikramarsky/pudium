@@ -114,7 +114,8 @@ const SearchDetailsPage = () => {
                     classes: searchData.classes ? JSON.parse(searchData.classes) : [],
                     excludeIds: []
                 };
-
+                console.log("searchParams",searchParams);
+                
                 try {
                     const resStudents = await axios.post(
                         `${BASE_URL}students/params/`,
@@ -157,7 +158,8 @@ const SearchDetailsPage = () => {
                 classes: search.classes ? JSON.parse(search.classes) : [],
                 excludeIds: [...shownStudentIds, studentId]
             };
-
+            console.log("searchParams",searchParams);
+            
             const res = await axios.post(
                 `${BASE_URL}students/params`,
                 searchParams
@@ -257,7 +259,8 @@ const SearchDetailsPage = () => {
                 classes: search.classes ? JSON.parse(search.classes) : [],
                 excludeIds: shownStudentIds
             };
-
+            console.log("searchParams",searchParams);
+            
             const resStudents = await axios.post(
                 `${BASE_URL}students/params`,
                 searchParams
