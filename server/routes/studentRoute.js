@@ -130,7 +130,7 @@ router.post('/schoolid/:id', async (req, res, next) => {
         next(err);
     }
 });
-router.post('/params/', async (req, res, next) => {
+router.post('/params/toSave', async (req, res, next) => {
     try {
         console.log("studentRoute params", req.body); 
         let result = await studentService.getStudentsByParams(req.body)

@@ -118,7 +118,7 @@ const SearchDetailsPage = () => {
                 
                 try {
                     const resStudents = await axios.post(
-                        `${BASE_URL}students/params/`,
+                        `${BASE_URL}students/params/toSave/`,
                         searchParams
                     );
                     console.log("searchParams response", resStudents);
@@ -138,6 +138,7 @@ const SearchDetailsPage = () => {
                         setError('שגיאה בטעינת התלמידות');
                     }
                 }
+
 
 
             } finally {
@@ -162,7 +163,7 @@ const SearchDetailsPage = () => {
             console.log("searchParams",searchParams);
             
             const res = await axios.post(
-                `${BASE_URL}students/params`,
+                `${BASE_URL}students/params/toSave/`,
                 searchParams
             );
 
@@ -263,7 +264,7 @@ const SearchDetailsPage = () => {
             console.log("searchParams",searchParams);
             
             const resStudents = await axios.post(
-                `${BASE_URL}students/params`,
+                `${BASE_URL}students/params/toSave/`,
                 searchParams
             );
             const newStudents = resStudents.data;
