@@ -14,6 +14,8 @@ class StuInSeaService extends BaseService {
         throw new idError('this id is not exist');
     }
     async getBySearchId(id, schoolId) {
+        console.log("I am in getBySearchId service", id, schoolId);
+        
         let result = await this.repository.getBySearchId(id);
         console.log("result", result);
         

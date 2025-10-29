@@ -14,6 +14,8 @@ class SudentsService extends BaseService {
         throw new idError('this id is not exist');
     }
     async getStudentsByIds(schoolId, studentsIds) {
+        console.log("I am in getStudentsByIds service", schoolId, studentsIds);
+        
         console.log("studentsIds", studentsIds);
         let StuId = studentsIds;
         // אם זה מחרוזת, הופכים אותה למערך

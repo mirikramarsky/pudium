@@ -32,6 +32,8 @@ router.get('/:schoolId', async (req, res, next) => {
 });
 router.post('/:schoolId', async (req, res, next) => {
     try {
+        console.log("I am in student/:schoolId route", req.body);
+        
         let result = await studentService.getStudentsByIds(req.params.schoolId, req.body.studentIds)
         if (result != undefined)
             res.json(result || []);

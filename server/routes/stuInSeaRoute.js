@@ -46,6 +46,8 @@ router.get('/student/:id', async(req, res,next)=>{
 
 router.get('/search/:id/:schoolId', async(req, res,next)=>{
     try{
+        console.log("I am in stuin sea route", req.params.id, req.params.schoolId);
+        
         let result = await stuInSeaService.getBySearchId(req.params.id, req.params.schoolId);
         console.log("results", result);
         
