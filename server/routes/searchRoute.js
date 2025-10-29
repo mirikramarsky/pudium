@@ -60,7 +60,11 @@ router.get('/without/students/saved/:id', async (req, res, next) => {
 });
 router.get('/with/students/saved/:id', async (req, res, next) => {
     try {
+        console.log("id in route:", req.params.id);
+        
         let result = await searchService.getSearchesWithStudents(req.params.id)
+        console.log("result in route:", result);
+        
         if (result != undefined)
             res.json(result || []);
         else
