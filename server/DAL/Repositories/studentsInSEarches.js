@@ -64,6 +64,11 @@ class StuInSeaRepository {
             WHERE id = $2 `, [params.studentid, id]);
         return studentsinsearches.rowCount;
     }
+    async deleteStudents(studentid) {
+        let studentsinsearches = await pool.query(` DELETE FROM studentsinsearches
+            WHERE studentid = $1`, [studentid]);
+        return studentsinsearches.rowCount;
+    }
     async delete(id) {
         let studentsinsearches = await pool.query(` DELETE FROM studentsinsearches
             WHERE id = $1`, [id]);

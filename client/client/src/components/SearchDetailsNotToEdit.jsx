@@ -79,7 +79,16 @@ const SearchDetailsNotToEdit = () => {
     fetchSearchAndStudents();
 }, [id]);
 
-
+    const deleteStudent = async(studentId)=>{
+        try{
+            await axios.delete(`${BASE_URL}/stuInSea/student/${studentId}`);
+            alert("התלמידה נמחקה בהצלחה מהחיפוש הנוכחי")
+        }
+        catch(err){
+            console.error(err);
+            setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
+        }
+    }
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
@@ -130,6 +139,7 @@ const SearchDetailsNotToEdit = () => {
                                 <th>תחום 3</th>
                                 <th>תחום 4</th>
                                 <th>עדיפות כללית</th>
+                                <th>מחיקה</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,6 +154,7 @@ const SearchDetailsNotToEdit = () => {
                                     <td style={{ backgroundColor: getPriorityColor(student.field3priority) }}>{student.field3}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.field4priority) }}>{student.field4}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.severalpriority}</td>
+                                    <td><Button variant='danger' onClick={()=>deleteStudent(student.id)}>מחק</Button></td>
                                 </tr>
                             ))}
                         </tbody>

@@ -106,6 +106,20 @@ router.put('/:id', async(req, res,next)=>{
         next(err);
     }
 });
+router.delete('/student/:id', async(req, res,next)=>{
+    try{
+        let result = await stuInSeaService.deleteStudents(req.params.id);
+        if(result != undefined)
+            res.send(result)
+        else
+            res.status(204).send();
+    }
+    catch(err){
+         if (err instanceof idError)
+            return res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.delete('/:id', async(req, res,next)=>{
     try{
         let result = await stuInSeaService.delete(req.params.id);
