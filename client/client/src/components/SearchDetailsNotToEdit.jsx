@@ -27,6 +27,8 @@ const SearchDetailsNotToEdit = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    console.log("search", search);
+    
     console.log("1",search.classes);
     console.log("2",JSON.parse(search.classes));
     
