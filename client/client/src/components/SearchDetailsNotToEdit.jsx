@@ -84,7 +84,7 @@ const SearchDetailsNotToEdit = () => {
             setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
         }
     }
-    console.log("1", search?.classes != "[]");
+    console.log("1", search?.classes == []);
     console.log("2", JSON.parse(search?.classes || "[]"));
     
     
