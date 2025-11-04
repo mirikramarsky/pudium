@@ -108,7 +108,7 @@ const SearchDetailsNotToEdit = () => {
                         {' '}
                         {console.log(search.classes)}
                         {
-                            search.classes != [] ? JSON.parse(search.classes).join(', ') : '–'}
+                            search.classes != "[]" ? JSON.parse(search.classes).join(', ') : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search.countstudents}</Col>
                     <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>
