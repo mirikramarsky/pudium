@@ -212,13 +212,13 @@ const RecentSearchesPage = () => {
       updateFilter('classes', newSelection);
     }
   };
-   const deleteSearch = async(searcherId) => {
+  const deleteSearch = async (searcherId) => {
     alert("מחיקה תסיר את החיפוש מחיפושים אחרונים ותעלה את עדיפות התלמידות שהיו בחיפוש הזה \n האם את בטוחה שאת רוצה למחוק?")
-    try{
-    await axios.delete(`${BASE_URL}searches/deleteSaerch/${searcherId}`);
-    alert("המחיקה הצליחה")
+    try {
+      await axios.delete(`${BASE_URL}searches/deleteSaerch/${searcherId}`);
+      alert("המחיקה הצליחה")
     }
-    catch(err){
+    catch (err) {
       console.error(err)
       setError("המחיקה נכשלה")
     }
@@ -386,8 +386,10 @@ const RecentSearchesPage = () => {
                   {(() => {
                     try {
                       console.log("search.classes:", typeof (search.classes));
-                      console.log("search.classes value:", JSON.parse(search.classes));
-                      
+                      console.log("search.classes value:", typeof (JSON.parse(search.classes)));
+                      console.log("1", JSON.parse(search.classes) == []);
+
+                      console.log("2", JSON.parse(search.classes) == "[]");
 
                       const parsed = JSON.parse(search.classes);
                       if (!Array.isArray(parsed)) return '';
@@ -423,8 +425,8 @@ const RecentSearchesPage = () => {
                 </td>
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
-                <td>{search.classes == "[]" ? "V" : "x"}</td>
-                <td><Button  variant="dark" onClick={() => deleteSearch(search.id)}>מחק</Button></td>
+                <td>{JSON.parse(search.classes) == [] ? "V" : "x"}</td>
+                <td><Button variant="dark" onClick={() => deleteSearch(search.id)}>מחק</Button></td>
               </tr>
             ))}
           </tbody>

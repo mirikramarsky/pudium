@@ -27,64 +27,59 @@ const SearchDetailsNotToEdit = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-    console.log("search", search);
-    
-    console.log("1",search.classes);
-    console.log("2",JSON.parse(search.classes));
-    
-    
-   useEffect(() => {
-    const fetchSearchAndStudents = async () => {
+
+    useEffect(() => {
+        const fetchSearchAndStudents = async () => {
+            try {
+                const schoolId = localStorage.getItem('schoolId');
+                if (!schoolId) {
+                    setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
+                    setLoading(false);
+                    return;
+                }
+
+                // שליפת פרטי החיפוש
+                const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
+                const searchData = resSearch.data[0];
+
+                if (!searchData) {
+                    setError('החיפוש לא קיים');
+                    setSearch(null);
+                    setLoading(false);
+                    return;
+                }
+
+                setSearch(searchData);
+
+                // שליפת התלמידות לפי מזהי חיפוש מהטבלה המתאימה
+                const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}/${schoolId}`);
+                const students = resIds.data;
+
+                if (students.length > 0) {
+                    setStudents(students);
+                    setLoading(false);
+                    return;
+                } else {
+                    setStudents([]);
+                }
+
+            } catch (err) {
+                console.error('שגיאה בטעינה:', err);
+                setError('שגיאה בטעינת החיפוש או התלמידות');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSearchAndStudents();
+    }, [id]);
+
+    const deleteStudent = async (studentId) => {
         try {
-            const schoolId = localStorage.getItem('schoolId');
-            if (!schoolId) {
-                setError('קוד מוסד לא נמצא. אנא התחבר מחדש.');
-                setLoading(false);
-                return;
-            }
-
-            // שליפת פרטי החיפוש
-            const resSearch = await axios.get(`${BASE_URL}searches/${id}`);
-            const searchData = resSearch.data[0];
-
-            if (!searchData) {
-                setError('החיפוש לא קיים');
-                setSearch(null);
-                setLoading(false);
-                return;
-            }
-
-            setSearch(searchData);
-
-            // שליפת התלמידות לפי מזהי חיפוש מהטבלה המתאימה
-            const resIds = await axios.get(`${BASE_URL}stuInSea/search/${id}/${schoolId}`);
-            const students = resIds.data;
-
-              if (students.length > 0) {
-                        setStudents(students);
-                        setLoading(false);
-                        return;
-            } else {
-                setStudents([]);
-            }
-
-        } catch (err) {
-            console.error('שגיאה בטעינה:', err);
-            setError('שגיאה בטעינת החיפוש או התלמידות');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    fetchSearchAndStudents();
-}, [id]);
-
-    const deleteStudent = async(studentId)=>{
-        try{
             await axios.delete(`${BASE_URL}/stuInSea/student/${studentId}`);
             alert("התלמידה נמחקה בהצלחה מהחיפוש הנוכחי")
         }
-        catch(err){
+        catch (err) {
             console.error(err);
             setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
         }
@@ -92,7 +87,10 @@ const SearchDetailsNotToEdit = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-    
+    console.log("search", search);
+
+    console.log("1", search.classes);
+    console.log("2", JSON.parse(search.classes));
     return (
         <Container className="mt-4">
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
@@ -114,7 +112,7 @@ const SearchDetailsNotToEdit = () => {
                         {' '}
                         {console.log(search.classes)}
                         {
-                        search.classes != [] ? JSON.parse(search.classes).join(', ') : '–'}
+                            search.classes != [] ? JSON.parse(search.classes).join(', ') : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search.countstudents}</Col>
                     <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>
@@ -154,7 +152,7 @@ const SearchDetailsNotToEdit = () => {
                                     <td style={{ backgroundColor: getPriorityColor(student.field3priority) }}>{student.field3}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.field4priority) }}>{student.field4}</td>
                                     <td style={{ backgroundColor: getPriorityColor(student.severalpriority) }}>{student.severalpriority}</td>
-                                    <td><Button variant='danger' onClick={()=>deleteStudent(student.id)}>מחק</Button></td>
+                                    <td><Button variant='danger' onClick={() => deleteStudent(student.id)}>מחק</Button></td>
                                 </tr>
                             ))}
                         </tbody>
