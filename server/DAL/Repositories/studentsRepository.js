@@ -38,6 +38,11 @@ class StudentsRepository {
         const result = await pool.query(query, [schoolId]);
         return result.rows.map(row => row.class_full);
     }
+    async increasePriority(studentid){
+        const query = "UPDATE students SET severalpriority = severalpriority + 1 WHERE id = $1";
+        const result =  await pool.query(query, [studentid]);
+        return result.rowCount;
+    }
     async getStudentsByParams(params) {
         const values = [];
 

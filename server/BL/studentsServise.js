@@ -113,7 +113,7 @@ class SudentsService extends BaseService {
     }
 
     return results;
-}
+    }
 
 
     async goUpGrade(schoolId) {

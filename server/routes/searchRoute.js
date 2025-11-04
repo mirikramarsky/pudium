@@ -168,7 +168,20 @@ router.post('/:id/approve', async (req, res) => {
     }
 });
 
-
+router.delete('/deleteSaerch/:id', async (req, res, next) => {
+    try {
+        let result = await searchService.deleteSearch(req.params.id);
+        if (result != undefined)
+            res.send(result)
+        else
+            res.status(204).send();
+    }
+    catch (err) {
+        if (err instanceof idError)
+           return res.status(400).send(err.message);
+        next(err);
+    }
+});
 router.delete('/:id', async (req, res, next) => {
     try {
         let result = await searchService.delete(req.params.id);

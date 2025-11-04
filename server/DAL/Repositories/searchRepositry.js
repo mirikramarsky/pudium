@@ -1,4 +1,5 @@
 const pool = require('../db');
+const stuInSeaRepository = require('./studentsInSEarches');
 class SearchRepository {
     async get() {
         let searches = await pool.query('SELECT * FROM searches');

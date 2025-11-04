@@ -3,6 +3,7 @@ const BaseService = require("./baseService");
 const stuInSeaRepository = require('../DAL/Repositories/studentsInSEarches');
 const schoolRepository = require('../DAL/Repositories/schoolRepository');
 const mailer = require('../utils/mailer');
+const studentsRepository = require("../DAL/Repositories/studentsRepository");
 
 const BASE_URL = 'https://pudium-production.up.railway.app/api/podium';
 class SearchService extends BaseService {
@@ -15,12 +16,12 @@ class SearchService extends BaseService {
       return result;
     throw new idError('this id is not exist');
   }
-   async getByStudentId(studentId){
-     let result = await this.repository.getByStudentId(studentId);
+  async getByStudentId(studentId) {
+    let result = await this.repository.getByStudentId(studentId);
     if (result && result.length != 0)
       return result;
     throw new idError('this id is not exist');
-   }
+  }
   async getStudentsBySearchId(searchId) {
     let result = await this.repository.getStudentsBySearchId(searchId);
     if (result && result.length != 0)
@@ -29,7 +30,7 @@ class SearchService extends BaseService {
   }
   async getSearchesWithStudents(id) {
     console.log("id in service:", id);
-    
+
     let result = await this.repository.getSearchesWithStudents(id);
     console.log("result in service:", result);
     if (result && result.length != 0)
@@ -42,10 +43,18 @@ class SearchService extends BaseService {
       return result;
     throw new idError('שליפת החיפושים נכשלה');
   }
+  async deleteSearch(searchid) {
+    const studentsIds = await stuInSeaRepository.getStudentsListInSearch(searchid)
+    studentsIds.forEach(async student => { //להעלות את העדיפות של התלמידות
+      await studentsRepository.increasePriority(student);
+    });
+    await stuInSeaRepository.deleteallsearchsstu(searchid);// למחוק את הרשומות מחיפושי התלמידות
+    await this.repository.delete(searchid);// למחוק את החיפוש
+  }
   async sendApprovalMail(searchId, schoolid, dataFromClient) {
     const search = await this.repository.getById(searchId);
     if (!search) throw new Error('חיפוש לא נמצא');
-    
+
     const schoolEmail = dataFromClient.to;
     if (!schoolEmail) throw new Error('לא נמצא מייל לבית הספר');
 
@@ -53,7 +62,7 @@ class SearchService extends BaseService {
     const parsed = JSON.parse(search[0].classes);
     const classes = Array.isArray(parsed) ? parsed.join(', ') : '';
     const studentsIds = students.map(s => s.id);
-    let studentRows =await students.map(s => `
+    let studentRows = await students.map(s => `
         <tr>
             <td>${s.firstname}</td>
             <td>${s.lastname}</td>

@@ -16,6 +16,16 @@ class StuInSeaRepository {
         let studentsinsearches = await pool.query(`SELECT * FROM studentsinsearches where studentid = $1`, [id]);
         return studentsinsearches.rows;
     }
+    async getStudentsListInSearch(searchId) {
+         
+        const result = await pool.query(
+            `SELECT studentid 
+            FROM studentsinsearches 
+            WHERE searchid = $1`,
+            [searchId]
+        );
+        return result.rows;
+    }
     async getStudentsInSearch(searchId) {
          
         const result = await pool.query(
