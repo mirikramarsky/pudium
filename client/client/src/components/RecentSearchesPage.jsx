@@ -386,6 +386,8 @@ const RecentSearchesPage = () => {
                   {(() => {
                     try {
                       console.log("search.classes:", typeof (search.classes));
+                      console.log("search.classes value:", JSON.parse(search.classes));
+                      
 
                       const parsed = JSON.parse(search.classes);
                       if (!Array.isArray(parsed)) return '';
