@@ -76,7 +76,7 @@ const SearchDetailsNotToEdit = () => {
 
     const deleteStudent = async (studentId) => {
         try {
-            await axios.delete(`${BASE_URL}/stuInSea/student/${studentId}`);
+            await axios.delete(`${BASE_URL}stuInSea/student/${studentId}`);
             alert("התלמידה נמחקה בהצלחה מהחיפוש הנוכחי")
         }
         catch (err) {
@@ -87,10 +87,6 @@ const SearchDetailsNotToEdit = () => {
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
-    console.log("search", search);
-
-    console.log("1", search.classes);
-    console.log("2", JSON.parse(search.classes));
     return (
         <Container className="mt-4">
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
