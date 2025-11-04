@@ -361,6 +361,7 @@ const RecentSearchesPage = () => {
               <th>כיתות</th>
               <th>כמות</th>
               <th>תאריך</th>
+              <th>בחירה ידנית</th>
             </tr>
           </thead>
           <tbody>
@@ -373,6 +374,8 @@ const RecentSearchesPage = () => {
                 <td>
                   {(() => {
                     try {
+                      console.log("search.classes:", search.classes);
+                      
                       const parsed = JSON.parse(search.classes);
                       if (!Array.isArray(parsed)) return '';
 
@@ -407,6 +410,7 @@ const RecentSearchesPage = () => {
                 </td>
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
+                 <td>{search.classes == [] ? "V":"x"}</td>
               </tr>
             ))}
           </tbody>
