@@ -84,6 +84,10 @@ const SearchDetailsNotToEdit = () => {
             setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
         }
     }
+    console.log("1", search.classes != "[]");
+    console.log("2", JSON.parse(search?.classes || "[]"));
+    
+    
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
