@@ -133,8 +133,8 @@ const PriorityPage = () => {
       const uniqueClasses = new Set();
       for (const student of selectedStudents) {
         const res = await axios.post(`${BASE_URL}students/schoolid/${student.id}`, { schoolId });
-        console.log("student data:", res.data);
-        const s = res.data;
+        console.log("student data:", res.data[0]);
+        const s = res.data[0];
         if (s && s.class && s.grade !== undefined) {
           uniqueClasses.add(`${s.class}${s.grade}`);
         }

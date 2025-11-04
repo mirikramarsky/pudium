@@ -27,7 +27,10 @@ const SearchDetailsNotToEdit = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-
+    console.log("1",search.classes);
+    console.log("2",JSON.parse(search.classes));
+    
+    
    useEffect(() => {
     const fetchSearchAndStudents = async () => {
         try {
@@ -96,8 +99,11 @@ const SearchDetailsNotToEdit = () => {
                     <Col md={4}><strong>שם מחפשת:</strong> {search.searchername}</Col>
                     <Col md={4}><strong>תחום:</strong> {search.field}</Col>
                     <Col md={4}>
-                        <strong>כיתות:</strong>{' '}
-                        {search.classes ? JSON.parse(search.classes).join(', ') : '–'}
+                        <strong>כיתות:</strong>{search.classes}
+                        {' '}
+                        {console.log(search.classes)}
+                        {
+                        search.classes ? JSON.parse(search.classes).join(', ') : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search.countstudents}</Col>
                     <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>
