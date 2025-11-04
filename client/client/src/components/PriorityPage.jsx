@@ -101,7 +101,7 @@ const PriorityPage = () => {
 
       setFoundStudents(withoutSelected);
     } catch (err) {
-      setError('שגיאה בשליפת תלמידות: ' + (err.response?.data || err.message));
+      setError('אין תלמידות העונות לסינון הזה' );
     }
   };
 
@@ -133,6 +133,7 @@ const PriorityPage = () => {
       const uniqueClasses = new Set();
       for (const student of selectedStudents) {
         const res = await axios.post(`${BASE_URL}students/schoolid/${student.id}`, { schoolId });
+        console.log("student data:", res.data);
         const s = res.data;
         if (s && s.class && s.grade !== undefined) {
           uniqueClasses.add(`${s.class}${s.grade}`);
@@ -140,7 +141,7 @@ const PriorityPage = () => {
       }
 
       const classesArray = Array.from(uniqueClasses);
-
+      console.log("classesArray:", classesArray);
       const searchData = {
         searchname: searchName,
         countstudents: selectedStudents.length,
@@ -148,6 +149,7 @@ const PriorityPage = () => {
         classes: JSON.stringify(classesArray),
         searcherId,
         searchername: staffName,
+        schoolid: schoolId
       };
 
       const resSave = await axios.post(`${BASE_URL}searches/`, searchData);

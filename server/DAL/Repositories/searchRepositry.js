@@ -95,6 +95,7 @@ class SearchRepository {
         return students;
     }
     async insert(params) {
+        console.log("params in repository:", params);
         const now = new Date();
         let search = await pool.query(`INSERT INTO searches (searchname, searchdate, field, countstudents, searchername, classes, searcherid, schoolid,students)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)  RETURNING id`, [params.searchname, now, params.field, params.countstudents, params.searchername,

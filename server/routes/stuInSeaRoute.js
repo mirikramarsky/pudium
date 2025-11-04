@@ -79,6 +79,7 @@ catch(err){
 }});
 router.post('/:searchid', async(req, res,next)=>{
 try{
+    console.log("in stuInSeaRoute:", req.params.searchid, req.body.studentsid);
     let result = await stuInSeaService.insert(req.params.searchid, req.body.studentsid);
     if(result != null)
         res.json(result)
