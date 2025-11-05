@@ -52,6 +52,8 @@ class StuInSeaService extends BaseService {
         throw new idError('this search id is not exist');
     }
        async deleteStudents(studentid) {
+        console.log("I am in deleteStudents service", studentid);
+        
         let result = await this.repository.deleteStudents(studentid);
         if (result && result != 0)
             return result;

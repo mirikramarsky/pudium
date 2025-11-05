@@ -210,7 +210,7 @@ const SearchFormPage = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>כיתה (בחר אות או כיתה מדויקת)</Form.Label>
+          <Form.Label>כיתה (בחר שכבה או כיתה ספציפית)</Form.Label>
           <div>
             {Object.keys(classesByGroup).sort().map(group => (
               <div key={group} style={{ marginBottom: '5px' }}>

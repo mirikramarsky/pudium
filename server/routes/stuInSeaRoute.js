@@ -108,6 +108,8 @@ router.put('/:id', async(req, res,next)=>{
 });
 router.delete('/student/:id', async(req, res,next)=>{
     try{
+        console.log("I am in delete stuInSeaRoute:", req.params.id);
+        
         let result = await stuInSeaService.deleteStudents(req.params.id);
         if(result != undefined)
             res.send(result)
