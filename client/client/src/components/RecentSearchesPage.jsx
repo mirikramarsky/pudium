@@ -426,7 +426,7 @@ const RecentSearchesPage = () => {
                 </td>
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
-                <td>{JSON.parse(search.classes) == "[]" ? "V" : "x"}</td>
+                <td>{JSON.parse(search.classes) == "[]" ? "✔️" : "✖️"}</td>
                 <td><Button variant="dark" onClick={() => deleteSearch(search.id)}>מחק</Button></td>
               </tr>
             ))}
