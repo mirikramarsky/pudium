@@ -84,8 +84,11 @@ const SearchDetailsNotToEdit = () => {
             setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
         }
     }
+    console.log("search",search);
+    
     console.log("1",typeof(search?.classes));
-    console.log("2",JSON.parse(search?.classes));
+    // console.log("2",JSON.parse(search?.classes));
+    console.log("3", JSON.parse(search.classes) == "[]");
     
     
     
@@ -112,8 +115,8 @@ const SearchDetailsNotToEdit = () => {
                         <strong>כיתות:</strong>{search?.classes}
                         {' '}
                         {console.log(search?.classes)}
-                        {/* {
-                            search?.classes != "[]" ? JSON.parse(search?.classes).join(', ') : '–'} */}
+                        {
+                            JSON.parse(search.classes) !="[]" ? JSON.parse(search?.classes).join(', ') : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search?.countstudents}</Col>
                     <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>
