@@ -78,6 +78,7 @@ const SearchDetailsNotToEdit = () => {
         try {
             await axios.delete(`${BASE_URL}stuInSea/student/${studentId}`);
             alert("התלמידה נמחקה בהצלחה מהחיפוש הנוכחי")
+            setStudents(prev => prev.filter(student => student.id !== studentId));
         }
         catch (err) {
             console.error(err);

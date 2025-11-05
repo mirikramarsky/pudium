@@ -217,6 +217,7 @@ const RecentSearchesPage = () => {
     try {
       await axios.delete(`${BASE_URL}searches/deleteSaerch/${searcherId}`);
       alert("המחיקה הצליחה")
+      setSearches(prev => prev.filter(search => search.id !== searcherId));
     }
     catch (err) {
       console.error(err)
