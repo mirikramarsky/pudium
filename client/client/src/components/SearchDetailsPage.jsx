@@ -78,7 +78,7 @@ const SearchDetailsPage = () => {
                 if (searchData.students && searchData.students.students.length > 0) {
                     const fetchedIds = searchData.students.students;
                     const resStudents = await axios.post(
-                        `${BASE_URL}students/students/${schoolId}`,
+                        `${BASE_URL}students/${schoolId}`,
                         { studentIds: JSON.stringify(fetchedIds) }
                     );
                     setStudents(resStudents.data);
