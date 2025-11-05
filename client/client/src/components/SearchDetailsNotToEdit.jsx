@@ -84,14 +84,9 @@ const SearchDetailsNotToEdit = () => {
             setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
         }
     }
-    console.log("search",search);
-    
-    console.log("1",typeof(search?.classes));
-    // console.log("2",JSON.parse(search?.classes));
-    console.log("3", JSON.parse(search.classes) == "[]");
-    
-    
-    
+
+
+
     if (loading) return <Spinner animation="border" className="m-4" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!search) return <p>החיפוש לא נמצא</p>;
@@ -114,9 +109,11 @@ const SearchDetailsNotToEdit = () => {
                     <Col md={4}>
                         <strong>כיתות:</strong>{search?.classes}
                         {' '}
-                        {console.log(search?.classes)}
-                        {
-                            JSON.parse(search.classes) !="[]" ? JSON.parse(search?.classes).join(', ') : '–'}
+                        {console.log("search", search)}
+                        {console.log("1", typeof (search?.classes))}
+                        {/* // console.log("2",JSON.parse(search?.classes)); */}
+                        {console.log("3", JSON.parse(search.classes) == "[]")}
+                        {JSON.parse(search.classes) != "[]" ? JSON.parse(search?.classes).join(', ') : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search?.countstudents}</Col>
                     <Col md={8}><strong>תאריך:</strong> {new Date(search.searchdate).toLocaleString('he-IL')}</Col>
