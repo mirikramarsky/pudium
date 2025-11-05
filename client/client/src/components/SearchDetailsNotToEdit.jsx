@@ -84,8 +84,9 @@ const SearchDetailsNotToEdit = () => {
             setError("מחיקת התלמידה נכשלה, אנא נסי שוב")
         }
     }
-    console.log("1", search?.classes == []);
-    console.log("2", JSON.parse(search?.classes || "[]"));
+    console.log("1",typeof(search?.classes));
+    console.log("2",search?.classes);
+    
     
     
     if (loading) return <Spinner animation="border" className="m-4" />;
