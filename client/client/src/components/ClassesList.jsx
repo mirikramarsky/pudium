@@ -87,8 +87,33 @@ const ClassesList = () => {
     fetchClasses();
   }, []);
 
-  if (error) return <div ref={messageRef}><Alert variant="danger">{error}</Alert></div>;
-  if (loading) return <Alert variant="info">טוען כיתות...</Alert>;
+  if (error) return (
+    <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <Button
+          onClick={() => navigate('../staff-home')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
+      <div ref={messageRef}><Alert variant="danger">{error}</Alert></div>
+
+    </Container>);
+  if (loading) return (
+    <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <Button
+          onClick={() => navigate('../staff-home')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div>
+      <Alert variant="info">טוען כיתות...</Alert>
+    </Container>);
   if (!staff) return null;
 
   return (

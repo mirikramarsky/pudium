@@ -87,9 +87,40 @@ const SearchDetailsNotToEdit = () => {
 
 
 
-    if (loading) return <Spinner animation="border" className="m-4" />;
-    if (error) return <Alert variant="danger">{error}</Alert>;
-    if (!search) return <p>החיפוש לא נמצא</p>;
+    if (loading) return (
+        <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <Button
+                    onClick={() => navigate('../recent-searches')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div><Spinner animation="border" className="m-4" />
+        </Container>);
+    if (error) return (
+        <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <Button
+                    onClick={() => navigate('../recent-searches')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div> <Alert variant="danger">{error}</Alert>  </Container>);
+    if (!search) return (
+        <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <Button
+                    onClick={() => navigate('../recent-searches')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div><p>החיפוש לא נמצא</p>  </Container>);
     return (
         <Container className="mt-4">
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>

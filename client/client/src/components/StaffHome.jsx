@@ -40,7 +40,18 @@ const StaffHome = () => {
     if (staffId) fetchStaff();
   }, [staffId, schoolId]);
 
-  if (loading) return <Spinner animation="border" />;
+  if (loading) return (
+    <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <Button
+          onClick={() => navigate('../staff-login')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div><Spinner animation="border" />
+    </Container>);
 
   return (
     <Container className="mt-5 text-center">

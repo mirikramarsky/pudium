@@ -63,9 +63,30 @@ const EditStudent = () => {
         }
     };
 
-    if (error) return <Alert variant="danger">{error}</Alert>;
+    if (error) return (
+        <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <Button
+                    onClick={() => navigate(`../class/${formData.class}/${formData.grade}`)}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div><Alert variant="danger">{error}</Alert>
+        </Container>);
 
-    if (!formData) return <p>טוען...</p>;
+    if (!formData) return (
+        <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <Button
+                    onClick={() => navigate(`../class/${formData.class}/${formData.grade}`)}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div><p>טוען...</p></Container>);
 
     return (
         <Container className="mt-4">

@@ -292,7 +292,7 @@ const SearchDetailsPage = () => {
     };
 
     if (loading) return (
-    <Container className="mt-4">
+    <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
          <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
                 <Button
                     onClick={() => navigate('../data-fetch')}

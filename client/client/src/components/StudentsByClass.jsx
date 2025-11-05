@@ -81,7 +81,18 @@ const StudentsByClass = () => {
     </Table>
   );
 
-  if (error) return <Alert variant="danger">{error}</Alert>;
+  if (error) return (
+    <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+        <Button
+          onClick={() => navigate('../classes')}
+          variant="outline-secondary"
+          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+        >
+          חזרה 👉
+        </Button>
+      </div><Alert variant="danger">{error}</Alert>
+    </Container>);
 
   return (
     <Container className="mt-4">
@@ -97,52 +108,52 @@ const StudentsByClass = () => {
       </div>
       {renderLegend()}
       {loading ? (
-      <p>טוען תלמידות...</p>
+        <p>טוען תלמידות...</p>
       ) : students.length === 0 ? (
-      <p>אין תלמידות בכיתה זו.</p>
+        <p>אין תלמידות בכיתה זו.</p>
       ) : (
-      <Table bordered hover>
-        <thead>
-          <tr>
-            <th>מספר זהות</th>
-            <th>שם פרטי</th>
-            <th>שם משפחה</th>
-            <th>כיתה</th>
-            <th>תחום 1</th>
-            <th>תחום 2</th>
-            <th>תחום 3</th>
-            <th>תחום 4</th>
-            <th>עדיפות חינוכית</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(student => {
-            const rowColor = priorityColors[Number(student.severalpriority)] || '#ffffff';
-            const getCellStyle = (priority) => ({
-              backgroundColor: priorityColors[priority] || '#ffffff',
-            });
+        <Table bordered hover>
+          <thead>
+            <tr>
+              <th>מספר זהות</th>
+              <th>שם פרטי</th>
+              <th>שם משפחה</th>
+              <th>כיתה</th>
+              <th>תחום 1</th>
+              <th>תחום 2</th>
+              <th>תחום 3</th>
+              <th>תחום 4</th>
+              <th>עדיפות חינוכית</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map(student => {
+              const rowColor = priorityColors[Number(student.severalpriority)] || '#ffffff';
+              const getCellStyle = (priority) => ({
+                backgroundColor: priorityColors[priority] || '#ffffff',
+              });
 
-            return (
-              <tr
-                key={student.id}
-                style={{ backgroundColor: rowColor, cursor: 'pointer' }}
-                onClick={() => navigate(`/edit-student/${student.id}`)}
-              >
-                <td style={{ backgroundColor: rowColor }}>{student.id}</td>
-                <td style={{ backgroundColor: rowColor }}>{student.firstname}</td>
-                <td style={{ backgroundColor: rowColor }}>{student.lastname}</td>
-                <td style={{ backgroundColor: rowColor }}>{student.class} {student.grade}</td>
-                <td style={getCellStyle(student.field1priority)}>{student.field1}</td>
-                <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
-                <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
-                <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
-                <td style={getCellStyle(student.field4priority)}>
-                  {student.educpriority ? 'כן' : 'לא'}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+              return (
+                <tr
+                  key={student.id}
+                  style={{ backgroundColor: rowColor, cursor: 'pointer' }}
+                  onClick={() => navigate(`/edit-student/${student.id}`)}
+                >
+                  <td style={{ backgroundColor: rowColor }}>{student.id}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.firstname}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.lastname}</td>
+                  <td style={{ backgroundColor: rowColor }}>{student.class} {student.grade}</td>
+                  <td style={getCellStyle(student.field1priority)}>{student.field1}</td>
+                  <td style={getCellStyle(student.field2priority)}>{student.field2}</td>
+                  <td style={getCellStyle(student.field3priority)}>{student.field3}</td>
+                  <td style={getCellStyle(student.field4priority)}>{student.field4}</td>
+                  <td style={getCellStyle(student.field4priority)}>
+                    {student.educpriority ? 'כן' : 'לא'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
       )}
     </Container>
   );
