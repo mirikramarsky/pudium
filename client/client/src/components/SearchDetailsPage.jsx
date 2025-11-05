@@ -294,7 +294,6 @@ const SearchDetailsPage = () => {
     if (loading) return (
     <Container className="mt-4">
          <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
-                <h4>פרטי חיפוש: {search.searchname}</h4>
                 <Button
                     onClick={() => navigate('../data-fetch')}
                     variant="outline-secondary"
@@ -308,7 +307,6 @@ const SearchDetailsPage = () => {
     if (error) return (
         <Container className="mt-4">
          <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
-                <h4>פרטי חיפוש: {search.searchname}</h4>
                 <Button
                     onClick={() => navigate('../data-fetch')}
                     variant="outline-secondary"

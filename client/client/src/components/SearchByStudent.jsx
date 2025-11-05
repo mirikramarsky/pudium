@@ -114,7 +114,7 @@ const SearchByStudent = () => {
             sortSearches(res.data);
         } catch (err) {
             console.error('שגיאה בשליפת חיפושים:', err);
-            setError('שגיאה בשליפת החיפושים של התלמידה');
+            setError('לתלמידה אין חיפושים שמורים');
         }
     };
     const sortSearches = (searches) => {
