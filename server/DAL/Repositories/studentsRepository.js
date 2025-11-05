@@ -92,13 +92,8 @@ class StudentsRepository {
                 specific_priority DESC,
             RANDOM() 
             LIMIT $4
-            `;
-        console.log("query",query);
-        console.log("values",values);
-        
-        const result = await pool.query(query, values);
-        console.log("result rows",result.rows);
-        
+            `;        
+        const result = await pool.query(query, values);        
         return result.rows;
     }
     async insert(params) {

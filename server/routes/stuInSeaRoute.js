@@ -46,11 +46,7 @@ router.get('/student/:id', async(req, res,next)=>{
 
 router.get('/search/:id/:schoolId', async(req, res,next)=>{
     try{
-        console.log("I am in stuin sea route", req.params.id, req.params.schoolId);
-        
         let result = await stuInSeaService.getBySearchId(req.params.id, req.params.schoolId);
-        console.log("results", result);
-        
         if(result != undefined)
             res.json(result || []);
         else
@@ -79,7 +75,6 @@ catch(err){
 }});
 router.post('/:searchid', async(req, res,next)=>{
 try{
-    console.log("in stuInSeaRoute:", req.params.searchid, req.body.studentsid);
     let result = await stuInSeaService.insert(req.params.searchid, req.body.studentsid);
     if(result != null)
         res.json(result)
@@ -108,8 +103,6 @@ router.put('/:id', async(req, res,next)=>{
 });
 router.delete('/student/:id', async(req, res,next)=>{
     try{
-        console.log("I am in delete stuInSeaRoute:", req.params.id);
-        
         let result = await stuInSeaService.deleteStudents(req.params.id);
         if(result != undefined)
             res.send(result)

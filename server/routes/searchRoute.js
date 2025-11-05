@@ -60,11 +60,7 @@ router.get('/without/students/saved/:id', async (req, res, next) => {
 });
 router.get('/with/students/saved/:id', async (req, res, next) => {
     try {
-        console.log("id in route:", req.params.id);
-        
         let result = await searchService.getSearchesWithStudents(req.params.id)
-        console.log("result in route:", result);
-        
         if (result != undefined)
             res.json(result || []);
         else
@@ -124,14 +120,7 @@ router.post('/send-approval-mail/:searchId/school/:schoolid', async (req, res) =
 });
 router.put('/:id', async (req, res, next) => {
     try {
-        console.log("I am save the search changes");
-        console.log("search id", req.params.id);
-        console.log("search body", req.body);
-        
-        
         let result = await searchService.update(req.params.id, req.body);
-        console.log("result", result);
-        
         if (result != undefined)
             res.send(result)
         else
