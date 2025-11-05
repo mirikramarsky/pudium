@@ -53,8 +53,8 @@ class StuInSeaService extends BaseService {
     }
        async deleteStudents(studentid) {
         console.log("I am in deleteStudents service", studentid);
-        
         let result = await this.repository.deleteStudents(studentid);
+        await studentsRepository.increasePriority(studentid);
         if (result && result != 0)
             return result;
         throw new idError('this student id is not exist');
