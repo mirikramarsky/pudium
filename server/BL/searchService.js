@@ -4,6 +4,7 @@ const stuInSeaRepository = require('../DAL/Repositories/studentsInSEarches');
 const schoolRepository = require('../DAL/Repositories/schoolRepository');
 const mailer = require('../utils/mailer');
 const studentsRepository = require("../DAL/Repositories/studentsRepository");
+const idError = require("./errors/idError");
 
 const BASE_URL = 'https://pudium-production.up.railway.app/api/podium';
 class SearchService extends BaseService {
@@ -45,8 +46,12 @@ class SearchService extends BaseService {
   }
   async deleteSearch(searchid) {
     const studentsIds = await stuInSeaRepository.getStudentsListInSearch(searchid)
+    console.log("studentsIds in search service:", studentsIds);
+    let result;
     studentsIds.forEach(async student => { //להעלות את העדיפות של התלמידות
-      await studentsRepository.increasePriority(student);
+     result =  await studentsRepository.increasePriority(student);
+     if(!result || result === 0 )
+        throw new idError('העלאת עדיפות התלמידות נכשלה');
     });
     await stuInSeaRepository.deleteallsearchsstu(searchid);// למחוק את הרשומות מחיפושי התלמידות
     await this.repository.delete(searchid);// למחוק את החיפוש
