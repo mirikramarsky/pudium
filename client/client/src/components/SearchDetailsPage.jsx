@@ -114,15 +114,15 @@ const SearchDetailsPage = () => {
                     classes: searchData.classes ? JSON.parse(searchData.classes) : [],
                     excludeIds: []
                 };
-                console.log("searchParams2",searchParams);
-                
+                console.log("searchParams2", searchParams);
+
                 try {
                     const resStudents = await axios.post(
                         `${BASE_URL}students/params/toSave/`,
                         searchParams
                     );
                     console.log("searchParams response", resStudents);
-                    
+
                     const foundStudents = resStudents.data;
                     const newIds = foundStudents.map(s => s.id);
                     setStudents(foundStudents);
@@ -160,8 +160,8 @@ const SearchDetailsPage = () => {
                 classes: search.classes ? JSON.parse(search.classes) : [],
                 excludeIds: [...shownStudentIds, studentId]
             };
-            console.log("searchParams",searchParams);
-            
+            console.log("searchParams", searchParams);
+
             const res = await axios.post(
                 `${BASE_URL}students/params/toSave/`,
                 searchParams
@@ -261,8 +261,8 @@ const SearchDetailsPage = () => {
                 classes: search.classes ? JSON.parse(search.classes) : [],
                 excludeIds: shownStudentIds
             };
-            console.log("searchParams",searchParams);
-            
+            console.log("searchParams", searchParams);
+
             const resStudents = await axios.post(
                 `${BASE_URL}students/params/toSave/`,
                 searchParams
@@ -284,15 +284,41 @@ const SearchDetailsPage = () => {
         navigate('../../data-fetch')
     }
     const updateSearchStudents = async (studentIds) => {
-        console.log("studentIds: ",studentIds);
-        
+        console.log("studentIds: ", studentIds);
+
         await axios.put(`${BASE_URL}searches/${id}`, {
-            students: {"students": studentIds }
+            students: { "students": studentIds }
         });
     };
 
-    if (loading) return <Spinner animation="border" className="m-4" />;
-    if (error) return <Alert variant="danger">{error}</Alert>;
+    if (loading) return (
+    <Container className="mt-4">
+         <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h4>פרטי חיפוש: {search.searchname}</h4>
+                <Button
+                    onClick={() => navigate('../data-fetch')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div>
+        <Spinner animation="border" className="m-4" /></Container>
+    );
+    if (error) return (
+        <Container className="mt-4">
+         <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
+                <h4>פרטי חיפוש: {search.searchname}</h4>
+                <Button
+                    onClick={() => navigate('../data-fetch')}
+                    variant="outline-secondary"
+                    style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                >
+                    חזרה 👉
+                </Button>
+            </div>
+        <Alert variant="danger">{error}</Alert></Container>
+    )
     return (
         <Container className="mt-4">
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>

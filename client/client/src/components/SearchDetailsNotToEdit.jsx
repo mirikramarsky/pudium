@@ -107,12 +107,7 @@ const SearchDetailsNotToEdit = () => {
                     <Col md={4}><strong>שם מחפשת:</strong> {search.searchername}</Col>
                     <Col md={4}><strong>תחום:</strong> {search.field}</Col>
                     <Col md={4}>
-                        <strong>כיתות:</strong>{search?.classes}
-                        {' '}
-                        {console.log("search", search)}
-                        {console.log("1", typeof (search?.classes))}
-                        {/* // console.log("2",JSON.parse(search?.classes)); */}
-                        {console.log("3", JSON.parse(search.classes) == "[]")}
+                        <strong>כיתות:</strong>
                         {JSON.parse(search.classes) != "[]" ? JSON.parse(search?.classes).join(', ') : '–'}
                     </Col>
                     <Col md={4}><strong>כמות תלמידות:</strong> {search?.countstudents}</Col>
