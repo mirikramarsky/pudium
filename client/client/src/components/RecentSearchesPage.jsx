@@ -441,6 +441,20 @@ const RecentSearchesPage = () => {
           </tbody>
         </Table>
       )}
+      <ToastContainer position="bottom-center" className="mb-4">
+        <Toast
+          bg="success"
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={2500}
+          autohide
+        >
+          <Toast.Body style={{ textAlign: 'center', color: 'white' }}>
+            {toastMessage}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
+
     </Container>
   );
 };

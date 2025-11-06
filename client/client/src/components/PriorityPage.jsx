@@ -160,7 +160,7 @@ const PriorityPage = () => {
       });
 
       setSuccess('הבחירה נשמרה בהצלחה!');
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate('/staff-home'), 1500);
     } catch (err) {
       setError('שגיאה בשמירה: ' + (err.response?.data || err.message));
     }
