@@ -174,7 +174,7 @@ const SearchFormPage = () => {
 
       <Form onSubmit={handleSubmit} className='pt-5'>
         <Form.Group className="mb-3">
-          <Form.Label>שם החיפוש</Form.Label>
+          <Form.Label>שם הפעילות</Form.Label>
           <Form.Control
             type="text"
             value={formData.name}

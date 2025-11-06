@@ -3,6 +3,8 @@ import { Container, Form, Row, Col, Button, Table, Alert } from 'react-bootstrap
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
+import { Toast, ToastContainer } from 'react-bootstrap';
+
 
 const RecentSearchesPage = () => {
 
@@ -15,6 +17,8 @@ const RecentSearchesPage = () => {
   const staffId = localStorage.getItem('staffId');
   const schoolId = localStorage.getItem('schoolId');
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
   const [filters, setFilters] = useState({
     searchtime: '',
     searchdate: '',
@@ -213,11 +217,13 @@ const RecentSearchesPage = () => {
     }
   };
   const deleteSearch = async (searcherId) => {
-    alert("מחיקה תסיר את החיפוש מחיפושים אחרונים ותעלה את עדיפות התלמידות שהיו בחיפוש הזה \n האם את בטוחה שאת רוצה למחוק?")
+    if (!window.confirm("מחיקה תסיר את החיפוש מחיפושים אחרונים ותעלה את עדיפות התלמידות שהיו בחיפוש הזה.\nהאם את בטוחה שאת רוצה למחוק?"))
+      return;
     try {
       await axios.delete(`${BASE_URL}searches/deleteSaerch/${searcherId}`);
-      alert("המחיקה הצליחה")
       setSearches(prev => prev.filter(search => search.id !== searcherId));
+      setToastMessage("✅ המחיקה הצליחה!");
+      setShowToast(true);
     }
     catch (err) {
       console.error(err)
@@ -366,7 +372,7 @@ const RecentSearchesPage = () => {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>שם החיפוש</th>
+              <th>שם הפעילות</th>
               <th>מחפשת</th>
               <th>תחום</th>
               <th>כיתות</th>
@@ -386,12 +392,6 @@ const RecentSearchesPage = () => {
                 <td>
                   {(() => {
                     try {
-                      console.log("search.classes:", typeof (search.classes));
-                      console.log("search.classes value:", typeof (JSON.parse(search.classes)));
-                      console.log("1", JSON.parse(search.classes) == []);
-
-                      console.log("2", JSON.parse(search.classes) == "[]");
-
                       const parsed = JSON.parse(search.classes);
                       if (!Array.isArray(parsed)) return '';
 
@@ -427,7 +427,15 @@ const RecentSearchesPage = () => {
                 <td>{search.countstudents}</td>
                 <td>{new Date(search.searchdate).toLocaleString('he-IL')}</td>
                 <td>{JSON.parse(search.classes) == "[]" ? "✔️" : "✖️"}</td>
-                <td><Button variant="dark" onClick={() => deleteSearch(search.id)}>מחק</Button></td>
+                <td><Button
+                  variant="dark"
+                  onClick={(e) => {
+                    e.stopPropagation(); // 👈 מונע מהשורה להפעיל ניווט
+                    deleteSearch(search.id);
+                  }}
+                >
+                  מחק
+                </Button></td>
               </tr>
             ))}
           </tbody>
