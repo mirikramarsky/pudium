@@ -46,7 +46,7 @@ class SearchService extends BaseService {
     console.log("studentsIds in search service:", studentsIds);
     let result;
     studentsIds.forEach(async student => { //להעלות את העדיפות של התלמידות
-      id = student.studentid || student;
+     const id = student.studentid || student;
      result =  await studentsRepository.increasePriority(id);
      if(!result || result === 0 )
         throw new idError('העלאת עדיפות התלמידות נכשלה');
