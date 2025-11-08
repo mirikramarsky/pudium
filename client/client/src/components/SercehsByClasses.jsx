@@ -9,7 +9,7 @@ const SearchesByClasses = () => {
     const { grade, class: className } = useParams();
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
-    const maxSearches = 0;
+    let maxSearches = 0;
     const navigate = useNavigate();
 
     useEffect(() => {
