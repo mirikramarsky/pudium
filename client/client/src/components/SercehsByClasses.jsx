@@ -30,7 +30,7 @@ const SearchesByClasses = () => {
                     s.class === className
                 );
                 for (let student of filtered) {
-                    const searches = await axios.get(`${BASE_URL}stuInSea/students/${student.id}`);
+                    const searches = await axios.get(`${BASE_URL}stuInSea/student/${student.id}`);
                     let i = 0;
                     student.searches = [];
                     for (let search of searches.data) {
