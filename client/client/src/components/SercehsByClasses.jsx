@@ -56,8 +56,8 @@ const SearchesByClasses = () => {
                         }
                     }
                 }
-
                 maxSearches = Math.max(...students.map(s => s.searches.length));
+                console.log("maxSearches", maxSearches);
                 setStudents(filtered);
             } catch (err) {
                 setError('שגיאה בשליפת תלמידות');
@@ -69,7 +69,8 @@ const SearchesByClasses = () => {
 
         fetchStudents();
     }, [grade, className]);
-
+    console.log("students", students);
+    
     if (error) return (
         <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
