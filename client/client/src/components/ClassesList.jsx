@@ -12,7 +12,7 @@ const ClassesList = () => {
   const navigate = useNavigate();
   const messageRef = useRef(null);
   const location = useLocation();
-  const show = location.state?.show || 'students';
+  const show = location.state?.show || 'student';
   useEffect(() => {
     const fetchClasses = async () => {
       setLoading(true);
@@ -88,6 +88,8 @@ const ClassesList = () => {
     fetchClasses();
   }, []);
   const getBackPath = () => {
+    console.log(show);
+    
     if (show === 'student') return '../staff-home';
     if (show === 'searches') return '../recent-searches';
     return '../staff-home';
@@ -166,7 +168,7 @@ const ClassesList = () => {
                           letter = cls.charAt(0);
                           number = cls.slice(1);
                         }
-                        if(show === 'students'){
+                        if(show === 'student'){
                           navigate(`/class/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
                           return;
                         }

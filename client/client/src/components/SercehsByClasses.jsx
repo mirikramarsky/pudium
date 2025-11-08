@@ -51,7 +51,7 @@ const SearchesByClasses = () => {
                             // אין חיפושים => מערך ריק
                             student.searches = [];
                         } else {
-                            console.error(`שגיאה בשליפת חיפושים עבור תלמיד ${student.id}:`, err);
+                            // console.error(`שגיאה בשליפת חיפושים עבור תלמיד ${student.id}:`, err);
                             student.searches = [];
                         }
                     }
