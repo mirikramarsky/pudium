@@ -251,7 +251,7 @@ const RecentSearchesPage = () => {
          <Button
           onClick={() => navigate('../classes' ,{state :{show : 'searches' }})}
           variant="outline-success"
-          style={{ position: 'absolute', right: 0, top: '300%', transform: 'translateY(-30%)' }}
+          style={{ position: 'absolute', right: 0, top: '320%', transform: 'translateY(-50%)' }}
         >
           חיפוש לפי כיתה 👉
         </Button>

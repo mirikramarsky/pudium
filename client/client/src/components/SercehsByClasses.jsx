@@ -76,7 +76,6 @@ const SearchesByClasses = () => {
                     חזרה 👉
                 </Button>
             </div>
-            {renderLegend()}
             {loading ? (
                 <p>טוען תלמידות...</p>
             ) : students.length === 0 ? (
