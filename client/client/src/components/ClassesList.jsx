@@ -89,7 +89,7 @@ const ClassesList = () => {
   }, []);
   const getBackPath = () => {
     if (show === 'student') return '../staff-home';
-    if (mode === 'searches') return '..';
+    if (show === 'searches') return '../recent-searches';
     return '../staff-home';
   }
   if (error) return (

@@ -23,6 +23,7 @@ import { useLocation } from 'react-use';
 import SearchByStudent from '../components/SearchByStudent';
 import AddStudents from '../components/AddStudents';
 import StudentsFieldsTable from '../components/Fieldtable';
+import SearchesByClasses from '../components/SercehsByClasses';
 // import BottomBanner from '../components/BottomBanner';
 
 function Layout({ children }) {
@@ -72,7 +73,7 @@ function Home() {
                         <Route path="/search-by-student" element={<SearchByStudent />} />
                         <Route path="/addStudents" element={<AddStudents />} />
                         <Route path="/fill-students-fields" element={<StudentsFieldsTable />} />
-
+                        <Route path="/class-searches/:class/:grade" element={<SearchesByClasses />} />  
                     </Routes>
                 </Layout>
             </BrowserRouter>
