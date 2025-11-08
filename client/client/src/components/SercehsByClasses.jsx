@@ -30,14 +30,33 @@ const SearchesByClasses = () => {
                     s.class === className
                 );
                 for (let student of filtered) {
-                    const searches = await axios.get(`${BASE_URL}stuInSea/student/${student.id}`);
-                    let i = 0;
-                    student.searches = [];
-                    for (let search of searches.data) {
-                        searchDetails = await axios.get(`${BASE_URL}searches/${search.searchid}`);
-                        student.searches[i++] = { "name": searchDetails.data.searchname, "field": searchDetails.data.field };
+                    try {
+                        const searchesRes = await axios.get(`${BASE_URL}stuInSea/student/${student.id}`);
+                        student.searches = [];
+
+                        let i = 0;
+                        for (let search of searchesRes.data) {
+                            try {
+                                const searchDetails = await axios.get(`${BASE_URL}searches/${search.searchid}`);
+                                student.searches[i++] = {
+                                    name: searchDetails.data.searchname,
+                                    field: searchDetails.data.field
+                                };
+                            } catch (err) {
+                                console.error(`שגיאה בשליפת פרטי חיפוש עבור תלמיד ${student.id}:`, err);
+                            }
+                        }
+                    } catch (err) {
+                        if (err.response && err.response.status === 400) {
+                            // אין חיפושים => מערך ריק
+                            student.searches = [];
+                        } else {
+                            console.error(`שגיאה בשליפת חיפושים עבור תלמיד ${student.id}:`, err);
+                            student.searches = [];
+                        }
                     }
                 }
+
                 maxSearches = Math.max(...students.map(s => s.searches.length));
                 setStudents(filtered);
             } catch (err) {
