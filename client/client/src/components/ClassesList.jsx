@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Container, ListGroup, Alert, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BASE_URL from '../config';
 
 const ClassesList = () => {
@@ -11,7 +11,8 @@ const ClassesList = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const messageRef = useRef(null);
-
+  const location = useLocation();
+  const show = location.state?.show || 'students';
   useEffect(() => {
     const fetchClasses = async () => {
       setLoading(true);
@@ -86,12 +87,16 @@ const ClassesList = () => {
 
     fetchClasses();
   }, []);
-
+  const getBackPath = () => {
+    if (show === 'student') return '../staff-home';
+    if (mode === 'searches') return '..';
+    return '../staff-home';
+  }
   if (error) return (
     <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
         <Button
-          onClick={() => navigate('../staff-home')}
+          onClick={() => navigate(getBackPath())}
           variant="outline-secondary"
           style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
         >
@@ -105,7 +110,7 @@ const ClassesList = () => {
     <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
         <Button
-          onClick={() => navigate('../staff-home')}
+          onClick={() => navigate(getBackPath())}
           variant="outline-secondary"
           style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
         >
@@ -121,7 +126,7 @@ const ClassesList = () => {
       <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
         <h3>בחרי כיתה</h3>
         <Button
-          onClick={() => navigate('../staff-home')}
+          onClick={() => navigate(getBackPath())}
           variant="outline-secondary"
           style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
         >
@@ -161,8 +166,12 @@ const ClassesList = () => {
                           letter = cls.charAt(0);
                           number = cls.slice(1);
                         }
-
-                        navigate(`/class/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
+                        if(show === 'students'){
+                          navigate(`/class/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
+                          return;
+                        }
+                        else
+                          navigate(`/class-searches/${encodeURIComponent(letter)}/${encodeURIComponent(number)}`);
                       } else {
                         alert('על פי הרשאת הגישה שלך, אין באפשרותך להיכנס לכיתה זו. תודה רבה.');
                       }

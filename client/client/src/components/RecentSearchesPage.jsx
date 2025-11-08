@@ -248,6 +248,13 @@ const RecentSearchesPage = () => {
         >
           חיפוש לפי תלמידה 👉
         </Button>
+         <Button
+          onClick={() => navigate('../classes' ,{state :{show : 'searches' }})}
+          variant="outline-success"
+          style={{ position: 'absolute', right: 0, top: '250%', transform: 'translateY(-30%)' }}
+        >
+          חיפוש לפי כיתה 👉
+        </Button>
       </div>
       {error && <Alert variant="danger">{error}</Alert>}
       {fieldError && <Alert variant="warning">{fieldError}</Alert>}

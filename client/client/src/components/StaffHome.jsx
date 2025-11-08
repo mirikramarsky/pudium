@@ -67,7 +67,7 @@ const StaffHome = () => {
       </div>
 
       {showClassesButton && (
-        <Button variant="primary" className="m-3" onClick={() => navigate('/classes')}>
+        <Button variant="primary" className="m-3" onClick={() => navigate('/classes', { state: { show: 'student' } })}>
           🗂️ מילוי פרטים ✍️ - הצגת כיתות
         </Button>
       )}

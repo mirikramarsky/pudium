@@ -141,7 +141,6 @@ router.get('/:id/delete', async (req, res) => {
         res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה במחיקה</div>`);
     }
 });
-
 router.post('/:id/approve', async (req, res) => {
     const { id } = req.params;
     const studentsRaw = req.body.studentsid || '[]';
@@ -156,7 +155,6 @@ router.post('/:id/approve', async (req, res) => {
         res.status(500).send(`<div dir="rtl" style="font-family: Arial; color:red">❌ שגיאה בשמירה</div>`);
     }
 });
-
 router.delete('/deleteSaerch/:id', async (req, res, next) => {
     try {
         let result = await searchService.deleteSearch(req.params.id);
