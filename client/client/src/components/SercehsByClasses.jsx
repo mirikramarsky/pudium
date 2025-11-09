@@ -38,11 +38,11 @@ const SearchesByClasses = () => {
                         for (let search of searchesRes.data) {
                             try {
                                 const searchDetails = await axios.get(`${BASE_URL}searches/${search.searchid}`);
-                                console.log("searchDetails", searchDetails.data);
+                                console.log("searchDetails", searchDetails.data[0]);
 
                                 student.searches[i++] = {
-                                    name: searchDetails.data.searchname,
-                                    field: searchDetails.data.field
+                                    name: searchDetails.data[0].searchname,
+                                    field: searchDetails.data[0].field
                                 };
                             } catch (err) {
                                 console.error(`שגיאה בשליפת פרטי חיפוש עבור תלמיד ${student.id}:`, err);
