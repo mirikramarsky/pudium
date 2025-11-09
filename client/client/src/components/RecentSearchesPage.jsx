@@ -232,30 +232,40 @@ const RecentSearchesPage = () => {
   }
   return (
     <Container className="mt-4">
-      <div style={{ position: 'relative', textAlign: 'center', marginBottom: '65px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '65px', position: 'relative' }}>
         <h4 className="mb-4">חיפושים אחרונים</h4>
-        <Button
-          onClick={() => navigate('../data-fetch')}
-          variant="outline-secondary"
-          style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
-        >
-          חזרה 👉
-        </Button>
-        <Button
-          onClick={() => navigate('../search-by-student')}
-          variant="outline-info"
-          style={{ position: 'absolute', right: 0, top: '200%', transform: 'translateY(-50%)' }}
-        >
-          חיפוש לפי תלמידה 👉
-        </Button>
-         <Button
-          onClick={() => navigate('../classes' ,{state :{show : 'searches' }})}
-          variant="outline-success"
-          style={{ position: 'absolute', right: 0, top: '320%', transform: 'translateY(-50%)' }}
-        >
-          חיפוש לפי כיתה 👉
-        </Button>
+
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          gap: '10px', // רווח אנכי בין הכפתורים
+          position: 'absolute',
+          right: 0,
+          top: '50%',
+          transform: 'translateY(-50%)'
+        }}>
+          <Button
+            onClick={() => navigate('../data-fetch')}
+            variant="outline-secondary"
+          >
+            חזרה 👉
+          </Button>
+          <Button
+            onClick={() => navigate('../search-by-student')}
+            variant="outline-info"
+          >
+            חיפוש לפי תלמידה 👉
+          </Button>
+          <Button
+            onClick={() => navigate('../classes', { state: { show: 'searches' } })}
+            variant="outline-success"
+          >
+            חיפוש לפי כיתה 👉
+          </Button>
+        </div>
       </div>
+
       {error && <Alert variant="danger">{error}</Alert>}
       {fieldError && <Alert variant="warning">{fieldError}</Alert>}
 

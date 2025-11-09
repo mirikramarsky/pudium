@@ -146,6 +146,23 @@ html {
   white-space: nowrap; /* אם יש תוכן inline כמו טבלאות */
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table-container table {
+  min-width: 800px; /* או כל רוחב שתבחר */
+  white-space: nowrap;
+}
+
+th.stick {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 2;
+}
 
 
 /* רספונסיביות למסכים קטנים יותר */

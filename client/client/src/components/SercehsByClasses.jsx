@@ -70,9 +70,7 @@ const SearchesByClasses = () => {
 
         fetchStudents();
     }, [grade, className]);
-    console.log("students", students);
     maxSearches = Math.max(...students.map(s => s.searches.length));
-    console.log("maxSearches", maxSearches);
     if (error) return (
         <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
@@ -103,42 +101,46 @@ const SearchesByClasses = () => {
             ) : students.length === 0 ? (
                 <p>אין תלמידות בכיתה זו.</p>
             ) : (
-                <Table bordered hover>
-                    <thead>
-                        <tr>
-                            <th>מספר זהות</th>
-                            <th>שם פרטי</th>
-                            <th>שם משפחה</th>
-                            <th>כיתה</th>
-                            {Array.from({ length: maxSearches }).map((_, idx) => (
-                                <th key={idx}>חיפוש {idx + 1}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {students.map(student => {
-                            return (
-                                <tr
-                                    key={student.id}
-                                    style={{ backgroundColor: '#ffff', cursor: 'pointer' }}
-                                >
-                                    <td >{student.id}</td>
-                                    <td >{student.firstname}</td>
-                                    <td>{student.lastname}</td>
-                                    <td >{student.class} {student.grade}</td>
-                                    {Array.from({ length: maxSearches }).map((_, idx) => {
-                                        const search = student.searches[idx];
-                                        return (
-                                            <td key={idx}>
-                                                {search ? `${search.name} - ${search.field}` : '-'}
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
+                <div className="table-container">
+                    <Table bordered hover>
+
+                        <thead>
+                            <tr>
+                                <th>מספר זהות</th>
+                                <th>שם פרטי</th>
+                                <th>שם משפחה</th>
+                                <th>כיתה</th>
+                                {Array.from({ length: maxSearches }).map((_, idx) => (
+                                    <th key={idx}>חיפוש {idx + 1}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {students.map(student => {
+                                return (
+                                    <tr
+                                        key={student.id}
+                                        style={{ backgroundColor: '#ffff', cursor: 'pointer' }}
+                                    >
+                                        <td >{student.id}</td>
+                                        <td >{student.firstname}</td>
+                                        <td>{student.lastname}</td>
+                                        <td >{student.class} {student.grade}</td>
+                                        {Array.from({ length: maxSearches }).map((_, idx) => {
+                                            const search = student.searches[idx];
+                                            return (
+                                                <td key={idx}>
+                                                    {search ? `${search.name} - ${search.field}` : '-'}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </Table>
+                </div>
+
             )}
         </Container>
     );
