@@ -38,6 +38,8 @@ const SearchesByClasses = () => {
                         for (let search of searchesRes.data) {
                             try {
                                 const searchDetails = await axios.get(`${BASE_URL}searches/${search.searchid}`);
+                                console.log("searchDetails", searchDetails.data);
+
                                 student.searches[i++] = {
                                     name: searchDetails.data.searchname,
                                     field: searchDetails.data.field
@@ -56,8 +58,7 @@ const SearchesByClasses = () => {
                         }
                     }
                 }
-                maxSearches = Math.max(...students.map(s => s.searches.length));
-                console.log("maxSearches", maxSearches);
+
                 setStudents(filtered);
             } catch (err) {
                 setError('שגיאה בשליפת תלמידות');
@@ -70,7 +71,8 @@ const SearchesByClasses = () => {
         fetchStudents();
     }, [grade, className]);
     console.log("students", students);
-    
+    maxSearches = Math.max(...students.map(s => s.searches.length));
+    console.log("maxSearches", maxSearches);
     if (error) return (
         <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
