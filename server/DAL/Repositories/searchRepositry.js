@@ -113,6 +113,8 @@ class SearchRepository {
             )
            AND schoolid = $1
         `, [id]);
+        console.log("result in repo:", result.rows);
+        
         return result.rows;
     }
     async getSearchesWithoutStudents(id) {
