@@ -85,7 +85,7 @@ const StudentsByClass = () => {
     <Container className="mt-4" style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
         <Button
-          onClick={() => navigate('../classes')}
+          onClick={() => navigate('../classes', { state: { show: 'student' } })}
           variant="outline-secondary"
           style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
         >

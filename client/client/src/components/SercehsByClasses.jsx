@@ -89,7 +89,7 @@ const SearchesByClasses = () => {
             <div style={{ position: 'relative', textAlign: 'center', marginBottom: '20px' }}>
                 <h3>תלמידות בכיתה {className} {grade}</h3>
                 <Button
-                    onClick={() => navigate('../classes')}
+                    onClick={() => navigate('../classes', { state: { show: 'searches' } }) }
                     variant="outline-secondary"
                     style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
                 >
