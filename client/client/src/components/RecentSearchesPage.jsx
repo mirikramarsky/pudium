@@ -43,10 +43,12 @@ const RecentSearchesPage = () => {
           `${BASE_URL}staff/schoolId/${schoolId}/id/${staffId}`
         );
         const confirm = confirmRes.data[0]?.confirm;
-
+        console.log("confirm", confirm);
+        
         const response = await axios.get(`${BASE_URL}searches/with/students/saved/${schoolId}`);
         const allSearches = response.data || [];
-
+        console.log("allSearches", allSearches);
+        
         let filtered = allSearches;
 
         if (confirm === 2 || confirm === 3) {
